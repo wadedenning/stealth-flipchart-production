@@ -13,10 +13,10 @@
     --surface2: #1c2030;
     --border: #252a3a;
     --border2: #2e3550;
-    --text: #d4daf0;
+    --text: #d4daf0;h
     --text-dim: #7a8299;
     --text-bright: #f0f4ff;
-    --u-bg: #1a1f2e; --u-border: #3a4263; --u-accent: #7b91d0;
+    --u-bg: #1a1f2e; --u-border: #3a4263; --u-accent: #7b91d0;h
     --d-bg: #1f1a14; --d-border: #6b4c20; --d-accent: #e8943a;
     --s-bg: #1a1f1a; --s-border: #3a6040; --s-accent: #5eb870;
     --r-bg: #1a1520; --r-border: #5a3a78; --r-accent: #b07ad0;
@@ -279,21 +279,21 @@
     <div class="node-title">START &mdash; Connection Stage</div>
   </div>
   <div class="variant" data-v="U" id="v-1-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi [CLIENT NAME], this is [AGENT NAME] with Stealth Investigations — I'm reaching out because our research team flagged a payment in your name from [REPORTING COMPANY] that never made it to you.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations — I'm reaching out because our research team flagged a payment in your name from [REPORTING COMPANY] that never made it to you.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I wanted to make sure you were aware of it.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Does that ring a bell at all?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-1-D"><div class="variant-block" data-v="D"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] with Stealth Investigations. Our research team found a payment of [AMOUNT] in your name from [COMPANY] that never reached you. I wanted to make sure you knew about it — does that ring a bell?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] with Stealth Investigations. Our research team found a payment of [AMOUNT] in your name from [REPORTING COMPANY] that never reached you. I wanted to make sure you knew about it — does that ring a bell?</div>
   </div></div></div>
   <div class="variant" data-v="S" id="v-1-S"><div class="variant-block" data-v="S"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hey [NAME]! It's [AGENT] over at Stealth Investigations — listen, I've got something interesting for you. Our research team found a payment in your name from [COMPANY] that never made it to you. I wanted to make sure you knew about it — does that ring a bell at all?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hey [NAME]! It's [AGENT] over at Stealth Investigations — listen, I've got something interesting for you. Our research team found a payment in your name from [REPORTING COMPANY] that never made it to you. I wanted to make sure you knew about it — does that ring a bell at all?</div>
   </div></div></div>
   <div class="variant" data-v="R" id="v-1-R"><div class="variant-block" data-v="R"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research team came across some information I think would be important for you to know about — it looks like there's a payment in your name from [COMPANY] that never reached you. Does that ring a bell at all?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research team came across some information I think would be important for you to know about — it looks like there's a payment in your name from [REPORTING COMPANY] that never reached you. Does that ring a bell at all?</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-1-T"><div class="variant-block" data-v="T"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research department identified a payment in your name — it was reported by [COMPANY] and is currently being held by the State of Texas. I wanted to make sure you were aware of it. Does that ring a bell?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research department identified a payment in your name — it was reported by [REPORTING COMPANY] and is currently being held by the State of Texas. I wanted to make sure you were aware of it. Does that ring a bell?</div>
   </div></div></div>
 </div>
 
@@ -335,7 +335,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>Just so I can make sure I cover this the right way for you — do you usually prefer to get all the details upfront, or would you rather I give you the main points and you can ask questions as we go?</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-3-T"><div class="variant-block" data-v="T"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>I'm calling in reference to a case we've been researching involving [REPORTING COMPANY]. According to our records, they tried to issue a payment of [EXACT AMOUNT] back in approximately [YEAR], originally sent to [REPORTED ADDRESS]. It was never delivered, and the funds were subsequently turned over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm calling in reference to a case we've been researching involving [REPORTING COMPANY]. According to our records, they tried to issue a payment of [AMOUNT] back in approximately [YEAR], originally sent to [STREET NAME]. It was never delivered, and the funds were subsequently turned over to the State of Texas.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Were you aware that [REPORTING COMPANY] failed to deliver that payment?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Just so I can structure this conversation efficiently for you — do you prefer to get all the relevant details upfront, or would you like me to give you the highlights and you can drill down where you have questions?</div>
   </div></div></div>
@@ -347,28 +347,28 @@
     <div class="node-title">NOT_AWARE_PATH &mdash; Deliver the News</div>
   </div>
   <div class="variant" data-v="U" id="v-4-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>WOW — well, according to our research, [REPORTING COMPANY] reported that they sent the payment in [2 YEARS PRIOR] to [REPORTED ADDRESS].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>WOW — well, according to our research, [REPORTING COMPANY] reported that they sent the payment in [YEAR] to [STREET NAME].</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Then it looks like somebody at [REPORTING COMPANY] took the easy way out and instead of reaching out to you, they claimed the account was abandoned and turned your money over to the State of Texas.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I'm sorry to be the one to tell you that [REPORTING COMPANY] failed to do their job — but I'm also glad that I was able to connect with you and, at the very least, make you aware of the problem.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>So if I'm understanding this correctly — [REPORTING COMPANY] owed you [AMOUNT], they never got it to you, and then they turned it over to the State without ever contacting you. Is that a fair summary?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-4-D"><div class="variant-block" data-v="D"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>According to our records, [COMPANY] sent your payment to the State rather than reaching out to you. Here's the situation: they reported it as abandoned in [YEAR] and turned it over to the State of Texas.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>So [COMPANY] owed you [AMOUNT], they dropped the ball, and now the State has it. Is that your understanding as well?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>According to our records, [REPORTING COMPANY] sent your payment to the State rather than reaching out to you. Here's the situation: they reported it as abandoned in [YEAR] and turned it over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So [REPORTING COMPANY] owed you [AMOUNT], they dropped the ball, and now the State has it. Is that your understanding as well?</div>
   </div></div></div>
   <div class="variant" data-v="S" id="v-4-S"><div class="variant-block" data-v="S"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Oh WOW — so according to our research, [REPORTING COMPANY] said they sent the payment back in [YEAR] to [ADDRESS]. And then — and I honestly still can't believe companies do this — instead of picking up the phone and calling you, they just... claimed the account was abandoned and handed your money to the State.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>I know, right? I'm really sorry you're finding out this way — but I'm glad we were able to track you down. So [COMPANY] owed you [AMOUNT], never got it to you, and handed it to the State without a word. Is that a fair summary?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh WOW — so according to our research, [REPORTING COMPANY] said they sent the payment back in [YEAR] to [STREET NAME]. And then — and I honestly still can't believe companies do this — instead of picking up the phone and calling you, they just... claimed the account was abandoned and handed your money to the State.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I know, right? I'm really sorry you're finding out this way — but I'm glad we were able to track you down. So [REPORTING COMPANY] owed you [AMOUNT], never got it to you, and handed it to the State without a word. Is that a fair summary?</div>
   </div></div></div>
   <div class="variant" data-v="R" id="v-4-R"><div class="variant-block" data-v="R"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>So according to our research, [REPORTING COMPANY] reported that they sent the payment back in [YEAR] to [ADDRESS]. Unfortunately, instead of following up with you directly, they claimed the account was abandoned and turned the funds over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So according to our research, [REPORTING COMPANY] reported that they sent the payment back in [YEAR] to [STREET NAME]. Unfortunately, instead of following up with you directly, they claimed the account was abandoned and turned the funds over to the State of Texas.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I'm really sorry to be sharing this with you. I know this kind of thing is frustrating to hear. But I'm genuinely glad that we were able to reach you so at least you know what's going on.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>So if I'm understanding this right — [COMPANY] owed you [AMOUNT], they never reached out to you, and now the State has the money. Does that sound right to you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So if I'm understanding this right — [REPORTING COMPANY] owed you [AMOUNT], they never reached out to you, and now the State has the money. Does that sound right to you?</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-4-T"><div class="variant-block" data-v="T"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Our research indicates [COMPANY] reported this payment as abandoned property in [YEAR]. The amount recorded was [EXACT AMOUNT] for [TYPE OF PROPERTY]. Under Texas Property Code Chapter 74, the funds were then turned over to the State of Texas, which is the standard process after the statutory dormancy period.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Our research indicates [REPORTING COMPANY] reported this payment as abandoned property in [YEAR]. The amount recorded was [AMOUNT] for [TYPE OF PROPERTY]. Under Texas Property Code Chapter 74, the funds were then turned over to the State of Texas, which is the standard process after the statutory dormancy period.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>The reporting company did not make additional contact attempts before reporting it, which is where the breakdown occurred on their end.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>So to confirm my understanding — [COMPANY] issued [AMOUNT] in [YEAR], did not contact you prior to reporting it, and the funds are now held by the State. Is that accurate?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So to confirm my understanding — [REPORTING COMPANY] issued [AMOUNT] in [YEAR], did not contact you prior to reporting it, and the funds are now held by the State. Is that accurate?</div>
   </div></div></div>
 </div>
 
@@ -500,7 +500,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>So, I'm going to be out most of the day tomorrow with my [personal obligation], but I will be back on [2 days from now].</div>
     <div class="script-line"><div class="agent-label">AGENT</div>You know what — before I leave today, I'm going to ask a favor of a friend of mine in the document retrieval department to get you the initial generic list of documents the State is going to, quote unquote, REQUIRE from you.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I'll put all this together... I'll include info about us, our A+ BBB rating, our five-star Google reviews — you know, all the usual paraphernalia.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>Was [2 DAYS FROM NOW] good for you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Was [2 days from now] good for you?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Perfect! I'll have their generic list by then and if you feel like we might be a good solution for you, we can talk about possible next steps. Nice chatting with you!</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-9-D"><div class="variant-block" data-v="D"><div class="variant-body">
@@ -529,7 +529,7 @@
     <div class="node-title">RECONNECT &mdash; Re-Engagement</div>
   </div>
   <div class="variant" data-v="U" id="v-10-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi [CLIENT NAME], this is [AGENT NAME] with Stealth Investigations, getting back to you... Is now a bad time?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations, getting back to you... Is now a bad time?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>So — were you starstruck after reading all about just how incredibly awesome I am?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-10-D"><div class="variant-block" data-v="D"><div class="variant-body">
@@ -795,7 +795,7 @@
     <div class="node-title">SOFT_CLOSE &mdash; Not Interested Path</div>
   </div>
   <div class="variant" data-v="U" id="v-20-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand, and I appreciate you being upfront with me. Just so you know, this money doesn't go away — it's sitting with the State indefinitely. If anything ever changes and you'd like some help, my name is [AGENT NAME] at Stealth Investigations. Would it be a bad idea if I sent you my contact information, just in case?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand, and I appreciate you being upfront with me. Just so you know, this money doesn't go away — it's sitting with the State indefinitely. If anything ever changes and you'd like some help, my name is [AGENT] at Stealth Investigations. Would it be a bad idea if I sent you my contact information, just in case?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-20-D"><div class="variant-block" data-v="D"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Understood. The money stays with the State until someone claims it — no expiration. If that ever changes for you, here is how to reach us.</div>
@@ -819,7 +819,7 @@
     <div class="node-title">INBOUND_START &mdash; Receive and Identify</div>
   </div>
   <div class="variant" data-v="U" id="v-21-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Stealth Investigations, this is [AGENT NAME]. How can I help you today?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Stealth Investigations, this is [AGENT]. How can I help you today?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Oh great! Yes, we've been researching a case that involves you. There should be a Property ID Number on the letter we sent — do you happen to have that handy?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I totally understand why you'd ask that — honestly, I'd be suspicious too if I got a letter out of the blue saying someone owed me money. That's a completely reasonable reaction. Let me give you some information that might put your mind at ease.</div>
   </div></div></div>
@@ -850,7 +850,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>Do you have a couple of minutes right now?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-22-D"><div class="variant-block" data-v="D"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>[NAME], quick recap: [AMOUNT] from [COMPANY], turned over to the State. The State's process takes most people six-plus months. Our clients average 45 to 60 days. Two minutes — does that work?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>[NAME], quick recap: [AMOUNT] from [REPORTING COMPANY], turned over to the State. The State's process takes most people six-plus months. Our clients average 45 to 60 days. Two minutes — does that work?</div>
   </div></div></div>
   <div class="variant" data-v="S" id="v-22-S"><div class="variant-block" data-v="S"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>No worries at all — honestly, I probably sent you way more than anyone actually reads. Let me just give you the two-minute version.</div>
@@ -861,7 +861,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>Let me just give you a quick recap. According to our research, [REPORTING COMPANY] tried to issue you a payment of [AMOUNT] back in [YEAR] — it never reached you, and it ended up being turned over to the State of Texas. Is now still an okay time?</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-22-T"><div class="variant-block" data-v="T"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Not a problem. Let me give you a concise summary. According to our records, [REPORTING COMPANY] reported a payment of [EXACT AMOUNT] as abandoned in [YEAR]. The funds were subsequently turned over to the State of Texas under Texas Property Code Chapter 74.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Not a problem. Let me give you a concise summary. According to our records, [REPORTING COMPANY] reported a payment of [AMOUNT] as abandoned in [YEAR]. The funds were subsequently turned over to the State of Texas under Texas Property Code Chapter 74.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>What I specifically wanted to cover with you today is the legal distinction between what the State requires by statute and what they ask for under administrative policy. Do you have a few minutes?</div>
   </div></div></div>
 </div>
@@ -873,8 +873,8 @@
   </div>
   <div class="compliance-block">Do not state the dollar amount in the voicemail. Message may be heard by third parties.</div>
   <div class="variant visible" id="v-23-ALL"><div class="variant-block" data-v="ALL"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi, this message is for [CLIENT NAME]. My name is [AGENT NAME], I'm calling from Stealth Investigations. I'm reaching out because our research team flagged something in your name that I wanted to make sure you were aware of — it involves [REPORTING COMPANY]. It's important enough that I'd really like to speak with you directly.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>I'll try you again, but if you'd like to reach me first my number is [AGENT DIRECT NUMBER]. Again, that's [AGENT DIRECT NUMBER]. Thanks, [CLIENT NAME].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi, this message is for [NAME]. My name is [AGENT], I'm calling from Stealth Investigations. I'm reaching out because our research team flagged something in your name that I wanted to make sure you were aware of — it involves [REPORTING COMPANY]. It's important enough that I'd really like to speak with you directly.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll try you again, but if you'd like to reach me first my number is [AGENT DIRECT NUMBER]. Again, that's [AGENT DIRECT NUMBER]. Thanks, [NAME].</div>
   </div></div></div>
 </div>
 
@@ -884,14 +884,14 @@
     <div class="node-title">FOLLOWUP_60DAY &mdash; 60-Day DIY Callback</div>
   </div>
   <div class="variant" data-v="U" id="v-24-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Hi [CLIENT NAME], this is [AGENT NAME] with Stealth Investigations. We spoke about two months ago about the [REPORTING COMPANY] case — I wanted to check in and see how things have been going with the State. Is now a bad time?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. We spoke about two months ago about the [REPORTING COMPANY] case — I wanted to check in and see how things have been going with the State. Is now a bad time?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>So tell me — how has the process been going?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>That is exactly what I was afraid of when we talked. What you're describing is the second wave — the one I mentioned — and the part that most people don't make it through on their own. Is this a point where it might make sense to let us step in?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>That is genuinely good to hear. It sounds like you're in that three percent I mentioned. If anything stalls out, you know where to find me.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I hear you. Honestly, that's the most common thing that happens. The offer still stands if you'd like to let us handle it from here.</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-24-D"><div class="variant-block" data-v="D"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>[NAME], [AGENT] with Stealth. Checking in on the [COMPANY] case — 60 days out. How did the State treat you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>[NAME], [AGENT] with Stealth. Checking in on the [REPORTING COMPANY] case — 60 days out. How did the State treat you?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Right. That tracks exactly with what I see on these cases. You've already put in the time and you're still in the same place. We can get this resolved in the next 45 to 60 days. Do you want us to take it from here?</div>
   </div></div></div>
   <div class="variant" data-v="S" id="v-24-S"><div class="variant-block" data-v="S"><div class="variant-body">
@@ -914,11 +914,11 @@
     <div class="node-title">SUPERVISOR_CALLBACK &mdash; Fee Negotiation (Kathy)</div>
   </div>
   <div class="variant" data-v="U" id="v-25-U"><div class="variant-block" data-v="U"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">KATHY</div>Hi [CLIENT NAME], this is Kathy — I'm a supervisor here at Stealth Investigations. [AGENT NAME] passed along your conversation and asked me to reach out personally. Is now a bad time?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy — I'm a supervisor here at Stealth Investigations. [AGENT] passed along your conversation and asked me to reach out personally. Is now a bad time?</div>
     <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee structure on this case. So — what were you thinking would feel fair to you?</div>
     <div class="script-line"><div class="agent-label">KATHY</div>On a case like this, involving [REPORTING COMPANY] and the amount we're talking about, I'm comfortable working with you on that. Let's lock in [AGREED RATE]% and get the paperwork moving. Does that work for you?</div>
     <div class="script-line"><div class="agent-label">KATHY</div>I appreciate you being direct with me. I can't go as low as [THEIR NUMBER], but I can come down to [KATHY'S NUMBER]% on this case. That's as far as I can go. Would you be comfortable moving forward at that?</div>
-    <div class="script-line"><div class="agent-label">KATHY</div>Here's what I'm going to do. I'll authorize [AGREED RATE]% on this case and have [AGENT NAME] get back to you with the paperwork. Does that work?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>Here's what I'm going to do. I'll authorize [AGREED RATE]% on this case and have [AGENT] get back to you with the paperwork. Does that work?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-25-D"><div class="variant-block" data-v="D"><div class="variant-body">
     <div class="script-line"><div class="agent-label">KATHY</div>[NAME], this is Kathy at Stealth Investigations. [AGENT] told me you had a question about our rate. What number were you thinking?</div>
@@ -931,9 +931,9 @@
     <div class="script-line"><div class="agent-label">KATHY</div>You know what — I want to make this happen for you. Let's do [AGREED/NEGOTIATED RATE]% and get this thing moving. How does that sound?</div>
   </div></div></div>
   <div class="variant" data-v="R" id="v-25-R"><div class="variant-block" data-v="R"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy — I'm a supervisor at Stealth Investigations. [AGENT NAME] filled me in on your situation and asked me to reach out personally. I just want to make sure you feel completely taken care of here.</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy — I'm a supervisor at Stealth Investigations. [AGENT] filled me in on your situation and asked me to reach out personally. I just want to make sure you feel completely taken care of here.</div>
     <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee, and I want to address that directly. What would make you feel comfortable moving forward?</div>
-    <div class="script-line"><div class="agent-label">KATHY</div>I hear you. Here's what I'm going to do — I'm going to authorize [NEGOTIATED RATE]% on your case. [AGENT NAME] will take it from here and walk you through every step. You're in good hands. Does that feel okay to you?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I hear you. Here's what I'm going to do — I'm going to authorize [NEGOTIATED RATE]% on your case. [AGENT] will take it from here and walk you through every step. You're in good hands. Does that feel okay to you?</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-25-T"><div class="variant-block" data-v="T"><div class="variant-body">
     <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy, supervising here at Stealth Investigations. [AGENT] passed along the case details. I've reviewed the [REPORTING COMPANY] file and I'd like to discuss the fee structure with you directly.</div>
@@ -950,12 +950,12 @@
   </div>
   <div class="compliance-block">Never reveal the reason for the call to a third party. Leave voicemail only when the prospect's own voicemail picks up.</div>
   <div class="variant visible" id="v-26-ALL"><div class="variant-block" data-v="ALL"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Oh, I apologize for the confusion. I'm looking for [CLIENT NAME] — do I have the right number, or is this a different household?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh, I apologize for the confusion. I'm looking for [NAME] — do I have the right number, or is this a different household?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I'm sorry to have bothered you. Thank you for letting me know.</div>
   </div></div>
   <div class="variant-block" data-v="ALL" style="margin-top:10px"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>No problem at all. Is there a better time I could try reaching them directly?</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>It's a personal matter — I really do need to speak with [CLIENT NAME] directly. I'll try again another time. Thank you.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>It's a personal matter — I really do need to speak with [NAME] directly. I'll try again another time. Thank you.</div>
   </div></div></div>
 </div>
 
