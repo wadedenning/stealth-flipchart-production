@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stealth Investigations — Live Call Script</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --surface2: #1c2030;
+    --border: #252a3a;
+    --border2: #2e3550;
+    --text: #d4daf0;h
+    --text-dim: #7a8299;
+    --text-bright: #f0f4ff;
+    --u-bg: #1a1f2e; --u-border: #3a4263; --u-accent: #7b91d0;h
+    --d-bg: #1f1a14; --d-border: #6b4c20; --d-accent: #e8943a;
+    --s-bg: #1a1f1a; --s-border: #3a6040; --s-accent: #5eb870;
+    --r-bg: #1a1520; --r-border: #5a3a78; --r-accent: #b07ad0;
+    --t-bg: #141a1f; --t-border: #2a4a6a; --t-accent: #4a9fd4;
+    --warn-bg: #1f1a10; --warn-border: #5a4a20; --warn-text: #d4a843;
+    --tag-first: #1a2830; --tag-second: #1a2820; --tag-obj: #201a28;
+    --tag-inbound: #1a2020; --tag-followup: #281a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  #header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+
+  #header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--u-accent);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .header-sep { color: var(--border2); }
+
+  #type-selector { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .type-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .type-btn[data-type="U"] { background: var(--u-bg); border-color: var(--u-border); color: var(--u-accent); }
+  .type-btn[data-type="D"] { background: var(--d-bg); border-color: var(--d-border); color: var(--d-accent); }
+  .type-btn[data-type="S"] { background: var(--s-bg); border-color: var(--s-border); color: var(--s-accent); }
+  .type-btn[data-type="R"] { background: var(--r-bg); border-color: var(--r-border); color: var(--r-accent); }
+  .type-btn[data-type="T"] { background: var(--t-bg); border-color: var(--t-border); color: var(--t-accent); }
+  .type-btn.active { filter: brightness(1.4); box-shadow: 0 0 8px currentColor; }
+  .type-btn:hover { filter: brightness(1.2); }
+
+  #current-node-display {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+  #current-node-display span { color: var(--text-bright); }
+
+  #layout { display: flex; height: calc(100vh - 54px); }
+
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    margin-left: 0;
+  }
+
+  .node { display: none; }
+  .node.visible { display: block; }
+
+  .node-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .node-id-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .node-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-first { background: var(--tag-first); color: #5aa0c0; border: 1px solid #2a4a60; }
+  .tag-second { background: var(--tag-second); color: #5ab870; border: 1px solid #2a5030; }
+  .tag-obj { background: var(--tag-obj); color: #a07ad0; border: 1px solid #50306a; }
+  .tag-inbound { background: var(--tag-inbound); color: #5ab8a8; border: 1px solid #2a5048; }
+  .tag-followup { background: var(--tag-followup); color: #c07870; border: 1px solid #6a3028; }
+  .tag-neutral { background: #1a1a20; color: #808090; border: 1px solid #303040; }
+
+  .node-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+  }
+
+  .variant { display: none; }
+  .variant.visible { display: block; }
+
+  .variant-block {
+    border-radius: 4px;
+    border: 1px solid;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .variant-block[data-v="U"] { background: var(--u-bg); border-color: var(--u-border); }
+  .variant-block[data-v="D"] { background: var(--d-bg); border-color: var(--d-border); }
+  .variant-block[data-v="S"] { background: var(--s-bg); border-color: var(--s-border); }
+  .variant-block[data-v="R"] { background: var(--r-bg); border-color: var(--r-border); }
+  .variant-block[data-v="T"] { background: var(--t-bg); border-color: var(--t-border); }
+  .variant-block[data-v="ALL"] { background: var(--surface2); border-color: var(--border2); }
+
+  .variant-body { padding: 10px 12px; }
+
+  .script-line {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid rgba(255,255,255,0.15);
+    padding: 8px 10px;
+    margin: 6px 0;
+    font-size: 13px;
+    color: var(--text-bright);
+    line-height: 1.65;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .agent-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+  }
+
+  .compliance-block {
+    background: #1a1010;
+    border: 1px solid #6a2020;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 10px 0;
+    font-size: 12px;
+    color: #d06060;
+    font-weight: 500;
+  }
+
+  .compliance-block::before {
+    content: 'COMPLIANCE: ';
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .scenario-block {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .scenario-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  #nav-arrows {
+    position: fixed;
+    bottom: 16px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 50;
+  }
+
+  .nav-arrow {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .nav-arrow:hover { background: var(--border2); color: var(--text-bright); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  .universal-note {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .silence-marker {
+    border-left: 4px solid #c0392b;
+    background: #1a0a0a;
+    color: #e07070;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    margin: 3px 0 6px 0;
+    display: block;
+  }
+
+  .gate-guide {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #0a1020;
+    border-left: 4px solid #4a9fd4;
+    font-size: 11px;
+    color: #d4daf0;
+  }
+  .gate-guide strong { color: #4a9fd4; }
+  .gate-guide .gate-item { margin: 3px 0; }
+  .gate-guide .gate-route { color: #5eb870; font-weight: 600; }
+
+  .loop-guide {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #0a1a0a;
+    border-left: 4px solid #5eb870;
+    font-size: 11px;
+    color: #d4daf0;
+  }
+  .loop-guide strong { color: #5eb870; }
+  .loop-guide .loop-item { margin: 2px 0; }
+  .loop-d { color: #e8943a; }
+  .loop-s { color: #5eb870; }
+  .loop-r { color: #b07ad0; }
+  .loop-t { color: #4a9fd4; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>STEALTH INVESTIGATIONS</h1>
+  <span class="header-sep">|</span>
+  <div id="type-selector">
+    <button class="type-btn active" data-type="U" onclick="setType('U')">UNDETERMINED</button>
+    <button class="type-btn" data-type="D" onclick="setType('D')">DIRECTOR</button>
+    <button class="type-btn" data-type="S" onclick="setType('S')">SOCIALIZER</button>
+    <button class="type-btn" data-type="R" onclick="setType('R')">RELATER</button>
+    <button class="type-btn" data-type="T" onclick="setType('T')">THINKER</button>
+  </div>
+  <div id="current-node-display">Node <span id="node-num">1</span> of 26 &mdash; <span id="node-id-display">START</span></div>
+</div>
+
+<div id="layout">
+<div id="main">
+
+<div class="node visible" id="node-1">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 01</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">START &mdash; Connection Stage</div>
+  </div>
+  <div class="variant" data-v="U" id="v-1-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations — I'm reaching out because our research team flagged a payment in your name from [REPORTING COMPANY] that never made it to you.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I wanted to make sure you were aware of it.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Does that ring a bell at all?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-1-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] with Stealth Investigations. Our research team found a payment of [AMOUNT] in your name from [REPORTING COMPANY] that never reached you. I wanted to make sure you knew about it — does that ring a bell?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-1-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hey [NAME]! It's [AGENT] over at Stealth Investigations — listen, I've got something interesting for you. Our research team found a payment in your name from [REPORTING COMPANY] that never made it to you. I wanted to make sure you knew about it — does that ring a bell at all?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-1-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research team came across some information I think would be important for you to know about — it looks like there's a payment in your name from [REPORTING COMPANY] that never reached you. Does that ring a bell at all?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-1-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research department identified a payment in your name — it was reported by [REPORTING COMPANY] and is currently being held by the State of Texas. I wanted to make sure you were aware of it. Does that ring a bell?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-2">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 02</span><span class="node-tag tag-neutral">NEUTRAL</span></div>
+    <div class="node-title">CALLBACK_SCHEDULE &mdash; Busy / Not Now</div>
+  </div>
+  <div class="variant visible" id="v-2-ALL"><div class="variant-block" data-v="ALL"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>No problem at all. Would it be a bad time if I called you back [tomorrow / day after]? I just want to make sure you're aware of this. It will only take a couple of minutes.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-3">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 03</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">ENGAGEMENT &mdash; Problem Awareness</div>
+  </div>
+  <div class="variant" data-v="U" id="v-3-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>We've been researching a case involving [REPORTING COMPANY], and according to the notes on our file, it looks like they tried to issue you a payment in the amount of [AMOUNT] back in [YEAR].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I believe we sent you a notification about this a couple of weeks ago — it was sent to your address on [STREET NAME]...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Were you aware that [REPORTING COMPANY] failed to deliver your payment [X] years ago?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Just so I can make sure I cover everything the right way for you — when something like this comes up, do you usually like to get all the details upfront, or do you prefer just the highlights and you'll ask if you need more?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-3-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>We've been researching a case involving [REPORTING COMPANY]. According to our file, they tried to issue you [AMOUNT] back in [YEAR] — it was sent to your address on [STREET NAME]. Were you aware they failed to deliver that payment?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>When something like this comes up, do you usually like to get all the details or just the highlights?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-3-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So I've been looking into a case involving [REPORTING COMPANY], and wait until you hear this — according to our file, it looks like they tried to issue you [AMOUNT] back in [YEAR], sent to your address on [STREET NAME].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Were you aware that [REPORTING COMPANY] never got that payment to you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I hear you. Listen — just so I can walk you through this in a way that's useful to you, do you usually like all the details upfront or just the highlights and you'll ask questions as we go?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-3-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So we've been researching a case involving [REPORTING COMPANY], and I want to make sure I handle this carefully because it's a bit of an unexpected situation. According to our notes, it looks like they tried to issue you a payment of [AMOUNT] back in [YEAR] — it was sent to your address on [STREET NAME].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Were you aware that [REPORTING COMPANY] failed to deliver that to you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand. Please don't worry — we're going to go through everything step by step.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Just so I can make sure I cover this the right way for you — do you usually prefer to get all the details upfront, or would you rather I give you the main points and you can ask questions as we go?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-3-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm calling in reference to a case we've been researching involving [REPORTING COMPANY]. According to our records, they tried to issue a payment of [AMOUNT] back in approximately [YEAR], originally sent to [STREET NAME]. It was never delivered, and the funds were subsequently turned over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Were you aware that [REPORTING COMPANY] failed to deliver that payment?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Just so I can structure this conversation efficiently for you — do you prefer to get all the relevant details upfront, or would you like me to give you the highlights and you can drill down where you have questions?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-4">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 04</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">NOT_AWARE_PATH &mdash; Deliver the News</div>
+  </div>
+  <div class="variant" data-v="U" id="v-4-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>WOW — well, according to our research, [REPORTING COMPANY] reported that they sent the payment in [YEAR] to [STREET NAME].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Then it looks like somebody at [REPORTING COMPANY] took the easy way out and instead of reaching out to you, they claimed the account was abandoned and turned your money over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm sorry to be the one to tell you that [REPORTING COMPANY] failed to do their job — but I'm also glad that I was able to connect with you and, at the very least, make you aware of the problem.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So if I'm understanding this correctly — [REPORTING COMPANY] owed you [AMOUNT], they never got it to you, and then they turned it over to the State without ever contacting you. Is that a fair summary?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-4-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>According to our records, [REPORTING COMPANY] sent your payment to the State rather than reaching out to you. Here's the situation: they reported it as abandoned in [YEAR] and turned it over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So [REPORTING COMPANY] owed you [AMOUNT], they dropped the ball, and now the State has it. Is that your understanding as well?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-4-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh WOW — so according to our research, [REPORTING COMPANY] said they sent the payment back in [YEAR] to [STREET NAME]. And then — and I honestly still can't believe companies do this — instead of picking up the phone and calling you, they just... claimed the account was abandoned and handed your money to the State.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I know, right? I'm really sorry you're finding out this way — but I'm glad we were able to track you down. So [REPORTING COMPANY] owed you [AMOUNT], never got it to you, and handed it to the State without a word. Is that a fair summary?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-4-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So according to our research, [REPORTING COMPANY] reported that they sent the payment back in [YEAR] to [STREET NAME]. Unfortunately, instead of following up with you directly, they claimed the account was abandoned and turned the funds over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm really sorry to be sharing this with you. I know this kind of thing is frustrating to hear. But I'm genuinely glad that we were able to reach you so at least you know what's going on.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So if I'm understanding this right — [REPORTING COMPANY] owed you [AMOUNT], they never reached out to you, and now the State has the money. Does that sound right to you?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-4-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Our research indicates [REPORTING COMPANY] reported this payment as abandoned property in [YEAR]. The amount recorded was [AMOUNT] for [TYPE OF PROPERTY]. Under Texas Property Code Chapter 74, the funds were then turned over to the State of Texas, which is the standard process after the statutory dormancy period.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The reporting company did not make additional contact attempts before reporting it, which is where the breakdown occurred on their end.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So to confirm my understanding — [REPORTING COMPANY] issued [AMOUNT] in [YEAR], did not contact you prior to reporting it, and the funds are now held by the State. Is that accurate?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-5">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 05</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">AWARE_PATH &mdash; Already Aware</div>
+  </div>
+  <div class="variant" data-v="U" id="v-5-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh, okay — so you were already aware of this. It sounds like this has probably been on your mind for a while.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Have you had a chance to look into what the State requires to get those funds released to you?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-5-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Good — so you already know about it. Have you started the process?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-5-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh interesting — so you've already heard about this! Tell me, how long have you known? Have you done anything with it yet?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-5-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh, okay — I'm glad you knew about it. Did someone in your family mention it to you, or did you come across it on your own?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-5-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Understood. Have you looked into the claim process at all, or done any research on what's required?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-6">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 06</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">AWARE_ATTEMPTED &mdash; Tried and Struggling</div>
+  </div>
+  <div class="variant" data-v="U" id="v-6-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>It sounds like you've already been through some of this process. How has that been going for you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>That doesn't surprise me at all. What you're describing is exactly what the State's process is designed to do — wear people down until they give up.</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-6-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So you've already dealt with some of this. How far did you get before it stalled?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Right. That's exactly where most people get stuck. Here's why that happens.</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-6-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh no — you've already been dealing with this? Tell me what happened. What have they put you through so far?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>You know what — none of that surprises me. What you're describing is EXACTLY how they operate. It's not random — it's the system. Let me tell you something most people never figure out.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-6-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>It sounds like this has been stressful to deal with. I'm sorry you've had to go through that. Can you tell me a little about what you've run into so far?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I hear you. What you're going through is not an accident — the process is genuinely designed to discourage people. The good news is that there's a way around most of it.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-6-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>It sounds like you've already been working with the State directly. What stage did you reach, and where did things break down?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on what you're describing, you ran into what most people hit at that stage — and there's a legal reason the State can get away with it that most people don't know about.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-7">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 07</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">CONSEQUENCE &mdash; The State Process</div>
+  </div>
+  <div class="variant" data-v="U" id="v-7-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So it seems like anytime you're dealing with any governmental agency, they always make their process much more difficult than it actually should be...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>First there's the initial forms... a couple of signatures required... no big deal there...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Once they're submitted, the State auto-generates what's usually a generic list of documents for you to secure — items like birth certificates, death certificates, marriage licenses, divorce decrees, copies of court orders...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>...proof of your address from 1984 and a copy of a bank statement from 2003... I mean, some of their so-called requirements are just insane.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>If you do not provide the documents, they either deny or suspend your case. This is where most people give up... which, I guess, is what their process is designed to do...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>If you DO provide the documents, on time, THEN your case will finally be assigned to a State Examiner. That part won't take place for a minimum of 60 to 90 days. So now you're three months in, and THEN they provide you with the real list of documents...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>This is where the second wave of people usually give up. After all, they just jumped through three months of hoops and chasing people on the phone, just to find out they're going to have to go through another three months of nonsense.</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-7-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Here's what the State process looks like: first document request, then a 60-to-90-day wait for an examiner to be assigned, then a second document request with the real list of requirements. Minimum six months start to finish, and most people give up somewhere in the middle — which is exactly what the State is counting on.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Our clients are done in 45 to 60 days. That's the contrast.</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-7-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So here's how this works, and I want you to really picture this because it's kind of unbelievable...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>They start with the initial forms — fine, no big deal, a couple of signatures. But THEN... they auto-generate what they call a "generic list" of documents...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>...birth certificates, death certificates, marriage licenses, divorce decrees... and my personal favorite — proof of your address from 1984 and a copy of a bank statement from 2003. I mean...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>And here's the crazy part — if you don't give them every single thing on their list, on time? Denied. Or suspended. That's it. And THAT is where most people just... give up. Which is apparently the whole point.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Because if by some miracle you DO get through all of that — now you wait ANOTHER 60 to 90 days just to get your case assigned to an actual human being. And THEN you get the REAL document list.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Three months of work. Just to find out you're starting over. Most people are gone by that point.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-7-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So let me walk you through what the State requires, because I want you to understand what you're dealing with before you decide anything...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>They send you a generic list of documents — things like birth certificates, death certificates, marriage licenses. And I know that sounds manageable, but here's the reality: gathering all of these takes time. It means phone calls, waiting on records offices, tracking down documents you might not even have anymore...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Imagine having to do all of that while also just trying to live your life — taking time away from your family, making call after call to government offices where nobody really seems to care about your specific situation...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>And if you miss a deadline, or forget one document? They deny or suspend your case. Most people at that point just... walk away. After everything they put in.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>And the ones who do push through? They wait another 60 to 90 days. Then they get the real requirements. It's a second wave of the same thing.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-7-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Here's how the State process works in sequence. First, you submit an initial claim form through the State. That triggers an automated document request, typically 8 to 12 items. These include things like certified copies of birth certificates, government-issued ID, proof of address at the time of the original account.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Important distinction: many of these items are administrative policy, not statutory requirements under Texas Property Code Chapter 74. The State does not typically disclose which is which. If you do not provide everything on the list within the deadline — regardless of whether it's legally required — they deny or suspend the claim.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>If you do provide everything on time, the case gets assigned to a State Examiner. That assignment takes a minimum of 60 to 90 calendar days from submission. The Examiner then issues a secondary document request — the case-specific list, which is different from and in addition to the first list.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Total timeline for the average DIY claimant: six to nine months, assuming no denials or suspension. Most people abandon the process after the first document request. The State pays out only 4.2% of held funds annually.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-8">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 08</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">SOLUTION &mdash; Our Service</div>
+  </div>
+  <div class="variant" data-v="U" id="v-8-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>On this type of case, OUR CLIENTS typically receive their money in 45 to 60 days. We know the system, we know the players, and we know the shortcuts through their system.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would you be opposed to receiving all the details on this in writing?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-8-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Our clients get their money in 45 to 60 days. We handle everything. You do nothing except sign and collect.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Shall I email you the details so you can review them and we can move forward?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-8-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Here's the good news — our clients typically have their money in 45 to 60 days. We know exactly how to navigate this system and we do it every single day.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'd love to send you all the details — would it be a bad idea if I shot that over to your email?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-8-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>The good news is that our clients typically receive their money in 45 to 60 days, and the best part is that we handle everything for you. You won't have to chase anyone down or deal with the State yourself.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would you feel comfortable if I were to send you all the information so you could review it with your family and see how you feel about it?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-8-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on our track record with similar cases, our average resolution time is 45 to 60 days. We have direct channels with the State and know precisely which documentation satisfies each requirement — and which requirements are policy versus statute.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would it be out of the question for me to send you the complete documentation — including our BBB rating, process outline, and client references — so you can review everything at your own pace?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-9">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 09</span><span class="node-tag tag-first">FIRST CALL</span></div>
+    <div class="node-title">TRANSITION &mdash; Schedule Follow-Up</div>
+  </div>
+  <div class="variant" data-v="U" id="v-9-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Perfect — I'll get all the details over to you shortly.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So, I'm going to be out most of the day tomorrow with my [personal obligation], but I will be back on [2 days from now].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>You know what — before I leave today, I'm going to ask a favor of a friend of mine in the document retrieval department to get you the initial generic list of documents the State is going to, quote unquote, REQUIRE from you.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll put all this together... I'll include info about us, our A+ BBB rating, our five-star Google reviews — you know, all the usual paraphernalia.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Was [2 days from now] good for you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Perfect! I'll have their generic list by then and if you feel like we might be a good solution for you, we can talk about possible next steps. Nice chatting with you!</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-9-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll have everything to you by end of day. I'll also include the State's document list so you can see exactly what you'd be dealing with on your own.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll follow up [2 days from now]. Does that work?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-9-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Perfect! I'll get everything over to you shortly. And listen — I'm going to be out most of tomorrow because of [personal obligation], but I'll be back [2 days from now].</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Before I head out, I'm going to ask my friend in the document retrieval department to pull that initial list for you — kind of a sneak preview of what the State is going to throw at you.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Was [2 days from now] good? Great — I've really enjoyed talking with you, and I'll have everything ready. Talk soon!</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-9-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll get all the information over to you shortly — there's no rush at all on your end. Take your time reading through everything, share it with your family if you'd like, and when we talk next I'm happy to answer any questions anyone might have.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm also going to reach out to my contact in document retrieval and see if she can pull the State's initial requirements list for your case.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would [2 days from now] work for you? No pressure at all — if you need more time just let me know.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-9-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll send you our company information, the BBB documentation, our process overview, and I'll have my contact in document retrieval pull the State's preliminary document requirements for your specific case.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll follow up [2 days from now]. Does that timeline work for you?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-10">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 10</span><span class="node-tag tag-second">SECOND CALL</span></div>
+    <div class="node-title">RECONNECT &mdash; Re-Engagement</div>
+  </div>
+  <div class="variant" data-v="U" id="v-10-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations, getting back to you... Is now a bad time?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So — were you starstruck after reading all about just how incredibly awesome I am?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-10-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] with Stealth. Following up on our conversation from [day]. Did you have a chance to review the materials I sent?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-10-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hey [NAME]! It's [AGENT] — were you starstruck? Be honest.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm glad you got a kick out of it. Did you get a chance to look over everything I sent?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-10-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], it's [AGENT] — I hope you've been doing well! Did you get a chance to look over what I sent? I hope it wasn't too overwhelming.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-10-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] with Stealth Investigations following up. I wanted to check if you had a chance to review the documentation and if you have any questions about the process or our qualifications.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-11">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 11</span><span class="node-tag tag-second">SECOND CALL</span></div>
+    <div class="node-title">EDUCATE &mdash; Policy vs. Regulation</div>
+  </div>
+  <div class="variant" data-v="U" id="v-11-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I just got a message from my buddy over in the document retrieval department... she said she's still waiting for the State to get back with the generic list.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Most of the time — I'd say 80% of the time — when the State doesn't respond in this length of time, it's not a good sign...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So here's the game the State plays, and most people don't know this. Before I get to that, I need to back up a bit. There's a difference between POLICIES and REGULATIONS.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>And THIS is where the State plays in the gray area. The State comes back and says you're going to have to provide things like birth certificates, death certificates, marriage license copies... paternal great grandmother's second cousin's maiden name... it's really ridiculous.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Their HOPE is that people will just give up. And when people complain, they just say "That's our policy."</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>BUT — what they DON'T tell people is that providing a certified copy of a divorce decree, or whatever, is actually NOT a legal requirement.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I like to explain it like this: it might be a restaurant's POLICY that you wear a jacket and tie. But that does NOT mean you are LEGALLY REQUIRED to wear a jacket and tie.</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-11-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Quick update — document retrieval is still waiting on the State, which is typical. Here's what matters: the State's document requirements are policy, not law. They use them to discourage claims. We know the difference and we use it to our clients' advantage.</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-11-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay so I have an update from my friend in document retrieval — the State is dragging their feet, which is basically their specialty.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So here's something most people never figure out — there's a difference between what the State SAYS you need and what they can actually REQUIRE you to provide by law.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>You know how some fancy restaurants say you have to wear a jacket and tie to get in? But that's just their policy — they can't actually arrest you for showing up in jeans, right? Same idea here.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Exactly! And they count on people not knowing that. We know the difference. That's a big part of what we do.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-11-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I know this is a lot to take in, and I want you to know that everything you've been confused about or frustrated with is completely normal — the State makes it confusing on purpose.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The most important thing to understand is that a lot of what the State asks for isn't actually required by law. It's policy. And there's a legal difference between the two that most people don't fully understand.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The good news is that we know exactly which requirements are legitimate and which ones are just meant to wear people down. That's where we can really help you.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-11-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Document retrieval is still waiting on the State, which is consistent with typical response times at this stage.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Here's the key legal distinction you should understand: Texas Property Code Chapter 74 outlines what is statutorily required vs. what falls under administrative policy. Many of the items on the State's standard document request list are administrative policy, not statutory mandates.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The State does not typically disclose which requirements are legally binding and which are not. We know the difference for every item on the list, and we use that knowledge to cut through the unnecessary requirements and focus exclusively on what is legally required to process the claim.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-12">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 12</span><span class="node-tag tag-second">SECOND CALL</span></div>
+    <div class="node-title">QUALIFY &mdash; Fit Assessment</div>
+  </div>
+  <div class="variant" data-v="U" id="v-12-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Sorry, I didn't mean to get off track there...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The reality is that the service we provide is NOT a good fit for everyone...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>How do you do with things like this? Things that require a lot of time and patience?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Do you feel like it would be a bad thing if we could save you the aggravation of having to deal with a whole series of State employees for the next several months?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Did the information I sent over leave anything out that you might have questions about?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Is there anything about the process that I didn't cover?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-12-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>This process isn't something most people want to deal with. Based on everything we've covered — is this something you'd want us to handle?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-12-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Honestly, some people love tackling this kind of stuff themselves — and more power to them! But most of our clients tell us they would rather spend their time on literally anything else. How about you?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-12-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I know it can feel like a big decision. What does your family think about the situation? Would it give you peace of mind to have someone else handle all the back-and-forth with the State, so you don't have to?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-12-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on what you've reviewed, do you have any questions about our process, our qualifications, or the specifics of how we handle cases like yours? I want to make sure you have all the information you need before making any decision.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-13">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 13</span><span class="node-tag tag-second">SECOND CALL</span></div>
+    <div class="node-title">COMMITMENT &mdash; Close</div>
+  </div>
+  <div class="variant" data-v="U" id="v-13-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Would you be opposed to allowing us to move forward with recovering your money from the State?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Then I guess, really, the next step would be to move forward with the process. Would it be inappropriate for us to start the paperwork at this point?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-13-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Would you be against us moving forward from here?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-13-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Do you think it might be a crazy idea to let us handle this and get your money back for you?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Right? This is going to be great. Let me get the paperwork started.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-13-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Do you feel like you would be uncomfortable moving forward with this?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>We'll be right there with you every step of the way. You won't have to deal with any of it alone.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would it be inappropriate for us to go ahead and start the paperwork?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-13-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on everything we've covered, do you feel it would be out of the question to move forward?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The next step is simply the paperwork, and I can walk you through every line if you'd like. Nothing will happen without your review and sign-off.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-14">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 14</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">OBJECTION_HANDLING &mdash; Master Branch</div>
+  </div>
+  <div class="variant visible" id="v-14-ALL"><div class="variant-block" data-v="ALL"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>You know, it's been my experience that people who say [MIRROR THEIR EXACT WORDS BACK] always fall into one of two camps — either they're Not Interested, OR they're Interested But Not Sure...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Which one of those do you fall into?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-15">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 15</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">INTERESTED_NOT_SURE &mdash; Dig for Real Objection</div>
+  </div>
+  <div class="variant" data-v="U" id="v-15-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay, Interested But Not Sure... It SEEMS like you have a really good reason for saying that?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-15-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Interested But Not Sure... It seems like you have a good reason for that?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-15-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay, Interested But Not Sure... It seems like something's on your mind?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-15-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay, Interested But Not Sure... It seems like there might be something you're not quite sure about?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>It's okay to share — I just want to make sure I'm being helpful.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-15-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Interested But Not Sure... It seems like you have a specific reason for that?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-16">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 16</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">CREDIBILITY_OBJECTION &mdash; Trust / Legitimacy</div>
+  </div>
+  <div class="variant" data-v="U" id="v-16-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay, so maybe you're feeling like "Hey, I just don't really know who you are or if this is really legitimate"... would it be ridiculous for me to assume that's what's on your mind?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay... fair enough... and thanks for being honest with me.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Is this the ONLY thing that's holding you back?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So... if you were to feel like, TO YOUR SATISFACTION, that everything is on the up and up... that [REPORTING COMPANY] has in fact rolled your money over to the State, AND that I'm not some fly-by-night rip-off artist... would you then, possibly, feel like you might be comfortable with exploring the possibility of allowing us to assist? Would that be impossible?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Do you feel there might be anything with any of that that might leave you feeling uncomfortable in any way?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So... would you be against moving forward from here effectively?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-16-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>We've been doing this 20-plus years. A+ BBB, five-star Google reviews, licensed by Texas DPS. Want me to send you the verification links right now?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-16-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I totally get it — you don't know us from Adam. Here's what I'd tell you: our Google reviews are real people, real stories. We've had our A+ BBB rating for over 20 years. That's pretty hard to fake.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>We're also licensed and regulated by the Texas Department of Public Safety — which means the State of Texas itself has reviewed and approved what we do.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would it be a bad idea for me to send you the links right now so you can look for yourself? Most people feel a lot better once they do.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-16-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand wanting to feel safe about this — that's actually a smart reaction. Let me share some things that might help put your mind at ease.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>We've been in business for over 20 years. Our BBB rating is A-plus. Our Google reviews are from real clients. And we're licensed and regulated by the Texas Department of Public Safety.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would you like me to send you links to all of those so you and your family can look them over at your own pace?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-16-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'd actually encourage you to verify everything independently. Our BBB profile is public. Our Texas DPS license is verifiable on the state website. Our Google reviews are unfiltered. I can send you direct links to each.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>If you'd like, I can also send you our license number so you can run it yourself through the DPS database. That's the most direct way to confirm we are who we say we are.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-17">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 17</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">FEE_OBJECTION &mdash; Rate / Fee Concern</div>
+  </div>
+  <div class="variant" data-v="U" id="v-17-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>All right, so if you're comfortable with our BBB and Google reviews, it seems like, maybe, you might possibly feel like the 10% fee is out of line... would it be out of the question for me to assume that THIS might be what you're feeling?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay... fair enough... and thanks for being honest with me. Is this the ONLY thing that's holding you back?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay, so our standard rate IS 10%, and quite honestly, in my opinion, sometimes that's a fair rate and sometimes it's not. Sometimes the cases are too complex, involve too many people, or require too many hours for us to handle effectively.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The point is there is a lot more involved than most people think.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Anyway — considering our standard rate is 10%, what is it that YOU think would be fair?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>OK... I'm really not sure what might be involved with cases involving [REPORTING COMPANY]... Do you feel like it might be out of line if I were to ask my supervisor whether there's any room for negotiation on this?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-17-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Our rate is 10%. That covers everything — all filings, all follow-ups, all compliance work. What number would work for you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Let me check with my supervisor. I'll have an answer for you before we hang up.</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-17-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>You would not BELIEVE what we go through with some of these banks. Here's what I mean...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So yeah — 10% sounds like a lot until you see what actually goes into it. And honestly? For some cases, it's a bargain.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>What do you think would feel fair to you? Whatever you say, I'll take it to my supervisor and see what we can do.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-17-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand — nobody likes unexpected costs, and I want you to feel good about this. Let me explain what goes into that 10% so you can see what you're actually getting...</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Would you feel comfortable if I checked with my supervisor to see if there's any flexibility? I'm not making any promises, but I want to do right by you on this.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-17-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Consider the alternative: six-plus months of your time, multiple document requests, follow-up calls, potential denials and resubmissions. Our 10% covers all of that activity, with an average resolution of 45 to 60 days.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on the case amount, here is what the math looks like: our fee is [AMOUNT x 10%]. The cost of doing this yourself — in time, potential errors, and the 95.8% chance the State stalls you indefinitely — is difficult to quantify but significant.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>If you'd like, I can check with my supervisor about the rate structure for your specific case.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-18">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 18</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">DIY_OBJECTION &mdash; Wants to Do It Themselves</div>
+  </div>
+  <div class="variant" data-v="U" id="v-18-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>So, Interested But Not Sure, and you've seen that our BBB A+ rating and Google reviews are solid, AND you don't feel that our 10% contingency rate is out of line... then usually that would mean that you just might be wanting to work on this on your own... is THAT it?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay... fair enough... and thanks for being honest with me. Is this the ONLY thing that's holding you back?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay. Here's what most people don't know about the State's process. The reality is there are BILLIONS upon BILLIONS of dollars being held by the State of Texas, just like this. But here is the part most people never find out — the State has an ANNUAL BUDGET of how much they are going to pay out of that fund each year. And for the past 20-plus years, that annual budget has NEVER exceeded 4.2 percent. Not 42 percent — four point two percent.</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So 95.8% of those funds do not get released. The State accomplishes this by throttling payments and — in my opinion — misleading people into believing that their policies are mandated by law.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Now, that's not to say YOU might not get lucky and fall into that 4.2 percent. It IS possible.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Say in 60 days or so — IF THE STATE IS STILL JERKING YOU AROUND AT THAT POINT — would you be against maybe exploring the possibility of allowing us to assist? IF THEY'RE STILL JERKING YOU AROUND — would that be an impossibility?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-18-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>4.2% payout rate annually. That means 95.8% of DIY claimants get stalled or nothing. We get our clients into that 4.2 percent in 45 to 60 days.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>That's your call. If they give you grief in 60 days, my number is [AGENT NUMBER]. Offer stands.</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-18-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>FOUR POINT TWO PERCENT! Can you believe that?! That means 95.8% of people who try this on their own are just... stuck. Waiting forever. Or giving up.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Tell you what — give it a shot. If the State gives you grief, call me directly. I'll be here, and the offer doesn't expire.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-18-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I don't want you to go through months of stress and frustration just to end up back where you started. But I also completely respect that you want to try it yourself — that makes sense.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>How about this — if after 60 days you're feeling overwhelmed or like it's going nowhere, would you feel comfortable reaching back out to us? We'll still be here for you. The offer doesn't go away.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-18-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Statistically, the State pays out only 4.2% of held funds annually. That's a 95.8% non-payment rate for unassisted claimants. Our success rate with cases like yours is significantly higher because we know which requirements are legally binding, which are not, and how to use that distinction.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'd suggest giving it 60 days. If you're not making measurable progress by then, the offer stands. Would you be open to noting a 60-day checkpoint?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-19">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 19</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">UNKNOWN_OBJECTION &mdash; None of the Above</div>
+  </div>
+  <div class="variant" data-v="U" id="v-19-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay... so now I have to admit that I'm out of ideas. 99% of the people who say they're Interested But Not Sure fall into one of those three camps.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Do you feel it would be inappropriate for me to ask you what it would take for you to possibly feel comfortable with maybe allowing us to assist with moving your case forward?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-19-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm not sure what's holding you back. What would need to be true for you to move forward?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-19-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Well, you've stumped me! I'm zero for three. Help me out here — what's actually on your mind?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-19-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I can tell something is still weighing on you, and that's completely okay. Would you feel comfortable sharing what it is? I just want to make sure I'm being genuinely helpful here.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-19-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>We've covered credibility, cost, and the DIY option. Is there a specific piece of information or a particular aspect of the process that would help you make a more informed decision?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-20">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 20</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">SOFT_CLOSE &mdash; Not Interested Path</div>
+  </div>
+  <div class="variant" data-v="U" id="v-20-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I completely understand, and I appreciate you being upfront with me. Just so you know, this money doesn't go away — it's sitting with the State indefinitely. If anything ever changes and you'd like some help, my name is [AGENT] at Stealth Investigations. Would it be a bad idea if I sent you my contact information, just in case?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-20-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Understood. The money stays with the State until someone claims it — no expiration. If that ever changes for you, here is how to reach us.</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-20-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hey, I totally get it — it's not the right time and that's completely fine. It was really great talking with you. I'll drop my contact info in the email just in case — no pressure at all.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-20-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>That's completely okay — there's absolutely no pressure here. If you ever want to talk about it again, or if someone in your family thinks it might be worth exploring, please don't hesitate to reach out. I'll include my contact information in the email.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Take care of yourself, and I genuinely hope everything goes smoothly for you.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-20-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I understand. If you ever want to revisit this, I'm happy to send you documentation on our process, our credentials, and the relevant Texas statutes so you have a complete reference if the situation changes.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The funds remain with the State indefinitely. If circumstances change, you know where to find us.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-21">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 21</span><span class="node-tag tag-inbound">INBOUND</span></div>
+    <div class="node-title">INBOUND_START &mdash; Receive and Identify</div>
+  </div>
+  <div class="variant" data-v="U" id="v-21-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Stealth Investigations, this is [AGENT]. How can I help you today?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh great! Yes, we've been researching a case that involves you. There should be a Property ID Number on the letter we sent — do you happen to have that handy?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I totally understand why you'd ask that — honestly, I'd be suspicious too if I got a letter out of the blue saying someone owed me money. That's a completely reasonable reaction. Let me give you some information that might put your mind at ease.</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-21-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Let me pull your file. Your name?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-21-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm so glad you called! Let me pull up your case and tell you exactly what we found.</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-21-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm really glad you called. There's nothing to worry about — let me explain everything so you feel completely comfortable.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Can I get your name, or the Property ID from the letter? I'll pull up your file and walk you through it step by step.</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-21-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Absolutely. Let me pull up your file first so I can give you specific answers about your case, not just general information.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-22">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 22</span><span class="node-tag tag-followup">FOLLOW-UP</span></div>
+    <div class="node-title">RE_PRESENT_VALUE &mdash; Re-Present Value</div>
+  </div>
+  <div class="variant" data-v="U" id="v-22-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>No problem at all — life gets busy. Let me just take two minutes and give you the short version of what I sent over.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So quick recap: [REPORTING COMPANY] issued a payment of [AMOUNT] back in [YEAR], it never made it to you, and it ended up getting turned over to the State of Texas.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The reason I wanted to follow up is that the State's process for getting that money released is genuinely more complicated than most people expect — and there's a specific piece of it that most people don't know about.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Do you have a couple of minutes right now?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-22-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>[NAME], quick recap: [AMOUNT] from [REPORTING COMPANY], turned over to the State. The State's process takes most people six-plus months. Our clients average 45 to 60 days. Two minutes — does that work?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-22-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>No worries at all — honestly, I probably sent you way more than anyone actually reads. Let me just give you the two-minute version.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>The short story: [REPORTING COMPANY] had a payment of [AMOUNT] in your name, it never made it to you, and it ended up with the State of Texas. You have a couple of minutes?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-22-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh, please don't worry about that at all — that's exactly why I called. I would rather walk you through it personally anyway.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Let me just give you a quick recap. According to our research, [REPORTING COMPANY] tried to issue you a payment of [AMOUNT] back in [YEAR] — it never reached you, and it ended up being turned over to the State of Texas. Is now still an okay time?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-22-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Not a problem. Let me give you a concise summary. According to our records, [REPORTING COMPANY] reported a payment of [AMOUNT] as abandoned in [YEAR]. The funds were subsequently turned over to the State of Texas under Texas Property Code Chapter 74.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>What I specifically wanted to cover with you today is the legal distinction between what the State requires by statute and what they ask for under administrative policy. Do you have a few minutes?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-23">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 23</span><span class="node-tag tag-neutral">NEUTRAL</span></div>
+    <div class="node-title">VOICEMAIL &mdash; No Answer Script</div>
+  </div>
+  <div class="compliance-block">Do not state the dollar amount in the voicemail. Message may be heard by third parties.</div>
+  <div class="variant visible" id="v-23-ALL"><div class="variant-block" data-v="ALL"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi, this message is for [NAME]. My name is [AGENT], I'm calling from Stealth Investigations. I'm reaching out because our research team flagged something in your name that I wanted to make sure you were aware of — it involves [REPORTING COMPANY]. It's important enough that I'd really like to speak with you directly.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'll try you again, but if you'd like to reach me first my number is [AGENT DIRECT NUMBER]. Again, that's [AGENT DIRECT NUMBER]. Thanks, [NAME].</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-24">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 24</span><span class="node-tag tag-followup">FOLLOW-UP</span></div>
+    <div class="node-title">FOLLOWUP_60DAY &mdash; 60-Day DIY Callback</div>
+  </div>
+  <div class="variant" data-v="U" id="v-24-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. We spoke about two months ago about the [REPORTING COMPANY] case — I wanted to check in and see how things have been going with the State. Is now a bad time?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So tell me — how has the process been going?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>That is exactly what I was afraid of when we talked. What you're describing is the second wave — the one I mentioned — and the part that most people don't make it through on their own. Is this a point where it might make sense to let us step in?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>That is genuinely good to hear. It sounds like you're in that 4.2 percent I mentioned. If anything stalls out, you know where to find me.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I hear you. Honestly, that's the most common thing that happens. The offer still stands if you'd like to let us handle it from here.</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-24-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>[NAME], [AGENT] with Stealth. Checking in on the [REPORTING COMPANY] case — 60 days out. How did the State treat you?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Right. That tracks exactly with what I see on these cases. You've already put in the time and you're still in the same place. We can get this resolved in the next 45 to 60 days. Do you want us to take it from here?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-24-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hey [NAME]! It's [AGENT] from Stealth — remember me? I promised I'd check back in after 60 days to see how you've been making out with the State. So... give me the update. How did it go?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>That's exactly what I was talking about when we spoke. You went through all of that and they still haven't moved it forward. So here's the question — are you ready to let someone who does this every single day just take it off your plate?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-24-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], it's [AGENT] from Stealth Investigations — I hope you've been well. I promised I'd call back around this point to see how things were going with the State. Did you have a chance to work on it?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I really appreciate you being honest with me about that. If you'd like, we can step in right now and take all of that off your hands completely. Would that be something you'd feel comfortable with?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-24-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] from Stealth Investigations following up as promised. Specifically — did you receive an initial document request from the State, and if so, have you had a chance to respond to it?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on what you're describing, you've hit the point where most DIY claimants stall. At this stage, given what you've already put in, does it make logical sense to bring us in to execute the rest rather than continuing to manage it yourself?</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-25">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 25</span><span class="node-tag tag-followup">FOLLOW-UP</span></div>
+    <div class="node-title">SUPERVISOR_CALLBACK &mdash; Fee Negotiation (Kathy)</div>
+  </div>
+  <div class="variant" data-v="U" id="v-25-U"><div class="variant-block" data-v="U"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy — I'm a supervisor here at Stealth Investigations. [AGENT] passed along your conversation and asked me to reach out personally. Is now a bad time?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee structure on this case. So — what were you thinking would feel fair to you?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>On a case like this, involving [REPORTING COMPANY] and the amount we're talking about, I'm comfortable working with you on that. Let's lock in [AGREED RATE]% and get the paperwork moving. Does that work for you?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I appreciate you being direct with me. I can't go as low as [THEIR NUMBER], but I can come down to [KATHY'S NUMBER]% on this case. That's as far as I can go. Would you be comfortable moving forward at that?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>Here's what I'm going to do. I'll authorize [AGREED RATE]% on this case and have [AGENT] get back to you with the paperwork. Does that work?</div>
+  </div></div></div>
+  <div class="variant" data-v="D" id="v-25-D"><div class="variant-block" data-v="D"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">KATHY</div>[NAME], this is Kathy at Stealth Investigations. [AGENT] told me you had a question about our rate. What number were you thinking?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I can work with that. Confirm you want to move forward and I'll have [AGENT] send you the paperwork today.</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I can't do [THEIR NUMBER]. I can do [KATHY'S NUMBER]%. That's my best number. Are we doing this?</div>
+  </div></div></div>
+  <div class="variant" data-v="S" id="v-25-S"><div class="variant-block" data-v="S"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME]! It's Kathy — I'm one of the supervisors here at Stealth Investigations. [AGENT] mentioned your conversation and I wanted to call you personally because I think we can work something out here. How are you doing today?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>So [AGENT] said you had a question about the fee structure. What were you thinking on the rate?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>You know what — I want to make this happen for you. Let's do [AGREED/NEGOTIATED RATE]% and get this thing moving. How does that sound?</div>
+  </div></div></div>
+  <div class="variant" data-v="R" id="v-25-R"><div class="variant-block" data-v="R"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy — I'm a supervisor at Stealth Investigations. [AGENT] filled me in on your situation and asked me to reach out personally. I just want to make sure you feel completely taken care of here.</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee, and I want to address that directly. What would make you feel comfortable moving forward?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I hear you. Here's what I'm going to do — I'm going to authorize [NEGOTIATED RATE]% on your case. [AGENT] will take it from here and walk you through every step. You're in good hands. Does that feel okay to you?</div>
+  </div></div></div>
+  <div class="variant" data-v="T" id="v-25-T"><div class="variant-block" data-v="T"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy, supervising here at Stealth Investigations. [AGENT] passed along the case details. I've reviewed the [REPORTING COMPANY] file and I'd like to discuss the fee structure with you directly.</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>Our standard rate is 10%. Based on the specifics of your case, I have flexibility to work below that. What I need to understand is what number you'd need to see to feel that the value proposition makes sense for you.</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>That's within what I can authorize. The terms: [NEGOTIATED RATE]% contingency, due only upon State release of funds to you. Nothing is owed if we are unsuccessful. Does that structure work for you?</div>
+    <div class="script-line"><div class="agent-label">KATHY</div>I appreciate the directness. I can't get to [THEIR NUMBER]. My authorized floor on this case is [KATHY'S NUMBER]%. If that works for you, I can have the paperwork initiated today.</div>
+  </div></div></div>
+</div>
+
+<div class="node" id="node-26">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 26</span><span class="node-tag tag-neutral">COMPLIANCE</span></div>
+    <div class="node-title">WRONG_NUMBER &mdash; Incorrect Contact Protocol</div>
+  </div>
+  <div class="compliance-block">Never reveal the reason for the call to a third party. Leave voicemail only when the prospect's own voicemail picks up.</div>
+  <div class="variant visible" id="v-26-ALL"><div class="variant-block" data-v="ALL"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>Oh, I apologize for the confusion. I'm looking for [NAME] — do I have the right number, or is this a different household?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>I'm sorry to have bothered you. Thank you for letting me know.</div>
+  </div></div>
+  <div class="variant-block" data-v="ALL" style="margin-top:10px"><div class="variant-body">
+    <div class="script-line"><div class="agent-label">AGENT</div>No problem at all. Is there a better time I could try reaching them directly?</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>It's a personal matter — I really do need to speak with [NAME] directly. I'll try again another time. Thank you.</div>
+  </div></div></div>
+</div>
+
+</div>
+</div>
+
+<div id="nav-arrows">
+  <button class="nav-arrow" onclick="prevNode()">&#8592; PREV</button>
+  <button class="nav-arrow" onclick="nextNode()">NEXT &#8594;</button>
+</div>
+
+<script>
+  let currentType = 'U';
+  let currentNode = 1;
+  const totalNodes = 26;
+  const universalNodes = [2, 14, 23, 26];
+
+  // Read URL parameters on load
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('type')) currentType = params.get('type').toUpperCase();
+  if (params.get('node')) currentNode = parseInt(params.get('node')) || 1;
+
+  function setType(type) {
+    currentType = type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
+    showVariantsForCurrentNode();
+  }
+
+  function showVariantsForCurrentNode() {
+    const nodeEl = document.getElementById(`node-${currentNode}`);
+    if (!nodeEl) return;
+    nodeEl.querySelectorAll('.variant').forEach(v => v.classList.remove('visible'));
+    if (universalNodes.includes(currentNode)) {
+      const allV = nodeEl.querySelector('.variant[id$="-ALL"]');
+      if (allV) allV.classList.add('visible');
+    } else {
+      const typedV = document.getElementById(`v-${currentNode}-${currentType}`);
+      if (typedV) {
+        typedV.classList.add('visible');
+      } else {
+        const undeterV = document.getElementById(`v-${currentNode}-U`);
+        if (undeterV) undeterV.classList.add('visible');
+      }
+      const allV = nodeEl.querySelector('.variant[id$="-ALL"]');
+      if (allV) allV.classList.add('visible');
+    }
+  }
+
+  function goNode(n) {
+    if (n < 1 || n > totalNodes) return;
+    const prevEl = document.getElementById(`node-${currentNode}`);
+    if (prevEl) prevEl.classList.remove('visible');
+    currentNode = n;
+    const newEl = document.getElementById(`node-${currentNode}`);
+    if (newEl) newEl.classList.add('visible');
+    const nodeIds = {
+      1:'START',2:'CALLBACK_SCHEDULE',3:'ENGAGEMENT',4:'NOT_AWARE_PATH',
+      5:'AWARE_PATH',6:'AWARE_ATTEMPTED',7:'CONSEQUENCE',8:'SOLUTION',
+      9:'TRANSITION',10:'RECONNECT',11:'EDUCATE',12:'QUALIFY',
+      13:'COMMITMENT',14:'OBJECTION_HANDLING',15:'INTERESTED_NOT_SURE',
+      16:'CREDIBILITY_OBJECTION',17:'FEE_OBJECTION',18:'DIY_OBJECTION',
+      19:'UNKNOWN_OBJECTION',20:'SOFT_CLOSE',21:'INBOUND_START',
+      22:'RE_PRESENT_VALUE',23:'VOICEMAIL',24:'FOLLOWUP_60DAY',
+      25:'SUPERVISOR_CALLBACK',26:'WRONG_NUMBER'
+    };
+    document.getElementById('node-num').textContent = currentNode;
+    document.getElementById('node-id-display').textContent = nodeIds[currentNode] || '';
+    showVariantsForCurrentNode();
+    document.getElementById('main').scrollTop = 0;
+  }
+
+  function prevNode() { goNode(currentNode - 1); }
+  function nextNode() { goNode(currentNode + 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextNode();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevNode();
+    if (e.key === '1') setType('U');
+    if (e.key === '2') setType('D');
+    if (e.key === '3') setType('S');
+    if (e.key === '4') setType('R');
+    if (e.key === '5') setType('T');
+  });
+
+  // Initialize with URL params or defaults
+  setType(currentType);
+  goNode(currentNode);
+</script>
+</body>
+</html>
