@@ -253,6 +253,45 @@
     font-style: italic;
     margin-bottom: 8px;
   }
+
+  .silence-marker {
+    border-left: 4px solid #c0392b;
+    background: #1a0a0a;
+    color: #e07070;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    margin: 3px 0 6px 0;
+    display: block;
+  }
+
+  .gate-guide {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #0a1020;
+    border-left: 4px solid #4a9fd4;
+    font-size: 11px;
+    color: #d4daf0;
+  }
+  .gate-guide strong { color: #4a9fd4; }
+  .gate-guide .gate-item { margin: 3px 0; }
+  .gate-guide .gate-route { color: #5eb870; font-weight: 600; }
+
+  .loop-guide {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #0a1a0a;
+    border-left: 4px solid #5eb870;
+    font-size: 11px;
+    color: #d4daf0;
+  }
+  .loop-guide strong { color: #5eb870; }
+  .loop-guide .loop-item { margin: 2px 0; }
+  .loop-d { color: #e8943a; }
+  .loop-s { color: #5eb870; }
+  .loop-r { color: #b07ad0; }
+  .loop-t { color: #4a9fd4; }
 </style>
 </head>
 <body>
@@ -459,7 +498,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>Here's how the State process works in sequence. First, you submit an initial claim form through the State. That triggers an automated document request, typically 8 to 12 items. These include things like certified copies of birth certificates, government-issued ID, proof of address at the time of the original account.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Important distinction: many of these items are administrative policy, not statutory requirements under Texas Property Code Chapter 74. The State does not typically disclose which is which. If you do not provide everything on the list within the deadline — regardless of whether it's legally required — they deny or suspend the claim.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>If you do provide everything on time, the case gets assigned to a State Examiner. That assignment takes a minimum of 60 to 90 calendar days from submission. The Examiner then issues a secondary document request — the case-specific list, which is different from and in addition to the first list.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>Total timeline for the average DIY claimant: six to nine months, assuming no denials or suspension. Most people abandon the process after the first document request. The State pays out less than three percent of held funds annually.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Total timeline for the average DIY claimant: six to nine months, assuming no denials or suspension. Most people abandon the process after the first document request. The State pays out only 4.2% of held funds annually.</div>
   </div></div></div>
 </div>
 
@@ -616,22 +655,27 @@
   </div>
   <div class="variant" data-v="U" id="v-13-U"><div class="variant-block" data-v="U"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Would you be opposed to allowing us to move forward with recovering your money from the State?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Then I guess, really, the next step would be to move forward with the process. Would it be inappropriate for us to start the paperwork at this point?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-13-D"><div class="variant-block" data-v="D"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Would you be against us moving forward from here?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
   </div></div></div>
   <div class="variant" data-v="S" id="v-13-S"><div class="variant-block" data-v="S"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Do you think it might be a crazy idea to let us handle this and get your money back for you?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Right? This is going to be great. Let me get the paperwork started.</div>
   </div></div></div>
   <div class="variant" data-v="R" id="v-13-R"><div class="variant-block" data-v="R"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Do you feel like you would be uncomfortable moving forward with this?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
     <div class="script-line"><div class="agent-label">AGENT</div>We'll be right there with you every step of the way. You won't have to deal with any of it alone.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Would it be inappropriate for us to go ahead and start the paperwork?</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-13-T"><div class="variant-block" data-v="T"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Based on everything we've covered, do you feel it would be out of the question to move forward?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
     <div class="script-line"><div class="agent-label">AGENT</div>The next step is simply the paperwork, and I can walk you through every line if you'd like. Nothing will happen without your review and sign-off.</div>
   </div></div></div>
 </div>
@@ -654,6 +698,7 @@
   </div>
   <div class="variant" data-v="U" id="v-15-U"><div class="variant-block" data-v="U"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Okay, Interested But Not Sure... It SEEMS like you have a really good reason for saying that?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-15-D"><div class="variant-block" data-v="D"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Interested But Not Sure... It seems like you have a good reason for that?</div>
@@ -713,6 +758,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>Okay, so our standard rate IS 10%, and quite honestly, in my opinion, sometimes that's a fair rate and sometimes it's not. Sometimes the cases are too complex, involve too many people, or require too many hours for us to handle effectively.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>The point is there is a lot more involved than most people think.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Anyway — considering our standard rate is 10%, what is it that YOU think would be fair?</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
     <div class="script-line"><div class="agent-label">AGENT</div>OK... I'm really not sure what might be involved with cases involving [REPORTING COMPANY]... Do you feel like it might be out of line if I were to ask my supervisor whether there's any room for negotiation on this?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-17-D"><div class="variant-block" data-v="D"><div class="variant-body">
@@ -730,7 +776,7 @@
   </div></div></div>
   <div class="variant" data-v="T" id="v-17-T"><div class="variant-block" data-v="T"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>Consider the alternative: six-plus months of your time, multiple document requests, follow-up calls, potential denials and resubmissions. Our 10% covers all of that activity, with an average resolution of 45 to 60 days.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>Based on the case amount, here is what the math looks like: our fee is [AMOUNT x 10%]. The cost of doing this yourself — in time, potential errors, and the 97% chance the State stalls you indefinitely — is difficult to quantify but significant.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Based on the case amount, here is what the math looks like: our fee is [AMOUNT x 10%]. The cost of doing this yourself — in time, potential errors, and the 95.8% chance the State stalls you indefinitely — is difficult to quantify but significant.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>If you'd like, I can check with my supervisor about the rate structure for your specific case.</div>
   </div></div></div>
 </div>
@@ -743,17 +789,18 @@
   <div class="variant" data-v="U" id="v-18-U"><div class="variant-block" data-v="U"><div class="variant-body">
     <div class="script-line"><div class="agent-label">AGENT</div>So, Interested But Not Sure, and you've seen that our BBB A+ rating and Google reviews are solid, AND you don't feel that our 10% contingency rate is out of line... then usually that would mean that you just might be wanting to work on this on your own... is THAT it?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Okay... fair enough... and thanks for being honest with me. Is this the ONLY thing that's holding you back?</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>Okay. Here's what most people don't know about the State's process. The reality is there are BILLIONS upon BILLIONS of dollars being held by the State of Texas, just like this. But here is the part most people never find out — the State has an ANNUAL BUDGET of how much they are going to pay out of that fund each year. And for the past 20-plus years, that annual budget has NEVER exceeded THREE percent.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>So 97% of those funds do not get released. The State accomplishes this by throttling payments and — in my opinion — misleading people into believing that their policies are mandated by law.</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>Now, that's not to say YOU might not get lucky and fall into that three percent. It IS possible.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Okay. Here's what most people don't know about the State's process. The reality is there are BILLIONS upon BILLIONS of dollars being held by the State of Texas, just like this. But here is the part most people never find out — the State has an ANNUAL BUDGET of how much they are going to pay out of that fund each year. And for the past 20-plus years, that annual budget has NEVER exceeded 4.2 percent. Not 42 percent — four point two percent.</div>
+    <div class="silence-marker">[ HOLD SILENCE ]</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>So 95.8% of those funds do not get released. The State accomplishes this by throttling payments and — in my opinion — misleading people into believing that their policies are mandated by law.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Now, that's not to say YOU might not get lucky and fall into that 4.2 percent. It IS possible.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Say in 60 days or so — IF THE STATE IS STILL JERKING YOU AROUND AT THAT POINT — would you be against maybe exploring the possibility of allowing us to assist? IF THEY'RE STILL JERKING YOU AROUND — would that be an impossibility?</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-18-D"><div class="variant-block" data-v="D"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Three percent payout rate annually. That means 97% of DIY claimants get stalled or nothing. We get our clients into that three percent in 45 to 60 days.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>4.2% payout rate annually. That means 95.8% of DIY claimants get stalled or nothing. We get our clients into that 4.2 percent in 45 to 60 days.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>That's your call. If they give you grief in 60 days, my number is [AGENT NUMBER]. Offer stands.</div>
   </div></div></div>
   <div class="variant" data-v="S" id="v-18-S"><div class="variant-block" data-v="S"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>THREE percent! Can you believe that?! That means 97% of people who try this on their own are just... stuck. Waiting forever. Or giving up.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>FOUR POINT TWO PERCENT! Can you believe that?! That means 95.8% of people who try this on their own are just... stuck. Waiting forever. Or giving up.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>Tell you what — give it a shot. If the State gives you grief, call me directly. I'll be here, and the offer doesn't expire.</div>
   </div></div></div>
   <div class="variant" data-v="R" id="v-18-R"><div class="variant-block" data-v="R"><div class="variant-body">
@@ -761,7 +808,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>How about this — if after 60 days you're feeling overwhelmed or like it's going nowhere, would you feel comfortable reaching back out to us? We'll still be here for you. The offer doesn't go away.</div>
   </div></div></div>
   <div class="variant" data-v="T" id="v-18-T"><div class="variant-block" data-v="T"><div class="variant-body">
-    <div class="script-line"><div class="agent-label">AGENT</div>Statistically, the State pays out less than three percent of held funds annually. That's a 97% non-payment rate for unassisted claimants. Our success rate with cases like yours is significantly higher because we know which requirements are legally binding, which are not, and how to use that distinction.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>Statistically, the State pays out only 4.2% of held funds annually. That's a 95.8% non-payment rate for unassisted claimants. Our success rate with cases like yours is significantly higher because we know which requirements are legally binding, which are not, and how to use that distinction.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I'd suggest giving it 60 days. If you're not making measurable progress by then, the offer stands. Would you be open to noting a 60-day checkpoint?</div>
   </div></div></div>
 </div>
@@ -887,7 +934,7 @@
     <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. We spoke about two months ago about the [REPORTING COMPANY] case — I wanted to check in and see how things have been going with the State. Is now a bad time?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>So tell me — how has the process been going?</div>
     <div class="script-line"><div class="agent-label">AGENT</div>That is exactly what I was afraid of when we talked. What you're describing is the second wave — the one I mentioned — and the part that most people don't make it through on their own. Is this a point where it might make sense to let us step in?</div>
-    <div class="script-line"><div class="agent-label">AGENT</div>That is genuinely good to hear. It sounds like you're in that three percent I mentioned. If anything stalls out, you know where to find me.</div>
+    <div class="script-line"><div class="agent-label">AGENT</div>That is genuinely good to hear. It sounds like you're in that 4.2 percent I mentioned. If anything stalls out, you know where to find me.</div>
     <div class="script-line"><div class="agent-label">AGENT</div>I hear you. Honestly, that's the most common thing that happens. The offer still stands if you'd like to let us handle it from here.</div>
   </div></div></div>
   <div class="variant" data-v="D" id="v-24-D"><div class="variant-block" data-v="D"><div class="variant-body">
