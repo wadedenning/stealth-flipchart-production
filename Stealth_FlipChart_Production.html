@@ -2797,5 +2797,181 @@
   <div class="switch-row"><div class="sw-sig">"I didn't expect that." Sustained surprise.</div><div class="sw-why">Emotional engagement surfaced. Rare but powerful.</div><div class="sw-act">&rarr; If it sustains, switch to SOCIALIZER. If they return to analysis, hold THINKER.</div></div>
   <div class="switch-row"><div class="sw-sig">"On behalf of my parents..." Protective family context.</div><div class="sw-why">Safety concern activated. Family entered as condition.</div><div class="sw-act">&rarr; Slow down. Switch to RELATER. Protect the relationship.</div></div>
 </div>
+<!-- ==========================================================
+     STEALTH RELAY CONNECTOR
+     Paste this block immediately before </body>.
+     To remove it, delete the whole block. Nothing else changes.
+     ========================================================== -->
+<style>
+  #relay-bar{
+    position:fixed; bottom:0; left:0; right:0; height:34px;
+    background:#141821; border-top:1px solid #2a3040;
+    display:flex; align-items:center; gap:14px;
+    padding:0 14px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:#7a8299; z-index:9000;
+  }
+  #relay-dot{ width:9px; height:9px; border-radius:50%; background:#3a4152; flex:none; }
+  #relay-dot.live{ background:#2ecc71; }
+  #relay-dot.stale{ background:#c0392b; }
+  #relay-type{ color:#e8ecf4; font-weight:600; letter-spacing:.5px; }
+  #relay-note{ color:#7a8299; }
+  #relay-toggle{
+    margin-left:auto; cursor:pointer; color:#7a8299;
+    border:1px solid #2a3040; border-radius:4px; padding:3px 10px;
+    background:transparent; font-family:inherit; font-size:11px;
+  }
+  #relay-toggle.on{ color:#2ecc71; border-color:#2ecc71; }
+  body{ padding-bottom:34px; }
+</style>
+
+<div id="relay-bar">
+  <div id="relay-dot"></div>
+  <span id="relay-type">UNDETERMINED</span>
+  <span id="relay-note">waiting for a call</span>
+  <button id="relay-toggle" class="on" onclick="RELAY.toggle()">AUTO ON</button>
+</div>
+
+<script>
+(function () {
+  // ---- settings ------------------------------------------------------
+  // Agent seat. Override in the URL:  ...Production.html?agent=1002
+  var AGENT_ID = new URLSearchParams(location.search).get('agent') || '1001';
+
+  var RELAY_URL  = 'https://stealth-relay.wdenning.workers.dev/state';
+  var POLL_MS    = 1500;   // how often we ask the relay for state
+  var MANUAL_MS  = 20000;  // after the agent clicks, leave them alone this long
+  var STALE_MS   = 12000;  // no new relay activity for this long = call is over
+
+  // ---- internals -----------------------------------------------------
+  var enabled       = true;
+  var manualUntil   = 0;
+  var lastCallUuid  = null;
+  var lastAppliedAt = 0;
+  var deathShownFor = null;
+
+  var TYPE_MAP = {
+    DIRECTOR:'D', SOCIALIZER:'S', RELATER:'R', THINKER:'T', UNDETERMINED:'U'
+  };
+
+  var dotEl    = document.getElementById('relay-dot');
+  var typeEl   = document.getElementById('relay-type');
+  var noteEl   = document.getElementById('relay-note');
+  var toggleEl = document.getElementById('relay-toggle');
+
+  // Any manual click pauses automatic control briefly so the agent is not
+  // fighting the relay for the wheel.
+  function markManual() {
+    manualUntil = Date.now() + MANUAL_MS;
+    noteEl.textContent = 'you have the wheel';
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('#relay-bar')) return;
+    if (e.target.closest('.type-btn, .claim-btn, .nav-item, .navbtn, button')) {
+      markManual();
+    }
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if (['ArrowRight','ArrowLeft','ArrowUp','ArrowDown','1','2','3','4','5'].indexOf(e.key) > -1) {
+      markManual();
+    }
+  }, true);
+
+  function nodeNumberFrom(text) {
+    if (!text) return null;
+    var m = String(text).match(/Node\s*0*(\d{1,2})/i);
+    if (m) return parseInt(m[1], 10);
+    m = String(text).match(/\b0*(\d{1,2})\b/);
+    return m ? parseInt(m[1], 10) : null;
+  }
+
+  function claimKeyFrom(text) {
+    if (!text) return null;
+    var t = String(text).toUpperCase();
+    if (t.indexOf('PROBATED') > -1)  return 'probated';
+    if (t.indexOf('INTESTATE') > -1) return 'intestate';
+    if (t.indexOf('DECEASED')  > -1) return 'deceased-u';
+    if (t.indexOf('ALIVE') > -1 || t.indexOf('OWNER') > -1) return 'owner';
+    return null;
+  }
+
+  function apply(state) {
+    if (!state || !state.call_uuid) {
+      dotEl.className = '';
+      noteEl.textContent = 'waiting for a call';
+      return;
+    }
+
+    // New call: clear anything held over from the last one.
+    if (state.call_uuid !== lastCallUuid) {
+      lastCallUuid = state.call_uuid;
+      deathShownFor = null;
+      manualUntil = 0;
+      if (typeof goNode === 'function') goNode(1);
+      if (typeof setType === 'function') setType('U');
+    }
+
+    var activity = state.last_claude_at || 0;
+    var fresh = activity && (Date.now() - activity < STALE_MS);
+    dotEl.className = fresh ? 'live' : 'stale';
+
+    typeEl.textContent = state.committed_type || 'UNDETERMINED';
+
+    if (!enabled) { noteEl.textContent = 'auto off'; return; }
+    if (Date.now() < manualUntil) return;
+
+    noteEl.textContent = fresh ? 'following the call' : 'call idle';
+
+    // personality
+    var want = TYPE_MAP[state.committed_type];
+    if (want && typeof setType === 'function' && window.currentType !== want) {
+      setType(want);
+    }
+
+    // claim type
+    var claim = claimKeyFrom(state.claim_type);
+    if (claim && typeof setClaim === 'function' && window.currentClaim !== claim) {
+      setClaim(claim);
+    }
+
+    // node
+    var n = nodeNumberFrom(state.node);
+    if (n && n >= 1 && n <= 26 && typeof goNode === 'function' && window.currentNode !== n) {
+      goNode(n);
+      lastAppliedAt = Date.now();
+    }
+
+    // death discovered, once per call
+    var coaching = state.coaching || [];
+    if (coaching.indexOf('DEATH DISCOVERED') > -1 && deathShownFor !== state.call_uuid) {
+      deathShownFor = state.call_uuid;
+      if (typeof openDiscovery === 'function') openDiscovery();
+    }
+  }
+
+  function poll() {
+    fetch(RELAY_URL + '?user_id=' + encodeURIComponent(AGENT_ID), { cache:'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(apply)
+      .catch(function () {
+        dotEl.className = 'stale';
+        noteEl.textContent = 'cannot reach relay';
+      });
+  }
+
+  window.RELAY = {
+    toggle: function () {
+      enabled = !enabled;
+      toggleEl.textContent = enabled ? 'AUTO ON' : 'AUTO OFF';
+      toggleEl.className = enabled ? 'on' : '';
+      noteEl.textContent = enabled ? 'following the call' : 'auto off';
+    },
+    agent: function (id) { AGENT_ID = String(id); }
+  };
+
+  poll();
+  setInterval(poll, POLL_MS);
+})();
+</script>
+
 </body>
 </html>
