@@ -2840,7 +2840,8 @@
   var RELAY_URL  = 'https://stealth-relay.wdenning.workers.dev/state';
   var POLL_MS    = 1500;   // how often we ask the relay for state
   var MANUAL_MS  = 20000;  // after the agent clicks, leave them alone this long
-  var STALE_MS   = 12000;  // no new relay activity for this long = call is over
+  var STALE_MS   = 12000;  // no new relay activity for this long = the call has gone quiet
+  var IDLE_MS    = 120000; // state older than this is a finished call - stop steering
 
   // ---- internals -----------------------------------------------------
   var enabled       = true;
@@ -2901,25 +2902,43 @@
       return;
     }
 
-    // New call: clear anything held over from the last one.
-    if (state.call_uuid !== lastCallUuid) {
+    // New call: clear anything held over from the last one, but only once the
+    // new call is actually producing. Otherwise we would reset the chart while
+    // the agent is setting up.
+    var isNewCall = state.call_uuid !== lastCallUuid;
+    var callLive  = state.last_claude_at &&
+                    (Date.now() - state.last_claude_at < IDLE_MS);
+
+    if (isNewCall && callLive) {
       lastCallUuid = state.call_uuid;
       deathShownFor = null;
       manualUntil = 0;
       if (typeof goNode === 'function') goNode(1);
       if (typeof setType === 'function') setType('U');
+    } else if (isNewCall) {
+      lastCallUuid = state.call_uuid;
+      deathShownFor = null;
     }
 
     var activity = state.last_claude_at || 0;
-    var fresh = activity && (Date.now() - activity < STALE_MS);
-    dotEl.className = fresh ? 'live' : 'stale';
+    var age   = activity ? (Date.now() - activity) : Infinity;
+    var fresh = age < STALE_MS;
+    var over  = age > IDLE_MS;
 
+    dotEl.className = over ? '' : (fresh ? 'live' : 'stale');
     typeEl.textContent = state.committed_type || 'UNDETERMINED';
+
+    // A finished call should not keep steering the chart. Show what we know,
+    // but leave the agent in control until a new call starts producing.
+    if (over) {
+      noteEl.textContent = 'last call ended';
+      return;
+    }
 
     if (!enabled) { noteEl.textContent = 'auto off'; return; }
     if (Date.now() < manualUntil) return;
 
-    noteEl.textContent = fresh ? 'following the call' : 'call idle';
+    noteEl.textContent = fresh ? 'following the call' : 'call quiet';
 
     // personality
     var want = TYPE_MAP[state.committed_type];
