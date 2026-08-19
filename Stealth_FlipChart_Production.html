@@ -573,6 +573,109 @@
     font-size:11px; color:#aee5be; font-weight:600; line-height:1.5; }
   .inflection-marker { margin:4px 0 8px; padding:4px 12px; border-left:4px solid #c9a23a;
     background:#1a160a; font-size:11px; color:#e8d59a; font-weight:600; }
+/* ===== PRESENTER VIEW =====
+   A per-agent display mode. Same scripts, same nodes, nothing forked.
+   Strips the reference furniture (nav, compliance blocks, chart-only notes),
+   scales the script up, and puts a single delivery cue above it. The cue is
+   the live calibration from the relay when there is one, otherwise a rotating
+   cue weighted to the current node. */
+
+#presenter-toggle {
+  background:#241a08; color:#d0a04a; border:1px solid #6a4a12;
+  padding:4px 10px; border-radius:3px; cursor:pointer;
+  font-family:inherit; font-size:11px; letter-spacing:0.5px;
+}
+#presenter-toggle.on { background:#3a2a0c; color:#f0c060; border-color:#8a6a20; }
+
+#cue-banner {
+  display:none;
+  padding:10px 18px 11px;
+  background:#12100c;
+  border-bottom:2px solid #3a3428;
+  text-align:center;
+}
+#cue-persona {
+  display:block;
+  font-size:21px;
+  font-weight:700;
+  line-height:1.3;
+  letter-spacing:0.2px;
+  color:#9aa0b5;
+}
+#cue-secondary {
+  display:block;
+  margin-top:8px;
+  font-size:19px;
+  font-weight:700;
+  line-height:1.3;
+  letter-spacing:0.3px;
+  color:#c9b98a;
+}
+#cue-secondary.live {
+  color:#6ee0a0;
+  font-size:20px;
+  font-weight:700;
+}
+#cue-secondary .cue-src {
+  display:inline-block; font-size:9px; font-weight:400; letter-spacing:1.4px;
+  opacity:0.55; margin-right:8px; text-transform:uppercase; vertical-align:middle;
+}
+
+body.presenter #cue-banner { display:block; }
+body.presenter #nav { display:none; }
+body.presenter #reinforce-bar { display:none; }
+body.presenter .compliance-block { display:none; }
+
+/* The variant header is the most useful cue on the screen: node-specific,
+   personality-specific, and already vetted ("[DIRECTOR] Facts First, No
+   Emotional Setup"). It sits directly above the script it governs, so
+   presenter view makes it prominent rather than hiding it. */
+body.presenter .variant-header {
+  font-size:19px;
+  font-weight:700;
+  opacity:1;
+  letter-spacing:0.3px;
+  padding-bottom:5px;
+}
+
+/* Agents do not think in node numbers. The node title and the NODE nn label
+   are how the SYSTEM refers to itself, not how a sales call works, so they
+   come out of the reading path entirely. The small node display in the header
+   stays, out of the way, so an agent can still say where they are if
+   something looks wrong. */
+body.presenter .node-title { display:none; }
+body.presenter .node-id-line { display:none; }
+body.presenter .node-header { padding-bottom:0; border-bottom:none; }
+body.presenter #main { padding:14px 34px; }
+
+body.presenter .script-line {
+  font-size:24px;
+  line-height:1.5;
+  padding:14px 16px;
+  margin:11px 0;
+}
+body.presenter .agent-label {
+  font-size:10px; opacity:0.5;
+}
+body.presenter .silence-marker { font-size:16px; padding:11px 14px; }
+
+/* Presenter view is often run in a narrow window beside other tabs. */
+@media (max-width: 900px) {
+  body.presenter #main { padding:12px 18px; }
+  body.presenter .script-line { font-size:22px; padding:12px 13px; }
+  body.presenter .variant-header { font-size:17px; }
+  #cue-persona { font-size:18px; }
+  #cue-secondary { font-size:17px; }
+}
+
+/* The agent keeps control, but it sits at the edge of attention. */
+body.presenter #type-selector,
+body.presenter #claim-selector,
+body.presenter #discovery-btn { opacity:0.4; transform:scale(0.88); }
+body.presenter #type-selector:hover,
+body.presenter #claim-selector:hover,
+body.presenter #discovery-btn:hover { opacity:1; }
+
 </style>
 </head>
 <body>
@@ -636,7 +739,10 @@
   <div id="current-node-display">Node <span id="node-num">1</span> of 34 &mdash; <span id="node-id-display">START</span></div>
   <span class="header-sep">|</span>
   <button id="switch-toggle" onclick="toggleSwitch()">&#8644; SWITCHING GUIDE</button>
+  <button id="presenter-toggle" onclick="togglePresenter()" title="Large-type delivery view. Hides the reference material and shows one delivery cue.">PRESENTER</button>
 <div id="reinforce-bar"><span class="actor-line">★ You’re an actor — voice is your whole performance. Never sound scripted. Mean every line.</span><span class="tone-cue tone-U">READ THEM FIRST — collaborative, warm, neutral.</span><span class="tone-cue tone-D">DIRECTOR — flat, clipped, efficient. Fast pace. No warmth, no over-explaining.</span><span class="tone-cue tone-S">SOCIALIZER — emotional, upbeat, high energy. Fast pace. Match their rhythm.</span><span class="tone-cue tone-R">RELATER — warm, slow, reassuring. No pressure, no urgency.</span><span class="tone-cue tone-T">THINKER — precise, measured, calm. No hedging, give data. Their silence = processing; hold it longer.</span><span class="inflect-rule">INFLECTION — questions ↑ up (invite more) · statements &amp; closes ↓ down (authority).</span></div></div>
+
+<div id="cue-banner"><span id="cue-persona">READ THEM FIRST</span><span id="cue-secondary"><span class="cue-src">know them</span><span id="cue-text">Read them before you commit.</span></span></div>
 
 <div id="layout">
 
@@ -3096,6 +3202,153 @@
 </div>
 
 <script>
+/* ===== PRESENTER VIEW =====
+   Display mode only. No scripts are forked, no content is duplicated. The
+   toggle sets a class on <body>; everything else is CSS.
+
+   The cue banner shows ONE line above the script. Priority is absolute:
+   a live calibration from the relay always wins. It is about this call, this
+   prospect, this moment, and nothing generic can compete with it. When there
+   is no live calibration, a generic cue rotates. Rotation is weighted to the
+   current node so the cue is usually relevant to what the agent is doing,
+   and it rotates rather than repeating so it does not become wallpaper. */
+(function () {
+
+  // Second line: personality-specific, two per type, rotating. Node-level
+  // guidance is NOT here on purpose. Each node already carries a vetted
+  // variant header per personality ("[DIRECTOR] Facts First, No Emotional
+  // Setup"), which is more useful than anything generic and sits directly
+  // above the script it governs. Presenter view surfaces those rather than
+  // duplicating them here. Inflection is deliberately absent too: it never
+  // changes, so it is a training item, not a live cue.
+  var PERSONA_CUES = {
+    U: ["Read them before you commit.",
+        "A wrong read costs more than a neutral one."],
+    D: ["They fear wasted time.",
+        "Over-explaining loses them."],
+    S: ["They fear being bored.",
+        "Cutting their story short loses them."],
+    R: ["They fear making a mistake.",
+        "Urgency loses them."],
+    T: ["They fear being wrong.",
+        "Hedging loses them."]
+  };
+
+  var ROTATE_MS = 15000;
+  var bannerEl  = document.getElementById('cue-banner');
+  var textEl    = document.getElementById('cue-text');
+  var secEl     = document.getElementById('cue-secondary');
+  var personaEl = document.getElementById('cue-persona');
+  var srcEl     = secEl ? secEl.querySelector('.cue-src') : null;
+  var lastCue   = '';
+  var liveCue   = '';
+
+  // Colours match the tone cues in the reinforce bar so the persona line
+  // reads the same in both views.
+  var TYPE_COLOR = { U:'#9aa0b5', D:'#e0604a', S:'#5eb870', R:'#b07ad0', T:'#4a9fd4' };
+
+  // currentNode and currentType are declared with let, so they are NOT on
+  // window. Read the live value out of the DOM instead of guessing.
+  function typeNow() {
+    var m = String(document.body.className || '').match(/type-([UDSRT])\b/);
+    return m ? m[1] : 'U';
+  }
+
+  // The persona line is the single most important thing on this screen, so it
+  // is read straight from the reinforce bar rather than duplicated here. Edit
+  // the tone cues in one place and both views stay in sync.
+  function paintPersona() {
+    if (!personaEl) return;
+    var t = typeNow();
+    var src = document.querySelector('#reinforce-bar .tone-cue.tone-' + t);
+    personaEl.textContent = src ? src.textContent.trim() : '';
+    personaEl.style.color = TYPE_COLOR[t] || TYPE_COLOR.U;
+  }
+
+  // Everything the relay pushes into state.coaching that is a flag rather
+  // than a calibration. These are handled elsewhere in the chart.
+  var FLAGS = ['HOLD SILENCE', 'DEATH DISCOVERED', 'BRIDGE triggered',
+               'CLOSE SIGNAL', 'SUPERVISOR ALERT'];
+
+  function poolForType(t) {
+    return PERSONA_CUES[t] || PERSONA_CUES.U;
+  }
+
+  function render(text, isLive) {
+    if (!textEl || !secEl) return;
+    textEl.textContent = text;
+    if (isLive) {
+      secEl.classList.add('live');
+      if (srcEl) srcEl.textContent = 'coach';
+    } else {
+      secEl.classList.remove('live');
+      if (srcEl) srcEl.textContent = 'know them';
+    }
+  }
+
+  function rotate() {
+    paintPersona();
+    if (liveCue) return;                 // live always wins the second line
+    var pool = poolForType(typeNow());
+    if (pool.length > 1) {
+      var tries = 0, pick;
+      do { pick = pool[Math.floor(Math.random() * pool.length)]; tries++; }
+      while (pick === lastCue && tries < 8);
+      lastCue = pick;
+    } else {
+      lastCue = pool[0];
+    }
+    render(lastCue, false);
+  }
+
+  // Called from the relay poll on every state read.
+  window.setLiveCue = function (coaching) {
+    paintPersona();
+    var found = '';
+    for (var i = 0; i < (coaching || []).length; i++) {
+      var c = String(coaching[i] || '').trim();
+      if (c && FLAGS.indexOf(c) === -1) { found = c; break; }
+    }
+    if (found && found !== liveCue) {
+      liveCue = found;
+      render(found.charAt(0).toUpperCase() + found.slice(1), true);
+    } else if (!found && liveCue) {
+      liveCue = '';
+      rotate();
+    }
+  };
+
+  // The persona line has to follow the type the moment it changes, not on the
+  // next 12 second rotation. Watch the body class, which is what setType sets.
+  if (window.MutationObserver) {
+    new MutationObserver(paintPersona).observe(document.body, {
+      attributes: true, attributeFilter: ['class']
+    });
+  }
+
+  window.togglePresenter = function () {
+    var on = document.body.classList.toggle('presenter');
+    var btn = document.getElementById('presenter-toggle');
+    if (btn) btn.classList.toggle('on', on);
+    try { localStorage.setItem('stealth_presenter', on ? '1' : '0'); } catch (e) {}
+    if (on) rotate();
+  };
+
+  // Restore the agent's last choice.
+  try {
+    if (localStorage.getItem('stealth_presenter') === '1') {
+      document.body.classList.add('presenter');
+      var b = document.getElementById('presenter-toggle');
+      if (b) b.classList.add('on');
+    }
+  } catch (e) {}
+
+  rotate();
+  setInterval(rotate, ROTATE_MS);
+})();
+</script>
+
+<script>
 (function () {
   // ---- settings ------------------------------------------------------
   // Agent seat. Override in the URL:  ...Production.html?agent=1002
@@ -3192,6 +3445,12 @@
     dotEl.className = over ? '' : (fresh ? 'live' : 'stale');
     typeEl.textContent = state.committed_type || 'UNDETERMINED';
 
+    // Feed the presenter cue banner. Done before the early returns below so
+    // the banner keeps working when AUTO is off or the call has ended.
+    if (typeof window.setLiveCue === 'function') {
+      window.setLiveCue(over ? [] : (state.coaching || []));
+    }
+
     // A finished call should not keep steering the chart. Show what we know,
     // but leave the agent in control until a new call starts producing.
     if (over) {
@@ -3227,7 +3486,12 @@
     var coaching = state.coaching || [];
     if (coaching.indexOf('DEATH DISCOVERED') > -1 && deathShownFor !== state.call_uuid) {
       deathShownFor = state.call_uuid;
-      if (typeof openDiscovery === 'function') openDiscovery();
+      // The discovery panel no longer opens by itself. It used to be the only
+      // guidance for this moment, but the relay now routes to Node 28
+      // DEATH_PIVOT which carries the approved script, and a full height panel
+      // sliding over the screen during a condolence is the worst possible
+      // moment to break the agent's concentration. The flag button in the
+      // header still opens it on demand.
     }
   }
 
