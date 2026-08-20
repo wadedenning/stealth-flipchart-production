@@ -587,6 +587,33 @@
 }
 #presenter-toggle.on { background:#3a2a0c; color:#f0c060; border-color:#8a6a20; }
 
+/* Small talk hold. The agent freezes node steering when a call drifts off
+   topic, so the chart stops chasing a conversation that has no node. Type
+   detection keeps running and personality switches still apply, because
+   unguarded small talk is where the read is usually best.
+
+   No auto release. A timeout would let go mid anecdote, and the agent is the
+   only one who knows when the call is back on task. The cost of that is an
+   agent who forgets, so the button pulses: gently at first, then faster once
+   it has been held long enough that forgetting is the likely explanation. */
+#smalltalk-toggle {
+  background:#241a08; color:#d0a04a; border:1px solid #6a4a12;
+  padding:4px 10px; border-radius:3px; cursor:pointer;
+  font-family:inherit; font-size:11px; letter-spacing:0.5px;
+}
+#smalltalk-toggle.on {
+  background:#4a1a1a; color:#ff9a80; border-color:#a03a2a;
+  animation: st-pulse 2s ease-in-out infinite;
+}
+#smalltalk-toggle.on.urgent {
+  animation: st-pulse 0.7s ease-in-out infinite;
+}
+@keyframes st-pulse {
+  0%, 100% { background:#4a1a1a; color:#ff9a80; box-shadow:none; }
+  50%      { background:#8a2a1a; color:#fff0e0;
+             box-shadow:0 0 10px rgba(255,90,60,0.65); }
+}
+
 #cue-banner {
   display:none;
   padding:10px 18px 11px;
@@ -740,6 +767,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <span class="header-sep">|</span>
   <button id="switch-toggle" onclick="toggleSwitch()">&#8644; SWITCHING GUIDE</button>
   <button id="presenter-toggle" onclick="togglePresenter()" title="Large-type delivery view. Hides the reference material and shows one delivery cue.">PRESENTER</button>
+  <button id="smalltalk-toggle" onclick="toggleSmallTalk()" title="Hold the current node while the call is off topic. Personality detection keeps running. Turn it off when the call is back on task.">SMALL TALK</button>
 <div id="reinforce-bar"><span class="actor-line">★ You’re an actor — voice is your whole performance. Never sound scripted. Mean every line.</span><span class="tone-cue tone-U">READ THEM FIRST — collaborative, warm, neutral.</span><span class="tone-cue tone-D">DIRECTOR — flat, clipped, efficient. Fast pace. No warmth, no over-explaining.</span><span class="tone-cue tone-S">SOCIALIZER — emotional, upbeat, high energy. Fast pace. Match their rhythm.</span><span class="tone-cue tone-R">RELATER — warm, slow, reassuring. No pressure, no urgency.</span><span class="tone-cue tone-T">THINKER — precise, measured, calm. No hedging, give data. Their silence = processing; hold it longer.</span><span class="inflect-rule">INFLECTION — questions ↑ up (invite more) · statements &amp; closes ↓ down (authority).</span></div></div>
 
 <div id="cue-banner"><span id="cue-persona">READ THEM FIRST</span><span id="cue-secondary"><span class="cue-src">know them</span><span id="cue-text">Read them before you commit.</span></span></div>
@@ -2776,13 +2804,14 @@ body.presenter #discovery-btn:hover { opacity:1; }
         <div class="script-line"><div class="agent-label">AGENT</div>Oh. I'm very sorry to hear that. I truly am.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>I appreciate you telling me. And I apologize, our records didn't reflect that, so please forgive the confusion when I asked for [him/her].</div>
         <div class="script-line"><div class="agent-label">AGENT</div>If it's alright, let me briefly explain why I was calling, because it may still matter to your family. [REPORTING COMPANY] owed [DECEDENT NAME] money that was never delivered, and it ended up being turned over to the State of Texas. When something like this happens, that money doesn't just disappear. It's held by the State, and it passes to the rightful heirs of the estate.</div>
-        <div class="script-line"><div class="agent-label">AGENT</div>Now, who the rightful heirs are, that's not something I would ask you to sort out today, and honestly it's not something that gets decided on a phone call. There's a proper process for it. But it is worth the family knowing the money is there.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="script-line"><div class="agent-label">NOTE</div>If receptive &rarr; continue into Node 27's structure, unresearched posture ("Can I ask how you were related to [DECEDENT]?").</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Now, who the rightful heirs are, that's not something I would ask you to sort out today, and honestly it's not something that gets decided on a phone call. There's a proper process for it. But it is worth the family knowing the money is there.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Does it make sense for me to keep going, or would you rather I send you something first so you can see who we are?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>Their answer picks the branch, so you are not reading tone. "Keep going" or anything receptive &rarr; continue into Node 27's structure, unresearched posture. "Send me something" or any hesitation &rarr; the block below. Offering the exit is not weak here. After a death disclosure it is the thing that earns the second call.</div>
       </div>
     </div>
 
     <div class="variant-block" data-v="U" style="margin-top:10px">
-      <div class="variant-header">IF RATTLED / SUSPICIOUS &mdash; credibility first, then schedule</div>
+      <div class="variant-header">IF THEY WANT SOMETHING SENT FIRST &mdash; credibility, then schedule</div>
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">AGENT</div>Hey, listen. I understand that at this point I'm just a voice on the phone. You don't know who I am or whether any of this is legitimate. Would it be a bad idea for me to send you all of the information on this so you can see it for yourself? That way you can look at our Google reviews, our A+ rating with the BBB, our twenty-plus years in business, and our licensing with the Texas Department of Public Safety, which means the State of Texas itself has reviewed and approved what we do.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>No problem at all. Would it be a bad time if I called you back [tomorrow / day after]? That gives you a chance to look everything over, and it will only take a couple of minutes.</div>
@@ -3349,6 +3378,49 @@ body.presenter #discovery-btn:hover { opacity:1; }
 </script>
 
 <script>
+/* ===== SMALL TALK HOLD =====
+   Calls drift. A prospect starts talking about their daughter at A&M and two
+   or three minutes go by before the agent brings it back. The relay has no
+   idea that is happening: it keeps calling Claude every time the prospect
+   produces 25 new characters, Claude keeps hunting for a node in material
+   that has none, and the chart wanders somewhere unrelated.
+
+   This is deliberately a manual switch rather than something Claude infers.
+   The agent knows precisely when a call has gone off topic; a model guessing
+   at it would be right most of the time and quietly wrong the rest, and a
+   wrong hold is worse than drift because nobody can see it happening.
+
+   What is held: node steering only. Type detection keeps running and
+   personality switches still apply. Small talk is usually where the read is
+   most accurate, since that is where people are least guarded. */
+(function () {
+  var URGENT_AFTER_MS = 30000;
+  var heldSince = 0;
+  var btn = document.getElementById('smalltalk-toggle');
+
+  window.SMALLTALK = { active: false };
+
+  window.toggleSmallTalk = function () {
+    var on = !window.SMALLTALK.active;
+    window.SMALLTALK.active = on;
+    heldSince = on ? Date.now() : 0;
+    if (btn) {
+      btn.classList.toggle('on', on);
+      btn.classList.remove('urgent');
+      btn.textContent = on ? 'SMALL TALK - ON' : 'SMALL TALK';
+    }
+  };
+
+  // Escalate the pulse once it has been held long enough that the agent has
+  // probably forgotten rather than deliberately holding.
+  setInterval(function () {
+    if (!btn || !window.SMALLTALK.active) return;
+    btn.classList.toggle('urgent', (Date.now() - heldSince) > URGENT_AFTER_MS);
+  }, 1000);
+})();
+</script>
+
+<script>
 (function () {
   // ---- settings ------------------------------------------------------
   // Agent seat. Override in the URL:  ...Production.html?agent=1002
@@ -3419,22 +3491,36 @@ body.presenter #discovery-btn:hover { opacity:1; }
       return;
     }
 
-    // New call: clear anything held over from the last one, but only once the
-    // new call is actually producing. Otherwise we would reset the chart while
-    // the agent is setting up.
-    var isNewCall = state.call_uuid !== lastCallUuid;
-    var callLive  = state.last_claude_at &&
-                    (Date.now() - state.last_claude_at < IDLE_MS);
-
-    if (isNewCall && callLive) {
+    // New call: clear anything held over from the last one.
+    //
+    // This used to wait for the call to be "live", meaning Claude had already
+    // run at least once. That never worked. The relay sets last_claude_at to 0
+    // on a new call, so the first poll after a call starts always failed the
+    // live test, took the second branch, and consumed the uuid. By the time
+    // Claude ran the call was no longer new and the reset never fired. The
+    // symptom was the chart opening the next call on whatever node the last
+    // one ended on.
+    //
+    // Resetting immediately is safe: the relay only creates a call record when
+    // the first transcript segment arrives, so a uuid change already means a
+    // real call is producing.
+    if (state.call_uuid && state.call_uuid !== lastCallUuid) {
       lastCallUuid = state.call_uuid;
       deathShownFor = null;
       manualUntil = 0;
-      if (typeof goNode === 'function') goNode(1);
+
+      // Small talk does not carry across calls.
+      if (window.SMALLTALK) window.SMALLTALK.active = false;
+      var stBtn = document.getElementById('smalltalk-toggle');
+      if (stBtn) {
+        stBtn.classList.remove('on', 'urgent');
+        stBtn.textContent = 'SMALL TALK';
+      }
+
+      // Type first, then node. A stale personality read is worse than a stale
+      // node because the agent may act on it.
       if (typeof setType === 'function') setType('U');
-    } else if (isNewCall) {
-      lastCallUuid = state.call_uuid;
-      deathShownFor = null;
+      if (typeof goNode === 'function') goNode(1);
     }
 
     var activity = state.last_claude_at || 0;
@@ -3450,6 +3536,10 @@ body.presenter #discovery-btn:hover { opacity:1; }
     if (typeof window.setLiveCue === 'function') {
       window.setLiveCue(over ? [] : (state.coaching || []));
     }
+
+    // Small talk hold. Node steering stops; everything above this line keeps
+    // running, which is the point: the type read stays live.
+    if (window.SMALLTALK && window.SMALLTALK.active) return;
 
     // A finished call should not keep steering the chart. Show what we know,
     // but leave the agent in control until a new call starts producing.
