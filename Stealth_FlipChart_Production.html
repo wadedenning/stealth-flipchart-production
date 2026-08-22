@@ -763,7 +763,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
     <button class="claim-btn" data-claim="intestate" onclick="setClaim('intestate')">Intestate</button>
   </div>
   <button id="discovery-btn" onclick="openDiscovery()" title="Use the moment a relative reveals the owner has died.">&#9873; Deceased Discovered</button>
-  <div id="current-node-display">Node <span id="node-num">1</span> of 34 &mdash; <span id="node-id-display">START</span></div>
+  <div id="current-node-display">Node <span id="node-num">1</span> of 36 &mdash; <span id="node-id-display">START</span></div>
   <span class="header-sep">|</span>
   <button id="switch-toggle" onclick="toggleSwitch()">&#8644; SWITCHING GUIDE</button>
   <button id="presenter-toggle" onclick="togglePresenter()" title="Large-type delivery view. Hides the reference material and shows one delivery cue.">PRESENTER</button>
@@ -813,7 +813,9 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <div class="nav-item" data-node="26" onclick="goNode(26)"><span class="nav-num">26</span><span class="nav-id">WRONG_NUMBER</span></div>
 
   <div class="nav-section">Relative Track</div>
-  <div class="nav-item" data-node="27" onclick="goNode(27)"><span class="nav-num">27</span><span class="nav-id">RELATIVE_OPENER</span></div>
+  <div class="nav-item" data-node="27" onclick="goNode(27)"><span class="nav-num">27</span><span class="nav-id">RELATIVE_OPENER &middot; known</span></div>
+  <div class="nav-item" data-node="35" onclick="goNode(35)"><span class="nav-num">35</span><span class="nav-id">RELATIVE_OPENER &middot; uncertain</span></div>
+  <div class="nav-item" data-node="36" onclick="goNode(36)"><span class="nav-num">36</span><span class="nav-id">RELATIVE_OPENER &middot; unresearched</span></div>
   <div class="nav-item" data-node="28" onclick="goNode(28)"><span class="nav-num">28</span><span class="nav-id">DEATH_PIVOT</span></div>
   <div class="nav-item" data-node="29" onclick="goNode(29)"><span class="nav-num">29</span><span class="nav-id">RELATIVE_SCHEDULE</span></div>
   <div class="nav-item" data-node="30" onclick="goNode(30)"><span class="nav-num">30</span><span class="nav-id">EXECUTOR_TRIAGE</span></div>
@@ -2755,34 +2757,64 @@ body.presenter #discovery-btn:hover { opacity:1; }
 <div class="node" id="node-27">
   <div class="node-header">
     <div class="node-id-line"><span>NODE 27</span><span class="node-tag tag-relative">RELATIVE TRACK</span></div>
-    <div class="node-title">RELATIVE_OPENER &mdash; First Contact With a Relative</div>
+    <div class="node-title">RELATIVE_OPENER &mdash; Relationship Known</div>
   </div>
 
-  <div class="compliance-block">NOT a family tree call. No entitlement promised to anyone. SIGN FIRST, QUALIFY AFTER: never adjudicate, confirm, deny, or hint at heir status. On a RESEARCHED file, STATE known facts &mdash; never ask what the file already knows.</div>
+  <div class="compliance-block">Use this ONLY when the relationship is verified from a real source: an obituary, a will, or court records. If the file says RELATIVE_1 through 5, the database guessed and you do not know the relationship &mdash; use Node 35 instead. Naming a relationship that turns out to be wrong costs you the credibility the research just bought. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER: never adjudicate, confirm, deny, or hint at heir status.</div>
 
   <div class="variant" data-v="U" id="27-U">
     <div class="variant-block" data-v="U">
-      <div class="variant-header">OPENING A &mdash; RESEARCHED (contact type populated, death confirmed, obituary + probate search done)</div>
+      <div class="variant-header">THE OPENING</div>
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">AGENT</div>Hi, is this [RELATIVE FIRST NAME]? ... Hi [NAME], my name is [AGENT] and I'm with Stealth Investigations, we're a licensed investigations firm here in Alvin, Texas. The reason for my call, and I'll get right to it, is that we've been researching a case involving the estate of [DECEDENT NAME]. Our research shows [REPORTING COMPANY] owed [him/her] money that was never delivered, and it ended up turned over to the State of Texas. That money is still sitting there, and it belongs to [DECEDENT]'s rightful heirs.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Now, our research shows that you are [DECEDENT]'s [RELATIONSHIP]. Do I have that right?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Part of my job is making sure the right family members know it's there. The other part of my job is making sure the lawful heir or heirs actually receive those funds. In this case the amount involved is [CLAIM AMOUNT]. Would you be able to help me sort out who the lawful heirs are?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>Recent death per the obituary: one line of condolence before the confirmation, sincere, no dwelling. Years past, which is the usual case at roughly 49 of 50: skip it.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>The help question gets one of two answers. Relationship volunteered ("she was my mother") &rarr; proceed toward Node 29's schedule, or the fork if trust is already standing. Credibility challenge ("who did you say you're with?") &rarr; Node 16 variation, then Node 2 shape to schedule.</div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="variant-block" data-v="U" style="margin-top:10px">
-      <div class="variant-header">OPENING B &mdash; UNRESEARCHED (referral, discovery call, or thin file &mdash; assert nothing unestablished)</div>
+<!-- ═══ NODE 35: RELATIVE_OPENER, RELATIONSHIP UNCERTAIN ═══ -->
+<div class="node" id="node-35">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 35</span><span class="node-tag tag-relative">RELATIVE TRACK</span></div>
+    <div class="node-title">RELATIVE_OPENER &mdash; Relationship Uncertain</div>
+  </div>
+
+  <div class="compliance-block">The default for RELATIVE_1 through 5. The database placed this person with the decedent but the relationship itself is a guess: someone listed as a daughter may be a cousin, someone listed as a spouse may be an ex-spouse. So the script claims family, not a specific role. Everything else is identical to Node 27. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER.</div>
+
+  <div class="variant" data-v="U" id="35-U">
+    <div class="variant-block" data-v="U">
+      <div class="variant-header">THE OPENING</div>
+      <div class="variant-body">
+        <div class="script-line"><div class="agent-label">AGENT</div>Hi, is this [RELATIVE FIRST NAME]? ... Hi [NAME], my name is [AGENT] and I'm with Stealth Investigations, we're a licensed investigations firm here in Alvin, Texas. The reason for my call, and I'll get right to it, is that we've been researching a case involving the estate of [DECEDENT NAME]. Our research shows [REPORTING COMPANY] owed [him/her] money that was never delivered, and it ended up turned over to the State of Texas. That money is still sitting there, and it belongs to [DECEDENT]'s rightful heirs.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Now, according to our records, you are a relative of [DECEDENT]'s. Is that correct?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Part of my job is making sure the right family members know it's there. The other part of my job is making sure the lawful heir or heirs actually receive those funds. In this case the amount involved is [CLAIM AMOUNT]. Would you be able to help me sort out who the lawful heirs are?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>If they volunteer the relationship, take it and use it from that point on. That is better data than the database had.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>The help question gets one of two answers. Relationship volunteered ("she was my mother") &rarr; proceed toward Node 29's schedule, or the fork if trust is already standing. Credibility challenge ("who did you say you're with?") &rarr; Node 16 variation, then Node 2 shape to schedule.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NODE 36: RELATIVE_OPENER, UNRESEARCHED ═══ -->
+<div class="node" id="node-36">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 36</span><span class="node-tag tag-relative">RELATIVE TRACK</span></div>
+    <div class="node-title">RELATIVE_OPENER &mdash; Unresearched</div>
+  </div>
+
+  <div class="compliance-block">No research sits behind this call: a referral from Node 33, a discovery call continuing past Node 28, or a thin file. Assert nothing the facts have not established, including that this person is family. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER.</div>
+
+  <div class="variant" data-v="U" id="36-U">
+    <div class="variant-block" data-v="U">
+      <div class="variant-header">THE OPENING</div>
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">AGENT</div>Hi, is this [NAME]? ... Hi, my name is [AGENT] and I'm with Stealth Investigations in Alvin, Texas, we're a licensed investigations firm. I'm working on a matter involving [DECEDENT NAME], and I believe you may be family, is that right?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>The short version is that money was owed to [DECEDENT] that was never delivered, and it's currently being held by the State of Texas. Part of my job is making sure the right family members know it's there. The other part of my job is making sure the lawful heir or heirs actually receive those funds. In this case the amount involved is [CLAIM AMOUNT]. Would you be able to help me sort out who the lawful heirs are?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-      </div>
-    </div>
-
-    <div class="variant-block" data-v="U" style="margin-top:10px">
-      <div class="variant-header">THE HELP QUESTION &mdash; two responses</div>
-      <div class="variant-body">
-        <div class="script-line"><div class="agent-label">NOTE</div>1. Relationship volunteered ("she was my mother") &rarr; proceed toward Node 29's schedule, or the fork if trust is already standing. Recent death per the obituary: one line of condolence, sincere, no dwelling. Years past (the usual case, ~49 of 50): skip it.</div>
-        <div class="script-line"><div class="agent-label">NOTE</div>2. Credibility challenge ("who did you say you're with?") &rarr; Node 16 variation (credibility proof offer), then Node 2 shape to schedule.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>The help question gets one of two answers. Relationship volunteered ("she was my mother") &rarr; proceed toward Node 29's schedule, or the fork if trust is already standing. Credibility challenge ("who did you say you're with?") &rarr; Node 16 variation, then Node 2 shape to schedule.</div>
       </div>
     </div>
   </div>
@@ -3068,7 +3100,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   function closeDiscovery() { document.getElementById('discovery-overlay').classList.remove('open'); }
 
   let currentNode = 1;
-  const totalNodes = 34;
+  const totalNodes = 36;
 
   // Nodes where variant display is always "ALL" regardless of type selector
   const universalNodes = [2, 14, 23, 26];
@@ -3653,7 +3685,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
 
     // node
     var n = nodeNumberFrom(state.node);
-    if (n && n >= 1 && n <= 34 && typeof goNode === 'function' && window.currentNode !== n) {
+    if (n && n >= 1 && n <= 36 && typeof goNode === 'function' && window.currentNode !== n) {
       goNode(n);
       lastAppliedAt = Date.now();
     }
