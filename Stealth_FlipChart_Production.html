@@ -653,6 +653,12 @@ body.presenter #nav { display:none; }
 body.presenter #reinforce-bar { display:none; }
 body.presenter .compliance-block { display:none; }
 
+/* NOTE lines are agent reference, not words to say. In the full view they sit
+   usefully beside the script; in presenter view they are clutter between the
+   agent and the line they are about to deliver. Same reasoning as the
+   compliance blocks. */
+body.presenter .script-line.note-line { display:none; }
+
 /* The variant header is the most useful cue on the screen: node-specific,
    personality-specific, and already vetted ("[DIRECTOR] Facts First, No
    Emotional Setup"). It sits directly above the script it governs, so
@@ -3406,6 +3412,20 @@ body.presenter #discovery-btn:hover { opacity:1; }
 
   rotate();
   setInterval(rotate, ROTATE_MS);
+
+  // Tag NOTE lines so presenter view can hide them. They are written as plain
+  // script-lines with a NOTE label rather than a distinct class, so tag them
+  // once on load. Doing it here rather than by hand in the markup means any
+  // NOTE added to a node later is picked up without another edit.
+  (function tagNotes() {
+    var lines = document.querySelectorAll('.script-line');
+    for (var i = 0; i < lines.length; i++) {
+      var label = lines[i].querySelector('.agent-label');
+      if (label && label.textContent.trim().toUpperCase() === 'NOTE') {
+        lines[i].classList.add('note-line');
+      }
+    }
+  })();
 })();
 </script>
 
@@ -3484,7 +3504,8 @@ body.presenter #discovery-btn:hover { opacity:1; }
     '[DECEDENT]':            'subject_name',
     '[DECEDENT NAME]':       'subject_name',
     '[STREET NAME]':         'street_name',
-    '[TYPE OF PROPERTY]':    'property_type'
+    '[TYPE OF PROPERTY]':    'property_type',
+    '[RELATIONSHIP]':        'relationship'
   };
 
   var cached  = false;
