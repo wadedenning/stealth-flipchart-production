@@ -3421,6 +3421,85 @@ body.presenter #discovery-btn:hover { opacity:1; }
 </script>
 
 <script>
+/* ===== CALL CONTEXT SUBSTITUTION =====
+   The relay resolves the lead's custom fields on every call and has fed them
+   to Claude since v17, but the chart never saw them, so agents read
+   "[CLAIM AMOUNT]" and "[DECEDENT NAME]" in the script while the system knew
+   both. v18 of the relay returns the resolved context on /state; this puts it
+   on screen.
+
+   Only tokens that map to a field the relay actually resolves are touched.
+   Personality labels ([DIRECTOR], [UNDETERMINED]) and fields nobody supplies
+   ([SPOUSE], [CHILD], [NEGOTIATED RATE]) are left exactly as written.
+
+   Unfilled placeholders stay bracketed on purpose. An agent who sees
+   "[CLAIM AMOUNT]" knows the data is missing and works around it; nobody
+   reads it out loud. Highlighting it would be noise. */
+(function () {
+  var MAP = {
+    '[REPORTING COMPANY]':   'reporting_company',
+    '[COMPANY]':             'reporting_company',
+    '[BANK]':                'reporting_company',
+    '[NAME]':                'prospect_name',
+    '[CLIENT NAME]':         'prospect_name',
+    '[RELATIVE FIRST NAME]': 'prospect_name',
+    '[AGENT]':               'agent_name',
+    '[AGENT NAME]':          'agent_name',
+    '[AMOUNT]':              'claim_amount',
+    '[EXACT AMOUNT]':        'claim_amount',
+    '[CLAIM AMOUNT]':        'claim_amount',
+    '[YEAR]':                'transfer_year',
+    '[DECEDENT]':            'subject_name',
+    '[DECEDENT NAME]':       'subject_name',
+    '[STREET NAME]':         'street_name',
+    '[TYPE OF PROPERTY]':    'property_type'
+  };
+
+  var cached  = false;
+  var lastKey = null;
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Every node is already in the DOM, just hidden, so one pass on load caches
+  // all of them. Substitution always rebuilds from the cached original, which
+  // means a later call with different data cannot inherit the previous one's
+  // values and an ended call restores cleanly.
+  function cacheOriginals() {
+    if (cached) return;
+    var lines = document.querySelectorAll('.script-line');
+    for (var i = 0; i < lines.length; i++) {
+      lines[i].setAttribute('data-orig', lines[i].innerHTML);
+    }
+    cached = true;
+  }
+
+  window.applyCallContext = function (ctx) {
+    cacheOriginals();
+
+    var key = ctx ? JSON.stringify(ctx) : '';
+    if (key === lastKey) return;   // nothing changed, skip the DOM work
+    lastKey = key;
+
+    var lines = document.querySelectorAll('.script-line');
+    for (var i = 0; i < lines.length; i++) {
+      var html = lines[i].getAttribute('data-orig');
+      if (html === null) continue;
+      if (ctx) {
+        for (var token in MAP) {
+          var v = ctx[MAP[token]];
+          if (v && v !== 'unknown') html = html.split(token).join(esc(v));
+        }
+      }
+      lines[i].innerHTML = html;
+    }
+  };
+})();
+</script>
+
+<script>
 (function () {
   // ---- settings ------------------------------------------------------
   // Agent seat. Override in the URL:  ...Production.html?agent=1002
@@ -3535,6 +3614,13 @@ body.presenter #discovery-btn:hover { opacity:1; }
     // the banner keeps working when AUTO is off or the call has ended.
     if (typeof window.setLiveCue === 'function') {
       window.setLiveCue(over ? [] : (state.coaching || []));
+    }
+
+    // Put the lead's real values into the script text. Passing null on a
+    // finished call restores the placeholders, so the next call never opens
+    // showing the last prospect's name or amount.
+    if (typeof window.applyCallContext === 'function') {
+      window.applyCallContext(over ? null : (state.context || null));
     }
 
     // Small talk hold. Node steering stops; everything above this line keeps
