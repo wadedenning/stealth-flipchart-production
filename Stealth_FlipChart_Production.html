@@ -3733,7 +3733,23 @@ body.presenter #discovery-btn:hover { opacity:1; }
   function show(row) {
     current = row;
     var meta = [];
+
+    // Lead with WHEN. A draft from an earlier call looks identical to a fresh
+    // one otherwise, and on 2026-09-01 an old draft was filed against the
+    // wrong account because nothing on screen said which call it came from.
+    var when = '';
+    try {
+      var d = new Date(row.created_at);
+      var mins = Math.round((Date.now() - d.getTime()) / 60000);
+      if (mins < 2)        when = 'just now';
+      else if (mins < 60)  when = mins + ' minutes ago';
+      else if (mins < 180) when = Math.round(mins / 60) + ' hours ago';
+      else                 when = 'EARLIER CALL - ' + d.toLocaleString();
+    } catch (e) { when = ''; }
+    if (when) meta.push(when);
+
     if (row.account_number) meta.push('Account ' + row.account_number);
+    else meta.push('NO ACCOUNT NUMBER - this cannot be filed');
     if (row.agent_name) meta.push(row.agent_name);
     if (!row.had_transcript) meta.push('no transcript captured');
     el('summary-sub').textContent = meta.join('  |  ');
