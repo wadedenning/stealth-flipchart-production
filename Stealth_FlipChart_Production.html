@@ -786,6 +786,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <div id="summary-actions">
     <button id="summary-accept" onclick="acceptSummary()">ACCEPT AND FILE</button>
     <button id="summary-later" onclick="closeSummary()">Not now</button>
+    <button id="summary-discard" onclick="discardSummary()">Discard</button>
     <span id="summary-status"></span>
   </div>
 </div>
@@ -3386,6 +3387,11 @@ body.presenter #discovery-btn:hover { opacity:1; }
   padding: 10px 16px; border-radius: 4px; cursor: pointer;
   font-family: inherit; font-size: 13px;
 }
+#summary-discard {
+  background: #2a1a1a; color: #c08080; border: 1px solid #4a2a2a;
+  padding: 10px 16px; border-radius: 4px; cursor: pointer;
+  font-family: inherit; font-size: 13px;
+}
 #summary-status { font-size: 13px; color: #8a94a6; margin-left: 6px; }
 
 #pending-badge {
@@ -3745,6 +3751,32 @@ body.presenter #discovery-btn:hover { opacity:1; }
 
   window.openPending = function () {
     if (pendingList.length) show(pendingList[0]);
+  };
+
+  // Throw a draft away without filing it. Needed because a draft that cannot
+  // be filed, one whose lead carried no account number for instance, would
+  // otherwise reappear on every poll and block the panel forever.
+  window.discardSummary = function () {
+    if (!current) return;
+    if (!confirm('Discard this summary without filing it?\n\n' +
+                 'Nothing goes into the account. The call stays in the ' +
+                 'record either way.')) return;
+    var id = current.id;
+    el('summary-status').textContent = 'Discarding...';
+    fetch(BASE + '/pending/discard', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function () {
+        pendingList = pendingList.filter(function (p) { return p.id !== id; });
+        renderBadge();
+        closeSummary();
+      })
+      .catch(function () {
+        el('summary-status').textContent = 'Could not reach the relay.';
+      });
   };
 
   window.acceptSummary = function () {
