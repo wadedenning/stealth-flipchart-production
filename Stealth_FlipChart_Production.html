@@ -782,6 +782,13 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <div id="summary-sub"></div>
   <div id="summary-warn">Read this before you accept. Once it goes into the file
     it cannot be edited or deleted, so correct anything wrong here first.</div>
+  <div id="summary-callback">
+    <label for="summary-callback-at">Callback scheduled for</label>
+    <input id="summary-callback-at" type="text" autocomplete="off"
+           placeholder="e.g. Thursday 4 September, 2:00 PM">
+    <span class="cb-note">Dolphin keeps this date to itself, so put it here and
+      it goes into the file.</span>
+  </div>
   <textarea id="summary-text" spellcheck="true"></textarea>
   <div id="summary-actions">
     <button id="summary-accept" onclick="acceptSummary()">ACCEPT AND FILE</button>
@@ -3367,6 +3374,25 @@ body.presenter #discovery-btn:hover { opacity:1; }
   font-size: 13px; color: #f0c060; margin-bottom: 14px;
   border-left: 3px solid #6a4a12; padding-left: 10px;
 }
+#summary-callback {
+  display: none;
+  margin: 0 0 14px 0; padding: 12px 14px;
+  background: #131b26; border: 1px solid #2a4a6a; border-radius: 4px;
+}
+#summary-callback.show { display: block; }
+#summary-callback label {
+  display: block; font-size: 13px; color: #7ab0e0;
+  font-weight: 700; margin-bottom: 6px;
+}
+#summary-callback-at {
+  width: 100%; background: #0d1117; color: #e6edf3;
+  border: 1px solid #2a3441; border-radius: 3px;
+  padding: 9px 12px; font-family: inherit; font-size: 15px;
+}
+#summary-callback .cb-note {
+  display: block; margin-top: 6px; font-size: 12px; color: #7a8494;
+}
+
 #summary-text {
   width: 100%; min-height: 260px;
   background: #11161f; color: #e6edf3;
@@ -3753,11 +3779,23 @@ body.presenter #discovery-btn:hover { opacity:1; }
     if (row.agent_name) meta.push(row.agent_name);
     if (!row.had_transcript) meta.push('no transcript captured');
     el('summary-sub').textContent = meta.join('  |  ');
+    // The callback row only matters when a callback was actually scheduled.
+    // On every other disposition it would be one more thing to skip past.
+    var isCallback = String(row.dispo || '').toUpperCase() === 'CALLBK';
+    var cb = el('summary-callback');
+    if (cb) {
+      if (isCallback) cb.classList.add('show');
+      else cb.classList.remove('show');
+    }
+    var cbAt = el('summary-callback-at');
+    if (cbAt) cbAt.value = '';
+
     el('summary-text').value = row.draft || '';
     el('summary-status').textContent = '';
     el('summary-accept').disabled = false;
     el('summary-overlay').classList.add('open');
-    el('summary-text').focus();
+    if (isCallback && cbAt) cbAt.focus();
+    else el('summary-text').focus();
   }
 
   window.closeSummary = function () {
@@ -3808,7 +3846,11 @@ body.presenter #discovery-btn:hover { opacity:1; }
     fetch(BASE + '/pending/accept', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: current.id, text: text })
+      body: JSON.stringify({
+        id: current.id,
+        text: text,
+        callback_at: (el('summary-callback-at') || {}).value || ''
+      })
     })
       .then(function (r) { return r.json(); })
       .then(function (d) {
