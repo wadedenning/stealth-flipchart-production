@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unfiled Call Summaries</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; padding: 28px 34px;
+    background: #0d1117; color: #e6edf3;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px; line-height: 1.55;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
+  .sub { color: #8a94a6; font-size: 13px; margin-bottom: 22px; }
+
+  .bar { display: flex; gap: 10px; align-items: center; margin-bottom: 26px; }
+  button {
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    padding: 10px 18px; border-radius: 4px; cursor: pointer;
+  }
+  #download { background: #1a6a3a; color: #d6ffe6; border: 1px solid #2a8a4a; }
+  #refresh  { background: #1a1f28; color: #8a94a6; border: 1px solid #2a3441; }
+  #status   { font-size: 13px; color: #8a94a6; }
+
+  .totals {
+    background: #131b26; border: 1px solid #2a3441; border-radius: 4px;
+    padding: 14px 18px; margin-bottom: 26px; font-size: 14px;
+  }
+  .totals strong { color: #e6edf3; }
+  .totals .bad { color: #ff9a80; }
+
+  .agent { margin-bottom: 30px; }
+  .agent h2 {
+    font-size: 17px; margin: 0 0 2px; font-weight: 700;
+    border-bottom: 1px solid #2a3441; padding-bottom: 7px;
+  }
+  .agent .count { font-size: 13px; color: #8a94a6; margin: 6px 0 12px; }
+
+  .item {
+    border-left: 3px solid #2a3441; padding: 9px 0 9px 14px;
+    margin-bottom: 14px;
+  }
+  .item.old { border-left-color: #a03a2a; }
+  .item .meta { font-size: 12px; color: #8a94a6; margin-bottom: 5px; }
+  .item .meta .flag {
+    color: #ff9a80; font-weight: 700; letter-spacing: 0.4px;
+  }
+  .item .draft { white-space: pre-wrap; font-size: 14px; color: #c9d4e0; }
+
+  .empty { color: #6ee0a0; font-size: 15px; }
+  .err { color: #ff9a80; }
+</style>
+</head>
+<body>
+
+<h1>Unfiled call summaries</h1>
+<div class="sub" id="generated">Loading...</div>
+
+<div class="bar">
+  <button id="download" onclick="downloadReport()">Download report</button>
+  <button id="refresh" onclick="load()">Refresh</button>
+  <span id="status"></span>
+</div>
+
+<div id="totals" class="totals" style="display:none"></div>
+<div id="body"></div>
+
+<script>
+/* Every summary the relay generated that nobody has filed yet.
+   A draft that is never accepted means a call with no record in the account,
+   so this is the list of calls that are effectively missing.
+
+   One report for the whole team on purpose. Kathy sends it out and the names
+   with carried-over items are visible to everyone on it.
+
+   Read only. Agents fix their own on the flip chart; nobody files a note about
+   a conversation they were not in. */
+
+var BASE = 'https://stealth-relay.wdenning.workers.dev';
+var data = null;
+
+function esc(t) {
+  return String(t == null ? '' : t)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function whenText(iso) {
+  try {
+    var d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+  } catch (e) { return iso; }
+}
+
+function render() {
+  var body = document.getElementById('body');
+  var totals = document.getElementById('totals');
+
+  document.getElementById('generated').textContent =
+    'Generated ' + whenText(data.generated_at);
+
+  var names = Object.keys(data.agents || {}).sort();
+
+  if (!names.length) {
+    totals.style.display = 'none';
+    body.innerHTML = '<p class="empty">Nothing outstanding. ' +
+      'Every call summary has been filed.</p>';
+    return;
+  }
+
+  var carried = 0;
+  names.forEach(function (n) {
+    data.agents[n].forEach(function (i) { if (i.carried_over) carried++; });
+  });
+
+  totals.style.display = 'block';
+  totals.innerHTML =
+    '<strong>' + data.total_unfiled + '</strong> unfiled ' +
+    (data.total_unfiled === 1 ? 'summary' : 'summaries') +
+    ' across <strong>' + names.length + '</strong> ' +
+    (names.length === 1 ? 'agent' : 'agents') +
+    (carried
+      ? '. <span class="bad">' + carried + ' carried over from a previous day.</span>'
+      : '.');
+
+  var html = '';
+  names.forEach(function (name) {
+    var items = data.agents[name];
+    var old = items.filter(function (i) { return i.carried_over; }).length;
+    html += '<div class="agent"><h2>' + esc(name) + '</h2>';
+    html += '<div class="count">' + items.length + ' unfiled' +
+            (old ? ', ' + old + ' from a previous day' : '') + '</div>';
+    items.forEach(function (i) {
+      html += '<div class="item' + (i.carried_over ? ' old' : '') + '">';
+      html += '<div class="meta">' + whenText(i.at) +
+              '  |  ' + esc(i.dispo || 'no disposition') +
+              '  |  ' + (i.account ? 'Account ' + esc(i.account)
+                                   : 'no account number') +
+              (i.had_transcript ? '' : '  |  no transcript') +
+              (i.carried_over
+                ? '  |  <span class="flag">' + i.age_hours +
+                  ' HOURS OLD</span>'
+                : '') +
+              '</div>';
+      html += '<div class="draft">' + esc(i.draft) + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  body.innerHTML = html;
+}
+
+function load() {
+  document.getElementById('status').textContent = 'Loading...';
+  fetch(BASE + '/report', { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      data = d;
+      document.getElementById('status').textContent = '';
+      render();
+    })
+    .catch(function () {
+      document.getElementById('status').innerHTML =
+        '<span class="err">Could not reach the relay. Try refresh.</span>';
+    });
+}
+
+/* Plain text, because this gets pasted into an email to the team. */
+function downloadReport() {
+  if (!data) return;
+  var lines = [];
+  lines.push('UNFILED CALL SUMMARIES');
+  lines.push('Generated ' + whenText(data.generated_at));
+  lines.push('');
+
+  var names = Object.keys(data.agents || {}).sort();
+  if (!names.length) {
+    lines.push('Nothing outstanding. Every call summary has been filed.');
+  } else {
+    var carried = 0;
+    names.forEach(function (n) {
+      data.agents[n].forEach(function (i) { if (i.carried_over) carried++; });
+    });
+    lines.push(data.total_unfiled + ' unfiled across ' + names.length +
+               ' agents. ' + carried + ' carried over from a previous day.');
+    lines.push('');
+    lines.push('A summary that is never accepted means the call has no record ' +
+               'in the account. Please clear yours on the flip chart.');
+    lines.push('');
+    lines.push('----------------------------------------------------------');
+
+    names.forEach(function (name) {
+      var items = data.agents[name];
+      var old = items.filter(function (i) { return i.carried_over; }).length;
+      lines.push('');
+      lines.push(name.toUpperCase() + ' - ' + items.length + ' unfiled' +
+                 (old ? ', ' + old + ' from a previous day' : ''));
+      lines.push('');
+      items.forEach(function (i) {
+        lines.push('  ' + whenText(i.at) +
+                   '  |  ' + (i.dispo || 'no disposition') +
+                   '  |  ' + (i.account ? 'Account ' + i.account
+                                        : 'NO ACCOUNT NUMBER') +
+                   (i.carried_over ? '  |  ' + i.age_hours + ' HOURS OLD' : ''));
+        String(i.draft || '').split('\n').forEach(function (l) {
+          lines.push('    ' + l);
+        });
+        lines.push('');
+      });
+      lines.push('----------------------------------------------------------');
+    });
+  }
+
+  var stamp = new Date().toISOString().slice(0, 10);
+  var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Unfiled_Call_Summaries_' + stamp + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+load();
+</script>
+
+</body>
+</html>
