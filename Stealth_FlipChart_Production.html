@@ -648,6 +648,60 @@
   opacity:0.55; margin-right:8px; text-transform:uppercase; vertical-align:middle;
 }
 
+/* ===== SCRIPT STATE =====
+   The coach says whether the node's written words still fit what the prospect
+   just did. When they do not, the script greys back and the calibration takes
+   the screen.
+
+   Greyed, never hidden. An experienced agent glances rather than reads, and
+   seeing that a line exists but does not apply is more information than seeing
+   nothing. A new agent needs to know what the node contains at all. */
+
+body.script-stale .variant.visible .script-line,
+body.script-stale .variant.visible .silence-marker {
+  opacity: 0.28;
+  filter: grayscale(1);
+  transition: opacity .25s ease;
+}
+body.script-stale .variant.visible .variant-header {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+#script-state-flag {
+  display: none;
+  margin: 0 0 12px 0;
+  padding: 7px 14px;
+  border-left: 3px solid #a0621a;
+  background: #241a0d;
+  color: #f0b060;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+body.script-stale #script-state-flag,
+body.script-adjust #script-state-flag { display: block; }
+body.script-adjust #script-state-flag {
+  border-left-color: #2a6a8a;
+  background: #0d1a24;
+  color: #7ab0e0;
+}
+
+/* The calibration takes over when the script cannot carry the moment. */
+body.script-stale #cue-banner,
+body.script-adjust #cue-banner {
+  border-color: #a0621a;
+  background: #1a1206;
+}
+body.script-stale #cue-text,
+body.script-adjust #cue-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffd28a;
+}
+body.script-stale #cue-persona,
+body.script-adjust #cue-persona { opacity: 0.55; }
+
 body.presenter #cue-banner { display:block; }
 body.presenter #nav { display:none; }
 body.presenter #reinforce-bar { display:none; }
@@ -791,6 +845,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   </div>
 </div>
 
+<div id="script-state-flag"></div>
 <div id="cue-banner"><span id="cue-persona">READ THEM FIRST</span><span id="cue-secondary"><span class="cue-src">know them</span><span id="cue-text">Read them before you commit.</span></span></div>
 
 <div id="layout">
@@ -4010,6 +4065,23 @@ body.presenter #discovery-btn:hover { opacity:1; }
     // the banner keeps working when AUTO is off or the call has ended.
     if (typeof window.setLiveCue === 'function') {
       window.setLiveCue(over ? [] : (state.coaching || []));
+    }
+
+    // Grey the script back when the coach says the node's words no longer fit
+    // what the prospect just did, and let the calibration take the screen.
+    // A finished call always reverts to normal so the next one starts clean.
+    var ss = over ? 'APPLIES' : (state.script_state || 'APPLIES');
+    var b = document.body;
+    var flag = document.getElementById('script-state-flag');
+    b.classList.remove('script-stale', 'script-adjust');
+    if (ss === 'STALE') {
+      b.classList.add('script-stale');
+      if (flag) flag.textContent =
+        'THE SCRIPT BELOW NO LONGER FITS. GO WITH THE DIRECTION ABOVE.';
+    } else if (ss === 'ADJUST') {
+      b.classList.add('script-adjust');
+      if (flag) flag.textContent =
+        'THE SCRIPT MOSTLY HOLDS. ADAPT IT TO WHAT THEY JUST SAID.';
     }
 
     // Put the lead's real values into the script text. Passing null on a
