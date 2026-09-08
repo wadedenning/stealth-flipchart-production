@@ -687,9 +687,15 @@ body.script-adjust #script-state-flag {
   color: #7ab0e0;
 }
 
-/* The calibration takes over when the script cannot carry the moment. */
+/* The calibration takes over when the script cannot carry the moment.
+   FORCE IT VISIBLE. The banner is normally presenter-only, so styling it for
+   STALE was useless in the default view: the script greyed out and nothing
+   replaced it, which is worse than leaving the stale script alone. The
+   direction has to be on screen whenever the script is not carrying the
+   moment, whichever view the agent is in. */
 body.script-stale #cue-banner,
 body.script-adjust #cue-banner {
+  display: block;
   border-color: #a0621a;
   background: #1a1206;
 }
