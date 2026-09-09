@@ -708,6 +708,56 @@ body.script-adjust #cue-text {
 body.script-stale #cue-persona,
 body.script-adjust #cue-persona { opacity: 0.55; }
 
+/* Reference blocks are for learning the material, not for reading mid-call.
+   On screen at the same time as a script they compete for attention at exactly
+   the moment the agent has none to spare. Presenter mode is the live-call view,
+   so they come out of it. They remain in the normal view, which is where an
+   agent studies. */
+body.presenter .gate-guide,
+body.presenter .buy-cue,
+body.presenter .loop-guide { display: none; }
+
+/* ===== GENERATED LINE =====
+   A few nodes carry no vetted words because what needs saying comes entirely
+   from what the prospect just said. The relay generates the opener and the
+   ladder underneath is fixed, so the agent can work down it at the prospect's
+   pace without waiting on anything. */
+
+#generated-block {
+  display: none;
+  margin: 0 0 18px 0;
+  border: 1px solid #2a6a4a;
+  border-left: 4px solid #3a9a6a;
+  border-radius: 4px;
+  background: #0d1a14;
+  padding: 16px 20px;
+}
+body.has-generated #generated-block { display: block; }
+
+/* The vetted script has nothing to say on these nodes. */
+body.has-generated .variant.visible { display: none; }
+
+#generated-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.6px;
+  color: #6ee0a0; margin-bottom: 10px;
+}
+#generated-line {
+  font-size: 26px; line-height: 1.45; color: #e6edf3; font-weight: 500;
+}
+#generated-ladder { margin-top: 16px; }
+#generated-ladder .rung {
+  font-size: 17px; line-height: 1.5; color: #a8c4b4;
+  padding: 7px 0 7px 16px; border-left: 2px solid #2a4a3a;
+  margin-bottom: 4px;
+}
+#generated-ladder .rung .n {
+  color: #6ee0a0; font-weight: 700; margin-right: 8px;
+}
+@media (max-width: 900px) {
+  #generated-line { font-size: 21px; }
+  #generated-ladder .rung { font-size: 15px; }
+}
+
 body.presenter #cue-banner { display:block; }
 body.presenter #nav { display:none; }
 body.presenter #reinforce-bar { display:none; }
@@ -852,6 +902,11 @@ body.presenter #discovery-btn:hover { opacity:1; }
 </div>
 
 <div id="script-state-flag"></div>
+<div id="generated-block">
+  <div id="generated-label"></div>
+  <div id="generated-line"></div>
+  <div id="generated-ladder"></div>
+</div>
 <div id="cue-banner"><span id="cue-persona">READ THEM FIRST</span><span id="cue-secondary"><span class="cue-src">know them</span><span id="cue-text">Read them before you commit.</span></span></div>
 
 <div id="layout">
@@ -4073,6 +4128,32 @@ body.presenter #discovery-btn:hover { opacity:1; }
       window.setLiveCue(over ? [] : (state.coaching || []));
     }
 
+    // A node with no vetted words shows a generated opener and, where there is
+    // one, the fixed ladder under it. The vetted script is hidden rather than
+    // greyed, because on these nodes there is nothing worth reading.
+    var gLine = over ? null : (state.generate_line || null);
+    var gBlock = document.getElementById('generated-block');
+    if (gLine && gBlock) {
+      document.body.classList.add('has-generated');
+      var lbl = { CALLBACK_PROPOSE: 'PROPOSE THE CALLBACK',
+                  CALLBACK_CONFIRM: 'CONFIRM THE TIME THEY GAVE' };
+      document.getElementById('generated-label').textContent =
+        lbl[state.generate_kind] || 'SAY THIS';
+      document.getElementById('generated-line').textContent = gLine;
+
+      var lad = state.generate_ladder || [];
+      var lh = '';
+      for (var li = 0; li < lad.length; li++) {
+        lh += '<div class="rung"><span class="n">' + (li + 1) + '</span>' +
+              String(lad[li])
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;') + '</div>';
+      }
+      document.getElementById('generated-ladder').innerHTML = lh;
+    } else {
+      document.body.classList.remove('has-generated');
+    }
+
     // Grey the script back when the coach says the node's words no longer fit
     // what the prospect just did, and let the calibration take the screen.
     // A finished call always reverts to normal so the next one starts clean.
@@ -4083,7 +4164,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
     if (ss === 'STALE') {
       b.classList.add('script-stale');
       if (flag) flag.textContent =
-        'THE SCRIPT BELOW NO LONGER FITS. GO WITH THE DIRECTION ABOVE.';
+        'THE SCRIPT NO LONGER FITS. GO WITH THE FOLLOWING DIRECTION.';
     } else if (ss === 'ADJUST') {
       b.classList.add('script-adjust');
       if (flag) flag.textContent =
