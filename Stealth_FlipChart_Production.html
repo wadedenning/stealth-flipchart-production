@@ -3943,6 +3943,10 @@ body.presenter #discovery-btn:hover { opacity:1; }
           if (current && current.call_uuid) {
             window.__filedCallUuid = current.call_uuid;
           }
+          // Clear the generated block. It belongs to the call just filed.
+          document.body.classList.remove('has-generated',
+                                         'script-stale', 'script-adjust');
+
           // Put the placeholders back. Without this the chart resets to Node 1
           // still showing the last prospect's name and amount, which is worse
           // than showing brackets: brackets are obviously missing, whereas a
@@ -4071,6 +4075,12 @@ body.presenter #discovery-btn:hover { opacity:1; }
     // summary, undoing the reset. The agent watched the chart clear to Node 1
     // and then jump straight back to where the last call ended.
     if (window.__filedCallUuid && state.call_uuid === window.__filedCallUuid) {
+      // Declining to re-apply is not enough on its own: anything already on
+      // screen from that call stays there. The generated block does exactly
+      // that, because it is rendered from state rather than from the node, so
+      // an accepted call left its green block sitting under a reset chart.
+      document.body.classList.remove('has-generated',
+                                     'script-stale', 'script-adjust');
       dotEl.className = '';
       noteEl.textContent = 'summary filed, ready for the next call';
       return;
