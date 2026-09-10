@@ -97,9 +97,9 @@
 
   .type-btn {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 7px 16px;
     border-radius: 3px;
     border: 1px solid transparent;
     cursor: pointer;
@@ -502,8 +502,8 @@
   /* === CLAIM-TYPE AXIS (Owner | Deceased: Undetermined / Probated / Intestate) === */
   #claim-selector { display:inline-flex; gap:5px; margin-left:4px; align-items:center; }
   .claim-sep { color:#444c66; font-size:11px; margin:0 2px; }
-  .claim-btn { font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
-    padding:5px 10px; border-radius:5px; cursor:pointer; text-transform:uppercase;
+  .claim-btn { font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700;
+    padding:7px 16px; border-radius:5px; cursor:pointer; text-transform:uppercase;
     border:1px solid #2f3550; background:#1b1f2e; color:#7a8299; letter-spacing:.4px; }
   .claim-btn[data-claim="owner"].active     { background:#13351f; border-color:#2f7d4d; color:#5eb870; box-shadow:0 0 8px #2f7d4d; }
   .claim-btn[data-claim="deceased-u"].active { background:#3a2a10; border-color:#b8862f; color:#e0a94a; box-shadow:0 0 8px #b8862f; }
@@ -772,6 +772,10 @@ body.has-generated .variant.visible { display: none; }
   #generated-line { font-size: 21px; }
   #generated-ladder .rung { font-size: 15px; }
 }
+
+/* The node indicator is for building and debugging, not for an agent mid-call.
+   Nobody on a live call needs to know they are on node 9 of 36. */
+body.presenter #current-node-display { display: none; }
 
 body.presenter #cue-banner { display:block; }
 body.presenter #nav { display:none; }
