@@ -668,6 +668,21 @@ body.script-stale .variant.visible .variant-header {
   filter: grayscale(1);
 }
 
+#training-badge {
+  display: none;
+  margin-right: 10px;
+  padding: 3px 9px;
+  border: 1px solid #3a5a7a;
+  border-radius: 3px;
+  background: #0d1620;
+  color: #7ab0e0;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  vertical-align: middle;
+}
+
 #script-state-flag {
   display: none;
   margin: 0 0 12px 0;
@@ -865,6 +880,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <h1>STEALTH INVESTIGATIONS</h1>
   <span class="header-sep">|</span>
   <div id="type-selector">
+    <span id="training-badge" style="display:none"></span>
     <button class="type-btn active" data-type="U" onclick="setType('U')">UNDETERMINED</button>
     <button class="type-btn" data-type="D" onclick="setType('D')">DIRECTOR</button>
     <button class="type-btn" data-type="S" onclick="setType('S')">SOCIALIZER</button>
@@ -3302,7 +3318,60 @@ body.presenter #discovery-btn:hover { opacity:1; }
   // Nodes that use variant blocks with data-v="ALL" in specific places
   // (but show typed variants too - handled by data-v matching)
 
+  // ===== TRAINING STAGE =====
+  //
+  // A new agent cannot absorb five variants across thirty-six nodes on day one.
+  // The chart shows only the types that agent has been trained on, and unlocks
+  // the rest as they earn them: one per morning for the veterans' five-day
+  // ramp, one per fortnight on the twenty-week schedule where each phase ends
+  // in a test and a raise.
+  //
+  // Set in the URL:  ...Production.html?agent=1002&trained=U,R
+  // Default is everything, so an unparameterised bookmark behaves exactly as
+  // the chart always has. Kathy issues an updated link as each type unlocks.
+  //
+  // NOTHING BEHIND THE SCENES IS REDUCED. Detection, switching, node routing
+  // and logging all run at full strength. The agent simply sees less, and the
+  // calls where the coach read a type they have not been taught become the
+  // training material for the session that introduces it.
+  var TRAINED = (function () {
+    var p = new URLSearchParams(location.search).get('trained');
+    if (!p) return ['U', 'D', 'S', 'R', 'T'];
+    var out = p.toUpperCase().split(',')
+      .map(function (x) { return x.trim(); })
+      .filter(function (x) { return ['U','D','S','R','T'].indexOf(x) !== -1; });
+    // Undetermined is the foundation and is never hidden.
+    if (out.indexOf('U') === -1) out.unshift('U');
+    return out;
+  })();
+
+  var FULLY_TRAINED = TRAINED.length === 5;
+
+  function isTrained(t) {
+    return TRAINED.indexOf(t) !== -1;
+  }
+
+  // Hide the buttons for types this agent has not reached. Hidden rather than
+  // disabled: a greyed button invites the question "what is that", which is
+  // exactly the distraction the staging exists to avoid.
+  function applyTrainingStage() {
+    if (FULLY_TRAINED) return;
+    document.querySelectorAll('.type-btn').forEach(function (b) {
+      if (!isTrained(b.getAttribute('data-type'))) b.style.display = 'none';
+    });
+    var badge = document.getElementById('training-badge');
+    if (badge) {
+      badge.textContent = 'TRAINING: ' + TRAINED.join(' ');
+      badge.style.display = 'inline-block';
+    }
+  }
+
   function setType(type) {
+    // The coach reads the prospect at full strength whatever the agent has
+    // been taught. When it lands on a type they have not reached, hold at
+    // UNDETERMINED and say nothing. Telling a week-two agent they are
+    // mishandling a type nobody has taught them does not help them.
+    if (!isTrained(type)) type = 'U';
     currentType = type;
     document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
@@ -3407,6 +3476,8 @@ body.presenter #discovery-btn:hover { opacity:1; }
   // these, which is why accepting a summary never reset the chart: its
   // `typeof setType === 'function'` guard was always false and it skipped the
   // reset in silence. Exposing them deliberately rather than moving the panel.
+  applyTrainingStage();
+
   window.setType = setType;
   window.goNode  = goNode;
   window.setClaim = setClaim;
@@ -4128,8 +4199,14 @@ body.presenter #discovery-btn:hover { opacity:1; }
     // seeing DIRECTOR at hello would otherwise reasonably wonder how it knows,
     // and the label also tells them to watch for it changing: the seed is a
     // starting point, not a verdict.
-    typeEl.textContent = (state.committed_type || 'UNDETERMINED') +
-      (state.seeded_type && state.seeded_type === state.committed_type
+    // Do not name a type the agent has not reached. Same reasoning as hiding
+    // the buttons: it invites a question the staging exists to avoid.
+    var shownType = state.committed_type || 'UNDETERMINED';
+    var shownKey = TYPE_MAP[shownType];
+    if (shownKey && !isTrained(shownKey)) shownType = 'UNDETERMINED';
+    typeEl.textContent = shownType +
+      (state.seeded_type && state.seeded_type === state.committed_type &&
+       shownType !== 'UNDETERMINED'
         ? '  (from last call)' : '');
 
     // Feed the presenter cue banner. Done before the early returns below so
@@ -4205,7 +4282,11 @@ body.presenter #discovery-btn:hover { opacity:1; }
     noteEl.textContent = fresh ? 'following the call' : 'call quiet';
 
     // personality
+    //
+    // Gate here as well as inside setType, so an untrained read does not make
+    // the chart call setType on every poll only to be turned back to U.
     var want = TYPE_MAP[state.committed_type];
+    if (want && !isTrained(want)) want = 'U';
     if (want && typeof setType === 'function' && window.currentType !== want) {
       setType(want);
     }
