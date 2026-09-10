@@ -97,9 +97,9 @@
 
   .type-btn {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 700;
-    padding: 7px 16px;
+    padding: 10px 22px;
     border-radius: 3px;
     border: 1px solid transparent;
     cursor: pointer;
@@ -502,8 +502,8 @@
   /* === CLAIM-TYPE AXIS (Owner | Deceased: Undetermined / Probated / Intestate) === */
   #claim-selector { display:inline-flex; gap:5px; margin-left:4px; align-items:center; }
   .claim-sep { color:#444c66; font-size:11px; margin:0 2px; }
-  .claim-btn { font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700;
-    padding:7px 16px; border-radius:5px; cursor:pointer; text-transform:uppercase;
+  .claim-btn { font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700;
+    padding:10px 22px; border-radius:5px; cursor:pointer; text-transform:uppercase;
     border:1px solid #2f3550; background:#1b1f2e; color:#7a8299; letter-spacing:.4px; }
   .claim-btn[data-claim="owner"].active     { background:#13351f; border-color:#2f7d4d; color:#5eb870; box-shadow:0 0 8px #2f7d4d; }
   .claim-btn[data-claim="deceased-u"].active { background:#3a2a10; border-color:#b8862f; color:#e0a94a; box-shadow:0 0 8px #b8862f; }
@@ -992,7 +992,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
       <span>NODE 01</span><span class="node-tag tag-first">FIRST CALL</span>
     </div>
     <div class="node-title">START &mdash; Connection Stage</div>
-    
+    <div class="node-note">UNDETERMINED ONLY. No personality read is possible before the prospect has spoken, so there is nothing to vary. Typed variants were stripped 2026-09-11.<br><br>The opening deliberately delays the hook. On a cold call the first sentence washes over people and the names do not register. "Licensed private investigations agency" and a county they may have no connection to plant two questions the prospect has to keep listening to resolve, so the reporting company lands when they are actually attending.</div>
   </div>
   
 
@@ -1001,7 +1001,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
       <div class="variant-header">[UNDETERMINED] — Default Barrel-Through Opening</div>
       <div class="variant-body">
         
-        <div class="script-line"><div class="agent-label">AGENT</div>Hi [CLIENT NAME], this is [AGENT NAME] with Stealth Investigations — I'm reaching out because our research team flagged a payment in your name from [REPORTING COMPANY] that never made it to you.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Hi [CLIENT NAME], this is [AGENT NAME] with Stealth Investigations — We are a licensed private Investigations Agency located in Brazoria County — I'm reaching out because our research team flagged a payment in your name from [REPORTING COMPANY] that never made it to you.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>I wanted to make sure you were aware of it.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Does that ring a bell at all?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
@@ -1010,51 +1010,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
     </div>
   </div>
 
-  <div class="variant" data-v="D" id="1-D">
-    <div class="variant-block" data-v="D">
-      <div class="variant-header">[DIRECTOR] — Fast, Fact-Dense, Zero Filler</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], [AGENT] with Stealth Investigations. Our research team found a payment of [AMOUNT] in your name from [COMPANY] that never reached you. I wanted to make sure you knew about it — does that ring a bell?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="S" id="1-S">
-    <div class="variant-block" data-v="S">
-      <div class="variant-header">[SOCIALIZER] — Warm, Energetic, Hook as Story Teaser</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Hey [NAME]! It's [AGENT] over at Stealth Investigations — listen, I've got something interesting for you. Our research team found a payment in your name from [COMPANY] that never made it to you. I wanted to make sure you knew about it — does that ring a bell at all?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="R" id="1-R">
-    <div class="variant-block" data-v="R">
-      <div class="variant-header">[RELATER] — Softer Delivery, Unhurried, Reassuring Frame</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research team came across some information I think would be important for you to know about — it looks like there's a payment in your name from [COMPANY] that never reached you. Does that ring a bell at all?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="T" id="1-T">
-    <div class="variant-block" data-v="T">
-      <div class="variant-header">[THINKER] — Structured, Credentialed, Specific</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Hi [NAME], this is [AGENT] with Stealth Investigations. I'm calling because our research department identified a payment in your name — it was reported by [COMPANY] and is currently being held by the State of Texas. I wanted to make sure you were aware of it. Does that ring a bell?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  
+    
 </div>
 
 <!-- ═══ NODE 2: CALLBACK_SCHEDULE ═══ -->
@@ -2510,65 +2466,17 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <div class="node-header">
     <div class="node-id-line"><span>NODE 21</span><span class="node-tag tag-inbound">INBOUND</span></div>
     <div class="node-title">INBOUND_START &mdash; Receive and Identify</div>
-    
+    <div class="node-note">UNDETERMINED ONLY. This is the agent's first words on a warm transfer from the receptionist, so no personality read exists yet. Typed variants were stripped 2026-09-11 for the same reason as Node 01.</div>
   </div>
   
 
   <div class="variant" data-v="U" id="21-U">
     <div class="variant-block" data-v="U">
-      <div class="variant-header">[UNDETERMINED] — Standard Inbound Greeting + Case Pull</div>
+      <div class="variant-header">[UNDETERMINED] — Warm Transfer Greeting + Case Pull</div>
       <div class="variant-body">
-        <div class="script-line"><div class="agent-label">AGENT</div>Stealth Investigations, this is [AGENT NAME]. How can I help you today?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Stealth Investigations, this is [AGENT NAME]. Is this Mr./Mrs. ______?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Oh great! Yes, we've been researching a case that involves you. There should be a Property ID Number on the letter we sent — do you happen to have that handy? That will help me pull up your file right away.</div>
-        
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>I totally understand why you'd ask that — honestly, I'd be suspicious too if I got a letter out of the blue saying someone owed me money. That's a completely reasonable reaction. Let me give you some information that might put your mind at ease.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="D" id="21-D">
-    <div class="variant-block" data-v="D">
-      <div class="variant-header">[DIRECTOR] — Fast Case Pull, Facts Immediately</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Let me pull your file. Your name?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="S" id="21-S">
-    <div class="variant-block" data-v="S">
-      <div class="variant-header">[SOCIALIZER] — Let Them Tell Their Story, Then Redirect</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>I'm so glad you called! Let me pull up your case and tell you exactly what we found.</div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="R" id="21-R">
-    <div class="variant-block" data-v="R">
-      <div class="variant-header">[RELATER] — Reassure First, Then Pull File</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>I'm really glad you called. There's nothing to worry about — let me explain everything so you feel completely comfortable.</div>
-        <div class="script-line"><div class="agent-label">AGENT</div>Can I get your name, or the Property ID from the letter? I'll pull up your file and walk you through it step by step.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="variant" data-v="T" id="21-T">
-    <div class="variant-block" data-v="T">
-      <div class="variant-header">[THINKER] — They Have Questions Ready — Answer All of Them</div>
-      <div class="variant-body">
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>Absolutely. Let me pull up your file first so I can give you specific answers about your case, not just general information.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Oh great! Thank you for calling, we've been researching a case that involves you. There should be a Property ID Number on the letter we sent — do you happen to have that handy? That will help me pull up your file right away.</div>
         
       </div>
     </div>
