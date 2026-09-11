@@ -967,12 +967,20 @@ body.presenter .silence-marker { font-size:16px; padding:11px 14px; }
   #cue-secondary { font-size:17px; }
 }
 
-/* The type and claim buttons stay visible and readable. They are the system
-   showing its work, and an agent glances at them. Sized to match the rest of
-   the row rather than being scaled down and faded, which is what they were
-   before 2026-09-11. */
-body.presenter #type-selector,
-body.presenter #claim-selector { opacity: 1; }
+/* The personality buttons stay. They are the system showing its work, and the
+   read changes how the agent speaks, so watching it shift is meaningful. Full
+   opacity rather than the scaled-down faded version they had before
+   2026-09-11. */
+body.presenter #type-selector { opacity: 1; }
+
+/* The claim buttons go. Same reasoning as the reference controls below: the
+   coach sets the claim type itself from what it hears, emits CLAIM TYPE, and
+   the chart applies it on the next poll. An agent clicking one would be
+   overridden a second later.
+   Unlike the personality read, the claim type does not change how the agent
+   speaks. It changes which nodes exist, which the agent experiences as the
+   script changing rather than as a label at the top of the screen. */
+body.presenter #claim-selector { display: none; }
 
 /* REFERENCE CONTROLS, HIDDEN IN PRESENTER
    Both open reference material for learning. Neither is something an agent does
