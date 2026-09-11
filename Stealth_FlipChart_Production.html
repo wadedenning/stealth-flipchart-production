@@ -970,7 +970,22 @@ body.presenter .silence-marker { font-size:16px; padding:11px 14px; }
 /* The agent keeps control, but it sits at the edge of attention. */
 body.presenter #type-selector,
 body.presenter #claim-selector,
-body.presenter #discovery-btn { opacity:0.4; transform:scale(0.88); }
+/* Deceased Discovered is a live action an agent takes mid-call, so it matches
+   the claim buttons beside it rather than being shrunk and dimmed. It was being
+   scaled down and faded to 40 percent, which made the one genuinely urgent
+   button on the row the hardest to see. */
+body.presenter #discovery-btn {
+  font-size: 20px;
+  font-weight: 700;
+  padding: 10px 22px;
+  margin-left: 14px;
+}
+
+/* The switching guide is reference material for learning how a prospect moves
+   between types. It belongs in the training and study charts, not in front of
+   an agent on a live call. */
+body.presenter #switch-toggle { display: none; }
+body.presenter .header-sep { display: none; }
 body.presenter #type-selector:hover,
 body.presenter #claim-selector:hover,
 body.presenter #discovery-btn:hover { opacity:1; }
