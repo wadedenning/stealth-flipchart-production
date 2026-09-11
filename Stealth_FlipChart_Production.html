@@ -777,6 +777,132 @@ body.has-generated .variant.visible { display: none; }
    Nobody on a live call needs to know they are on node 9 of 36. */
 body.presenter #current-node-display { display: none; }
 
+/* ===== BUY SIGNAL ALERT =====
+   Fires when the coach detects a close signal. This is a LIVE EVENT, not
+   reference material, which is why it survives presenter mode when the static
+   BUY SIGNAL reference block does not.
+
+   It had never been built. CLOSE SIGNAL sat in the chart's FLAGS list, which
+   the cue banner skips on the grounds that flags are "handled elsewhere", and
+   nothing handled it. DEATH DISCOVERED has explicit handling; this did not.
+
+   Deliberately loud and deliberately short-lived. The agent needs to notice it
+   inside a second and then get back to the prospect, so it announces itself and
+   then fades to a quiet marker rather than sitting on screen competing with the
+   script. */
+
+#buy-signal-alert {
+  display: none;
+  margin: 0 0 14px 0;
+  padding: 14px 20px;
+  border: 2px solid #2f7d4d;
+  border-left: 6px solid #5eb870;
+  border-radius: 4px;
+  background: #0d2413;
+  color: #7ef0a8;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+/* It stays loud for the rest of the call. Wade 2026-09-11: a buy signal not
+   acted on is the most expensive thing that happens on a call, so it does not
+   quieten down and it does not go away until the call does. */
+#buy-signal-alert.show { display: block; animation: buyflash 1.1s ease-out 2; }
+#buy-signal-alert .bs-said {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #b8e6c8;
+  letter-spacing: 0;
+}
+@keyframes buyflash {
+  0%   { box-shadow: 0 0 0 0 rgba(94,184,112,0.55); }
+  60%  { box-shadow: 0 0 26px 5px rgba(94,184,112,0.30); }
+  100% { box-shadow: 0 0 0 0 rgba(94,184,112,0); }
+}
+
+/* ===== THE THREE GATES, BETWEEN CALLS =====
+   Wade 2026-09-11: the gate guide is a good training tool, big picture
+   structure for the process, but it competes with the script during a call.
+
+   So it takes the SCRIPT AREA when no call is live, and disappears the moment a
+   transcript arrives. Between calls the script area holds Node 1, which nobody
+   needs to read, so the space is free.
+
+   Static and large rather than scrolling. An agent can read it at a glance
+   instead of waiting for a line to come round. */
+
+#gate-panel {
+  display: none;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 30px 40px;
+}
+body.presenter.no-call #gate-panel { display: block; }
+/* the script area belongs to the gates between calls */
+body.presenter.no-call #main { display: none; }
+
+#gate-panel .gp-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  color: #4a5468;
+  margin-bottom: 22px;
+}
+#gate-panel .gp-gate {
+  margin-bottom: 22px;
+  padding: 14px 0 14px 20px;
+  border-left: 4px solid #2a3441;
+}
+#gate-panel .gp-gate .gp-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: #5a6a82;
+  display: block;
+  margin-bottom: 6px;
+}
+#gate-panel .gp-gate .gp-claim {
+  font-size: 27px;
+  font-weight: 700;
+  color: #c9d4e0;
+  line-height: 1.3;
+}
+#gate-panel .gp-gate .gp-ans {
+  font-size: 18px;
+  color: #7a8798;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+#gate-panel .gp-gate .gp-ans em { color: #9fb0c4; font-style: normal; }
+
+#gate-panel .gp-close {
+  margin-top: 30px;
+  padding: 16px 20px;
+  border: 1px solid #2f7d4d;
+  border-left: 4px solid #5eb870;
+  border-radius: 4px;
+  background: #0d2413;
+  color: #7ef0a8;
+  font-size: 22px;
+  font-weight: 700;
+}
+#gate-panel .gp-routes {
+  margin-top: 24px;
+  font-size: 17px;
+  color: #6f7d94;
+  line-height: 1.7;
+}
+#gate-panel .gp-routes strong { color: #9fb4cc; }
+
+@media (max-width: 1000px) {
+  #gate-panel .gp-gate .gp-claim { font-size: 22px; }
+  #gate-panel .gp-gate .gp-ans { font-size: 16px; }
+  #gate-panel .gp-close { font-size: 18px; }
+}
+
 body.presenter #cue-banner { display:block; }
 body.presenter #nav { display:none; }
 body.presenter #reinforce-bar { display:none; }
@@ -921,6 +1047,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   </div>
 </div>
 
+<div id="buy-signal-alert"></div>
 <div id="script-state-flag"></div>
 <div id="generated-block">
   <div id="generated-label"></div>
@@ -3462,6 +3589,35 @@ body.presenter #discovery-btn:hover { opacity:1; }
 </div><!-- end #main -->
 </div><!-- end #layout -->
 
+<div id="gate-panel">
+  <div class="gp-label">THE THREE GATES</div>
+
+  <div class="gp-gate">
+    <span class="gp-n">GATE 1</span>
+    <div class="gp-claim">The money is real.</div>
+    <div class="gp-ans"><em>"Is this a scam?"</em> &nbsp;&rarr;&nbsp; Verify the funds on claimittexas.gov. The State is holding them. They are real.</div>
+  </div>
+
+  <div class="gp-gate">
+    <span class="gp-n">GATE 2</span>
+    <div class="gp-claim">Stealth can get it.</div>
+    <div class="gp-ans"><em>"How do I know you can do this?"</em> &nbsp;&rarr;&nbsp; 20-plus years, BBB A+, five-star Google, Texas DPS License A18410.</div>
+  </div>
+
+  <div class="gp-gate">
+    <span class="gp-n">GATE 3</span>
+    <div class="gp-claim">Now is the time.</div>
+    <div class="gp-ans"><em>"I'll just call the State"</em> / <em>"the fee seems high"</em> &nbsp;&rarr;&nbsp; The generic-list trap, the wait, policy vs regulation.</div>
+  </div>
+
+  <div class="gp-close">All three cleared = close now. Stop selling.</div>
+
+  <div class="gp-routes">
+    <strong>"Let me think about it"</strong> &nbsp;=&nbsp; dig for the real gate.<br>
+    <strong>"Check with family"</strong> &nbsp;=&nbsp; read the personality type first.
+  </div>
+</div>
+
 <div id="nav-arrows">
   <button class="nav-arrow" onclick="prevNode()">&#8592; PREV</button>
   <button class="nav-arrow" onclick="nextNode()">NEXT &#8594;</button>
@@ -3919,6 +4075,23 @@ body.presenter #discovery-btn:hover { opacity:1; }
   }
 
   // Called from the relay poll on every state read.
+  window.showBuySignal = function (said) {
+    var el = document.getElementById('buy-signal-alert');
+    if (!el) return;
+    el.innerHTML = 'BUY SIGNAL. CLOSE NOW. STOP SELLING.' +
+      (said ? '<span class="bs-said">they said: &ldquo;' +
+        String(said).replace(/&/g,'&amp;').replace(/</g,'&lt;') +
+        '&rdquo;</span>' : '');
+    el.classList.add('show');
+  };
+
+  window.clearBuySignal = function () {
+    var el = document.getElementById('buy-signal-alert');
+    if (!el) return;
+    el.classList.remove('show');
+    el.innerHTML = '';
+  };
+
   window.setLiveCue = function (coaching) {
     paintPersona();
     var found = '';
@@ -4286,7 +4459,12 @@ body.presenter #discovery-btn:hover { opacity:1; }
   var AGENT_ID = new URLSearchParams(location.search).get('agent') || '1001';
 
   var RELAY_URL  = 'https://stealth-relay.wdenning.workers.dev/state';
-  var POLL_MS    = 1500;   // how often we ask the relay for state
+  // 1500 until 2026-09-11. Lowered to 1000 because the poll interval is the
+  // last leg of the delay the agent actually feels: the relay may have the
+  // answer for over a second before the chart asks for it. Combined with
+  // DEBOUNCE_MS coming down from 2500 to 1500 on the relay side, this takes
+  // roughly two seconds out of the worst case.
+  var POLL_MS    = 1000;   // how often we ask the relay for state
   var MANUAL_MS  = 20000;  // after the agent clicks, leave them alone this long
   var STALE_MS   = 12000;  // no new relay activity for this long = the call has gone quiet
   var IDLE_MS    = 120000; // state older than this is a finished call - stop steering
@@ -4297,6 +4475,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   var lastCallUuid  = null;
   var lastAppliedAt = 0;
   var deathShownFor = null;
+  var buySignalFor = null;
 
   var TYPE_MAP = {
     DIRECTOR:'D', SOCIALIZER:'S', RELATER:'R', THINKER:'T', UNDETERMINED:'U'
@@ -4347,6 +4526,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
     if (!state || !state.call_uuid) {
       dotEl.className = '';
       noteEl.textContent = 'waiting for a call';
+      document.body.classList.add('no-call');
       return;
     }
 
@@ -4363,10 +4543,15 @@ body.presenter #discovery-btn:hover { opacity:1; }
       // an accepted call left its green block sitting under a reset chart.
       document.body.classList.remove('has-generated',
                                      'script-stale', 'script-adjust');
+      document.body.classList.add('no-call');
+      clearBuySignal();
       dotEl.className = '';
       noteEl.textContent = 'summary filed, ready for the next call';
       return;
     }
+
+    // A live call. The gates stop scrolling.
+    document.body.classList.remove('no-call');
 
     // New call: clear anything held over from the last one.
     //
@@ -4384,6 +4569,8 @@ body.presenter #discovery-btn:hover { opacity:1; }
     if (state.call_uuid && state.call_uuid !== lastCallUuid) {
       lastCallUuid = state.call_uuid;
       deathShownFor = null;
+      buySignalFor = null;
+      clearBuySignal();
       manualUntil = 0;
 
       // Small talk does not carry across calls.
@@ -4513,6 +4700,29 @@ body.presenter #discovery-btn:hover { opacity:1; }
     if (n && n >= 1 && n <= 36 && typeof goNode === 'function' && window.currentNode !== n) {
       goNode(n);
       lastAppliedAt = Date.now();
+    }
+
+    // BUY SIGNAL. Fires once per call when the coach detects a close signal.
+    // Loud for a moment, then it fades to a quiet marker: the agent needs to
+    // notice it inside a second and then get back to the prospect, not read a
+    // banner while somebody is talking.
+    var coachingArr = state.coaching || [];
+    var rawOut = String(state.raw_output || '');
+    var hasBuy = false;
+    for (var bi = 0; bi < coachingArr.length; bi++) {
+      if (String(coachingArr[bi] || '').toUpperCase().indexOf('CLOSE SIGNAL') > -1) {
+        hasBuy = true; break;
+      }
+    }
+    if (!hasBuy && rawOut.toUpperCase().indexOf('[CLOSE SIGNAL') > -1) hasBuy = true;
+
+    if (hasBuy && buySignalFor !== state.call_uuid) {
+      buySignalFor = state.call_uuid;
+      // Pull the quoted fragment if the coach gave one.
+      var said = '';
+      var m = rawOut.match(/\[CLOSE SIGNAL[^\]]*\]\s*said:\s*"([^"]+)"/i);
+      if (m) said = m[1];
+      showBuySignal(said);
     }
 
     // death discovered, once per call
