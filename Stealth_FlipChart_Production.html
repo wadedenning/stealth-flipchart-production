@@ -933,6 +933,17 @@ body.presenter .variant-header {
    something looks wrong. */
 body.presenter .node-title { display:none; }
 body.presenter .node-id-line { display:none; }
+/* Notes for whoever maintains the chart, not for an agent mid-call. They
+   explain WHY a node is shaped the way it is, which matters when somebody
+   later wonders whether a missing variant was an oversight. Visible in the
+   full chart, never in presenter mode. */
+.design-note {
+  font-size: 12.5px; line-height: 1.55; color: #5a6478;
+  background: #12161f; border-left: 3px solid #2a3441;
+  padding: 10px 14px; margin: 8px 0 4px; border-radius: 3px;
+}
+body.presenter .design-note { display: none; }
+
 body.presenter .node-header { padding-bottom:0; border-bottom:none; }
 body.presenter #main { padding:14px 34px; }
 
@@ -1119,7 +1130,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
       <span>NODE 01</span><span class="node-tag tag-first">FIRST CALL</span>
     </div>
     <div class="node-title">START &mdash; Connection Stage</div>
-    <div class="node-note">UNDETERMINED ONLY. No personality read is possible before the prospect has spoken, so there is nothing to vary. Typed variants were stripped 2026-09-11.<br><br>The opening deliberately delays the hook. On a cold call the first sentence washes over people and the names do not register. "Licensed private investigations agency" and a county they may have no connection to plant two questions the prospect has to keep listening to resolve, so the reporting company lands when they are actually attending.</div>
+    <div class="design-note">UNDETERMINED ONLY. No personality read is possible before the prospect has spoken, so there is nothing to vary. Typed variants were stripped 2026-09-11.<br><br>The opening deliberately delays the hook. On a cold call the first sentence washes over people and the names do not register. "Licensed private investigations agency" and a county they may have no connection to plant two questions the prospect has to keep listening to resolve, so the reporting company lands when they are actually attending.</div>
   </div>
   
 
@@ -2593,7 +2604,7 @@ body.presenter #discovery-btn:hover { opacity:1; }
   <div class="node-header">
     <div class="node-id-line"><span>NODE 21</span><span class="node-tag tag-inbound">INBOUND</span></div>
     <div class="node-title">INBOUND_START &mdash; Receive and Identify</div>
-    <div class="node-note">UNDETERMINED ONLY. This is the agent's first words on a warm transfer from the receptionist, so no personality read exists yet. Typed variants were stripped 2026-09-11 for the same reason as Node 01.</div>
+    <div class="design-note">UNDETERMINED ONLY. This is the agent's first words on a warm transfer from the receptionist, so no personality read exists yet. Typed variants were stripped 2026-09-11 for the same reason as Node 01.</div>
   </div>
   
 
@@ -4550,8 +4561,20 @@ body.presenter #discovery-btn:hover { opacity:1; }
       return;
     }
 
-    // A live call. The gates stop scrolling.
-    document.body.classList.remove('no-call');
+    // The gates take the script area whenever the call has gone quiet, not only
+    // when the relay has no record at all. A finished call sits in call_state
+    // until the NEXT one starts, so keying on call_uuid meant the gates almost
+    // never appeared: between calls there is nearly always a stale call there.
+    // Use OVER, not "quiet". A prospect thinking for fifteen seconds is still a
+    // live call, and swapping their script for the gates mid-pause would be
+    // the worst possible moment. `over` means the relay has heard nothing for
+    // two minutes, which is a finished call.
+    //
+    // In practice the agent accepts the summary long before that, and the
+    // filed-summary guard above puts the gates up immediately. This branch is
+    // the fallback for a call nobody filed.
+    if (over) document.body.classList.add('no-call');
+    else document.body.classList.remove('no-call');
 
     // New call: clear anything held over from the last one.
     //
