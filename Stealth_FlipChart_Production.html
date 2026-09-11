@@ -970,21 +970,26 @@ body.presenter .silence-marker { font-size:16px; padding:11px 14px; }
 /* The agent keeps control, but it sits at the edge of attention. */
 body.presenter #type-selector,
 body.presenter #claim-selector,
-/* Deceased Discovered is a live action an agent takes mid-call, so it matches
-   the claim buttons beside it rather than being shrunk and dimmed. It was being
-   scaled down and faded to 40 percent, which made the one genuinely urgent
-   button on the row the hardest to see. */
-body.presenter #discovery-btn {
-  font-size: 20px;
-  font-weight: 700;
-  padding: 10px 22px;
-  margin-left: 14px;
-}
+/* REFERENCE CONTROLS, HIDDEN IN PRESENTER
+   Both of these open reference material for learning. Neither is something an
+   agent does on a live call, and both belong in the full chart and the study
+   chart.
 
-/* The switching guide is reference material for learning how a prospect moves
-   between types. It belongs in the training and study charts, not in front of
-   an agent on a live call. */
+   The switching guide explains how a prospect moves between personality types.
+
+   Deceased Discovered is the more interesting one. It used to matter: the panel
+   it opens was once the only guidance for that moment. It is not any more. The
+   coach detects the cues itself, emits DEATH DISCOVERED, switches the claim
+   type and routes to Node 28, which carries the approved condolence script. The
+   panel was already stopped from opening by itself, because a full height
+   overlay sliding over the screen during a condolence is the worst possible
+   moment to break an agent's concentration.
+
+   So the button is now a manual route to reference material the agent does not
+   need mid-call. If the coach misses the death, the panel is a poor substitute
+   anyway, because Node 28 will not have loaded either. */
 body.presenter #switch-toggle { display: none; }
+body.presenter #discovery-btn { display: none; }
 body.presenter .header-sep { display: none; }
 body.presenter #type-selector:hover,
 body.presenter #claim-selector:hover,
