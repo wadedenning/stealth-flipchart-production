@@ -842,7 +842,11 @@ body.presenter #current-node-display { display: none; }
 }
 body.presenter.no-call #gate-panel { display: block; }
 /* the script area belongs to the gates between calls */
-body.presenter.no-call #main { display: none; }
+/* Hide the whole LAYOUT, not just #main. #layout is a flex container with
+   height: calc(100vh - 54px), so hiding #main inside it left a full-height
+   empty box and pushed the gate panel below the fold. The agent saw an empty
+   screen and assumed the reset had failed. */
+body.presenter.no-call #layout { display: none; }
 
 #gate-panel .gp-label {
   font-family: 'IBM Plex Mono', monospace;
@@ -2042,6 +2046,9 @@ body.presenter .header-sep { display: none; }
         
         <div class="script-line"><div class="agent-label">AGENT</div>Then I guess, really, the next step would be to move forward with the process. Would it be inappropriate for us to start the paperwork at this point?</div>
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>The next step is simply the paperwork. I can forward you the agreement via DocuSign and walk you through every line of it if you'd like. We can begin upon your review and sign off.</div>
+
       </div>
     </div>
   </div>
@@ -2053,6 +2060,9 @@ body.presenter .header-sep { display: none; }
         <div class="script-line"><div class="agent-label">AGENT</div>Would you be against us moving forward from here?</div><div class="inflection-marker">↓ DOWN inflection — calm authority, not desperate. (Relater: soften the drop.)</div>
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
+<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Next step is the paperwork. I'll send the agreement through DocuSign, you review it, and we start.</div>
+
       </div>
     </div>
   </div>
@@ -2065,6 +2075,9 @@ body.presenter .header-sep { display: none; }
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
         <div class="script-line"><div class="agent-label">AGENT</div>Right? This is going to be great. Let me get the paperwork started.</div>
+<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Wonderful. So the next step is just the paperwork. I'll send the agreement over through DocuSign, and I'm happy to walk you through every line of it. Once you've had a look and signed off, we get going.</div>
+
       </div>
     </div>
   </div>
@@ -2078,6 +2091,9 @@ body.presenter .header-sep { display: none; }
         
         <div class="script-line"><div class="agent-label">AGENT</div>We'll be right there with you every step of the way. You won't have to deal with any of it alone.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Would it be inappropriate for us to go ahead and start the paperwork?</div><div class="inflection-marker">↓ DOWN inflection — calm authority, not desperate. (Relater: soften the drop.)</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>That's wonderful. So the next step is simply the paperwork, and there is nothing complicated about it. I'll forward you the agreement through DocuSign, and I would be glad to walk you through every single line of it so you know exactly what you are signing. We begin as soon as you have reviewed it and you are comfortable.</div>
+
       </div>
     </div>
   </div>
@@ -2090,6 +2106,9 @@ body.presenter .header-sep { display: none; }
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
         <div class="script-line"><div class="agent-label">AGENT</div>The next step is simply the paperwork, and I can walk you through every line if you'd like. Nothing will happen without your review and sign-off.</div>
+<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>The next step is the agreement. I'll send it through DocuSign so you have it in writing and can read it at your own pace. I can walk you through each clause if that is useful. We begin once you have reviewed it and signed.</div>
+
       </div>
     </div>
   </div>
@@ -4747,7 +4766,18 @@ body.presenter .header-sep { display: none; }
     }
 
     // node
+    // A new call opens on Node 1 straight away, before the coach has run.
+    //
+    // The relay sets state.node only after its first Claude call, which cannot
+    // happen until somebody speaks. So on a real call the agent was delivering
+    // the opening line with no script on screen, and the chart only caught up
+    // after the PROSPECT replied. There is nothing to route on before then,
+    // but there is nothing to decide either: every call starts at Node 1.
     var n = nodeNumberFrom(state.node);
+    if (!n && typeof goNode === 'function' && window.currentNode !== 1) {
+      goNode(1);
+      lastAppliedAt = Date.now();
+    }
     if (n && n >= 1 && n <= 36 && typeof goNode === 'function' && window.currentNode !== n) {
       goNode(n);
       lastAppliedAt = Date.now();
