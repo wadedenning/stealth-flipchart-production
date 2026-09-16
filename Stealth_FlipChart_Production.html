@@ -1059,7 +1059,7 @@ body.presenter .header-sep { display: none; }
     <button class="claim-btn" data-claim="intestate" onclick="setClaim('intestate')">Intestate</button>
   </div>
   <button id="discovery-btn" onclick="openDiscovery()" title="Use the moment a relative reveals the owner has died.">&#9873; Deceased Discovered</button>
-  <div id="current-node-display">Node <span id="node-num">1</span> of 36 &mdash; <span id="node-id-display">START</span></div>
+  <div id="current-node-display">Node <span id="node-num">1</span> of 37 &mdash; <span id="node-id-display">START</span></div>
   <span class="header-sep">|</span>
   <button id="switch-toggle" onclick="toggleSwitch()">&#8644; SWITCHING GUIDE</button>
   <button id="presenter-toggle" onclick="togglePresenter()" title="Large-type delivery view. Hides the reference material and shows one delivery cue.">PRESENTER</button>
@@ -3642,6 +3642,49 @@ body.presenter .header-sep { display: none; }
 </div><!-- end #main -->
 </div><!-- end #layout -->
 
+<!-- ═══ NODE 37: FAMILY_CONSULT ═══ -->
+<div class="node" id="node-37">
+  <div class="node-header">
+    <div class="node-id-line"><span>NODE 37</span><span class="node-tag tag-obj">OBJECTIONS</span></div>
+    <div class="node-title">FAMILY_CONSULT &mdash; "I'd Have to Talk to My Spouse"</div>
+    <div class="design-note">ALL TYPES. Added 2026-09-16. The response does not change by personality type; what changes is WHEN in the call it arrives, and the coach picks the play.<br><br>Before this node existed, a spouse deferral routed to Node 09 TRANSITION, which ends a first call that is winding down. The call was not winding down: the prospect had asked what it was about thirty-five seconds earlier and still did not know.<br><br>Two plays because the same words mean two different things. Said BEFORE they understand the offer it is a brush-off wearing a consultation's clothes, and there is nothing to consult about yet. Said AFTER they understand it, it is a buying signal: they are taking it seriously enough to involve somebody.</div>
+  </div>
+
+  <div class="gate-guide">
+    <div class="gate-line"><strong>Which play?</strong> Ask yourself one question: could they explain this to their spouse right now?</div>
+    <div class="gate-line"><strong>No</strong> &rarr; PLAY A. They do not have enough to consult about. Do not accept the deferral yet.</div>
+    <div class="gate-line"><strong>Yes</strong> &rarr; PLAY B. This is a real consultation and a good sign. Get the spouse in.</div>
+    <div class="gate-line">&ldquo;Tell my husband&rdquo; is a buy signal. &ldquo;Check with my husband&rdquo; is a gate. Listen for which verb they used.</div>
+  </div>
+
+  <div class="variant" data-v="ALL" id="37-ALL">
+    <div class="variant-block" data-v="ALL">
+      <div class="variant-header">[ALL TYPES] &mdash; Two Plays, Chosen by Where the Call Is</div>
+      <div class="variant-body">
+
+        <div class="exit-label">PLAY A &mdash; THEY DO NOT YET KNOW WHAT THEY WOULD BE CONSULTING ABOUT</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Of course, and you absolutely should. I would not want you making a decision like this on your own either.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Let me give you enough that the conversation with [him/her] is actually worth having, because right now there is not much to tell [him/her].</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>Then go back and deliver what they missed. Usually Node 03 or Node 07. Come back to the spouse question once they can explain it themselves.</div>
+
+        <div class="exit-label">PLAY B &mdash; THEY UNDERSTAND IT AND WANT [HIM/HER] INVOLVED</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>That makes complete sense, and honestly I would rather have [him/her] on the call than not. Is [he/she] around right now?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+
+        <div class="exit-label">B1 &mdash; SPOUSE IS AVAILABLE</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Perfect. Go ahead and put [him/her] on, or put me on speaker, whichever is easier. I will start again from the top so [he/she] hears the whole thing rather than a summary.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>Start from the beginning. A second-hand version of this loses every detail that makes it credible.</div>
+
+        <div class="exit-label">B2 &mdash; SPOUSE IS NOT AVAILABLE</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>No problem at all. Here is what I would suggest. Let me send you everything on us, our licensing, our reviews, all of it, so the two of you can look it over together.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Then would it be a bad idea if I called back when you are both there? That way [he/she] can ask me directly rather than through you.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">NOTE</div>Lock the day and the time with both of them present. Then exit clean. Do not re-pitch.</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div id="gate-panel">
   <div class="gp-label">THE THREE GATES</div>
 
@@ -3731,7 +3774,7 @@ body.presenter .header-sep { display: none; }
   function closeDiscovery() { document.getElementById('discovery-overlay').classList.remove('open'); }
 
   let currentNode = 1;
-  const totalNodes = 36;
+  const totalNodes = 37;
 
   // Nodes where variant display is always "ALL" regardless of type selector
   const universalNodes = [2, 14, 23, 26];
@@ -4772,7 +4815,7 @@ body.presenter .header-sep { display: none; }
       goNode(1);
       lastAppliedAt = Date.now();
     }
-    if (n && n >= 1 && n <= 36 && typeof goNode === 'function' && window.currentNode !== n) {
+    if (n && n >= 1 && n <= 37 && typeof goNode === 'function' && window.currentNode !== n) {
       goNode(n);
       lastAppliedAt = Date.now();
     }
