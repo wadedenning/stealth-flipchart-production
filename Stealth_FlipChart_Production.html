@@ -694,13 +694,7 @@ body.script-stale .variant.visible .variant-header {
   font-weight: 700;
   letter-spacing: 0.4px;
 }
-body.script-stale #script-state-flag,
-body.script-adjust #script-state-flag { display: block; }
-body.script-adjust #script-state-flag {
-  border-left-color: #2a6a8a;
-  background: #0d1a24;
-  color: #7ab0e0;
-}
+body.script-stale #script-state-flag { display: block; }
 
 /* The calibration takes over when the script cannot carry the moment.
    FORCE IT VISIBLE. The banner is normally presenter-only, so styling it for
@@ -708,20 +702,17 @@ body.script-adjust #script-state-flag {
    replaced it, which is worse than leaving the stale script alone. The
    direction has to be on screen whenever the script is not carrying the
    moment, whichever view the agent is in. */
-body.script-stale #cue-banner,
-body.script-adjust #cue-banner {
+body.script-stale #cue-banner {
   display: block;
   border-color: #a0621a;
   background: #1a1206;
 }
-body.script-stale #cue-text,
-body.script-adjust #cue-text {
+body.script-stale #cue-text {
   font-size: 22px;
   font-weight: 700;
   color: #ffd28a;
 }
-body.script-stale #cue-persona,
-body.script-adjust #cue-persona { opacity: 0.55; }
+body.script-stale #cue-persona { opacity: 0.55; }
 
 /* Reference blocks are for learning the material, not for reading mid-call.
    On screen at the same time as a script they compete for attention at exactly
@@ -4719,15 +4710,14 @@ body.presenter .header-sep { display: none; }
     var ss = over ? 'APPLIES' : (state.script_state || 'APPLIES');
     var b = document.body;
     var flag = document.getElementById('script-state-flag');
+    // Two states, not three. ADJUST was removed 2026-09-16: "mostly holds" put
+    // the full script on screen beside a calibration that contradicted it, and
+    // left the agent to decide which to follow mid-call.
     b.classList.remove('script-stale', 'script-adjust');
     if (ss === 'STALE') {
       b.classList.add('script-stale');
       if (flag) flag.textContent =
         'THE SCRIPT NO LONGER FITS. GO WITH THE FOLLOWING DIRECTION.';
-    } else if (ss === 'ADJUST') {
-      b.classList.add('script-adjust');
-      if (flag) flag.textContent =
-        'THE SCRIPT MOSTLY HOLDS. ADAPT IT TO WHAT THEY JUST SAID.';
     }
 
     // Put the lead's real values into the script text. Passing null on a
