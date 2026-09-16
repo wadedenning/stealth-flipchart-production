@@ -281,6 +281,26 @@
 
   .variant-body { padding: 10px 12px; }
 
+  /* Exit and play labels. These had NO styling at all and rendered as plain
+     unstyled text, which on 2026-09-16 meant an agent looking at Node 37 could
+     not see that PLAY A and PLAY B were headings rather than more script. They
+     are the thing that tells the agent which block to read, so they have to be
+     the most obvious thing in the box. */
+  .exit-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #e0a94a;
+    background: #241a0d;
+    border-left: 4px solid #b8862f;
+    border-radius: 3px;
+    padding: 9px 14px;
+    margin: 18px 0 10px;
+  }
+  .exit-label:first-child { margin-top: 0; }
+  body.presenter .exit-label { font-size: 17px; padding: 11px 16px; }
+
   .script-line {
     background: rgba(255,255,255,0.04);
     border-left: 3px solid rgba(255,255,255,0.15);
