@@ -288,7 +288,7 @@
      the most obvious thing in the box. */
   .exit-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.6px;
     color: #e0a94a;
@@ -299,7 +299,16 @@
     margin: 18px 0 10px;
   }
   .exit-label:first-child { margin-top: 0; }
-  body.presenter .exit-label { font-size: 17px; padding: 11px 16px; }
+  body.presenter .exit-label { font-size: 15px; padding: 11px 16px; }
+  /* The play name is what the agent is looking for, so it carries the size.
+     The rest of the label is the condition it applies to. */
+  .exit-label .play-name {
+    font-size: 21px;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-right: 6px;
+  }
+  body.presenter .exit-label .play-name { font-size: 24px; }
 
   .script-line {
     background: rgba(255,255,255,0.04);
@@ -2061,7 +2070,7 @@ body.presenter .header-sep { display: none; }
         
         <div class="script-line"><div class="agent-label">AGENT</div>Then I guess, really, the next step would be to move forward with the process. Would it be inappropriate for us to start the paperwork at this point?</div>
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+<div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>The next step is simply the paperwork. I can forward you the agreement via DocuSign and walk you through every line of it if you'd like. We can begin upon your review and sign off.</div>
 
       </div>
@@ -2075,7 +2084,7 @@ body.presenter .header-sep { display: none; }
         <div class="script-line"><div class="agent-label">AGENT</div>Would you be against us moving forward from here?</div><div class="inflection-marker">↓ DOWN inflection — calm authority, not desperate. (Relater: soften the drop.)</div>
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+<div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Next step is the paperwork. I'll send the agreement through DocuSign, you review it, and we start.</div>
 
       </div>
@@ -2090,7 +2099,7 @@ body.presenter .header-sep { display: none; }
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
         <div class="script-line"><div class="agent-label">AGENT</div>Right? This is going to be great. Let me get the paperwork started.</div>
-<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+<div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Wonderful. So the next step is just the paperwork. I'll send the agreement over through DocuSign, and I'm happy to walk you through every line of it. Once you've had a look and signed off, we get going.</div>
 
       </div>
@@ -2106,7 +2115,7 @@ body.presenter .header-sep { display: none; }
         
         <div class="script-line"><div class="agent-label">AGENT</div>We'll be right there with you every step of the way. You won't have to deal with any of it alone.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Would it be inappropriate for us to go ahead and start the paperwork?</div><div class="inflection-marker">↓ DOWN inflection — calm authority, not desperate. (Relater: soften the drop.)</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+<div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>That's wonderful. So the next step is simply the paperwork, and there is nothing complicated about it. I'll forward you the agreement through DocuSign, and I would be glad to walk you through every single line of it so you know exactly what you are signing. We begin as soon as you have reviewed it and you are comfortable.</div>
 
       </div>
@@ -2121,7 +2130,7 @@ body.presenter .header-sep { display: none; }
         <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
         <div class="script-line"><div class="agent-label">AGENT</div>The next step is simply the paperwork, and I can walk you through every line if you'd like. Nothing will happen without your review and sign-off.</div>
-<div class="exit-label">PLAY B &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
+<div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY HAVE ALREADY CLOSED. Do not ask a close question. Give them the next step.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>The next step is the agreement. I'll send it through DocuSign so you have it in writing and can read it at your own pace. I can walk you through each clause if that is useful. We begin once you have reviewed it and signed.</div>
 
       </div>
@@ -3295,11 +3304,11 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body">
         <div class="exit-label">THE INSTRUMENT &mdash; wording does not change</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Good, the executor is who I want. Just so I know which records to pull: in what county was the probate case filed?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 1 &mdash; Names the county (probated, completed)</div>
+        <div class="exit-label"><span class="play-name">EXIT 1</span> &mdash; Names the county (probated, completed)</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Perfect. You have been through the courts, so you know how slow this gets, and the State is slower. Would it be a bad idea if I put everything together and sent it over, who we are, our licensing, and what the State's process looks like from here?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 2 &mdash; Filed but never completed</div>
+        <div class="exit-label"><span class="play-name">EXIT 2</span> &mdash; Filed but never completed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>More common than you would think, and not a problem. It just means the file is partway through. Would it be a bad idea if I put everything together and sent it over, who we are, our licensing, and what the State's process looks like from here?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 3 &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
+        <div class="exit-label"><span class="play-name">EXIT 3</span> &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>No problem, we look that up all the time. The important part is there is a Will and you are named in it, so let us not get ahead of ourselves on the court side. Would it be a bad idea if I put everything together and sent it over, who we are, our licensing, and what the State's process looks like from here?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
@@ -3311,11 +3320,11 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body">
         <div class="exit-label">THE INSTRUMENT &mdash; wording does not change</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Oh good, that actually makes this easier, the executor is exactly who I want to be talking with. Just so I know which records to pull on our end: in what county was the probate case filed?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 1 &mdash; Names the county (probated, completed)</div>
+        <div class="exit-label"><span class="play-name">EXIT 1</span> &mdash; Names the county (probated, completed)</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Perfect. And having been through it, you already know how much time these things eat up, and I will tell you, the State is worse than the courts. Would it be a bad idea if I put it all together and got it over to you, who we are, our licensing with the Texas Department of Public Safety, and what the State's process actually looks like from here, so you can see what you would be dealing with either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 2 &mdash; Filed but never completed</div>
+        <div class="exit-label"><span class="play-name">EXIT 2</span> &mdash; Filed but never completed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Oh, that happens all the time, honestly, it is not a problem at all. It just means the file is sitting partway through the process. Would it be a bad idea if I put it all together and got it over to you, who we are, our licensing with the Texas Department of Public Safety, and what the State's process actually looks like from here, so you can see what you would be dealing with either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 3 &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
+        <div class="exit-label"><span class="play-name">EXIT 3</span> &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Oh, no problem at all, that is the kind of thing we look up every day. The important part is there is a Will and you were named in it, so let us not get ahead of ourselves on the court side of things. Would it be a bad idea if I put it all together and got it over to you, who we are, our licensing with the Texas Department of Public Safety, and what the State's process actually looks like from here, so you can see what you would be dealing with either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
@@ -3327,11 +3336,11 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body">
         <div class="exit-label">THE INSTRUMENT &mdash; wording does not change</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Oh good, that actually simplifies things, the executor is exactly who I would want to be talking with. Let me ask you this, just so I know which records to pull on our end: in what county was the probate case filed?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 1 &mdash; Names the county (probated, completed)</div>
+        <div class="exit-label"><span class="play-name">EXIT 1</span> &mdash; Names the county (probated, completed)</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Perfect. And having been through the process yourself, you already know how time-consuming these matters get, and dealing with the State has even more delays than the courts do. Would it be a bad idea if I were to put everything together on this and get it over to you, who we are, our licensing with the Texas Department of Public Safety, and what the State's process actually looks like from here, so you can see exactly what you would be dealing with either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 2 &mdash; Filed but never completed</div>
+        <div class="exit-label"><span class="play-name">EXIT 2</span> &mdash; Filed but never completed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>That is actually more common than you would think, and it is not a problem at all. It simply means the file is sitting partway through the process. Would it be a bad idea if I were to put everything together on this and get it over to you, who we are, our licensing with the Texas Department of Public Safety, and what the State's process actually looks like from here, so you can see exactly what you would be dealing with either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 3 &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
+        <div class="exit-label"><span class="play-name">EXIT 3</span> &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>No problem at all, that is easy enough to sort out on our end, it is the kind of thing we look up all the time. The important part is that there is a Will and you were named in it, so let us not get ahead of ourselves on the court side of things. Would it be a bad idea if I were to put everything together on this and get it over to you, who we are, our licensing with the Texas Department of Public Safety, and what the State's process actually looks like from here, so you can see exactly what you would be dealing with either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
@@ -3343,11 +3352,11 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body">
         <div class="exit-label">THE INSTRUMENT &mdash; wording does not change</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Good, that simplifies the record side. So I know which records to pull: in what county was the probate case filed?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 1 &mdash; Names the county (probated, completed)</div>
+        <div class="exit-label"><span class="play-name">EXIT 1</span> &mdash; Names the county (probated, completed)</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Understood. Having completed probate you know the court timeline, and the State's is longer. Would it be a bad idea if I sent you our documentation, the licensing, and an outline of the State's process from this point, so you can see the full picture either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 2 &mdash; Filed but never completed</div>
+        <div class="exit-label"><span class="play-name">EXIT 2</span> &mdash; Filed but never completed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>That is common. It means the case is open but not closed, which is a known state rather than an obstacle. Would it be a bad idea if I sent you our documentation, the licensing, and an outline of the State's process from this point, so you can see the full picture either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        <div class="exit-label">EXIT 3 &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
+        <div class="exit-label"><span class="play-name">EXIT 3</span> &mdash; "I don't know" &mdash; do NOT say probate may never have been filed</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Not a problem, that is a records lookup and we do it routinely. The material fact is that a Will exists and names you, so the court side can wait until we have pulled the record. Would it be a bad idea if I sent you our documentation, the licensing, and an outline of the State's process from this point, so you can see the full picture either way?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
@@ -3608,9 +3617,9 @@ body.presenter .header-sep { display: none; }
         <div class="script-line"><div class="agent-label">AGENT</div>That helps. We need the family tree accurate because it determines who the lawful heirs are and it has to pass the courts and the State. We also want to be sure we are doing right by everyone involved.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>So what is best: three-way with [AUNT BETTY] now, or you call her first and we follow up together?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Either works. I will say this: at some point I do need to speak with her directly. Her answers generate more questions, and I would rather not put you in the middle of five calls when one would do it.</div>
-        <div class="exit-label">PLAY A &mdash; three-way accepted</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; three-way accepted</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Good. Stay on the line, we will get her on.</div>
-        <div class="exit-label">PLAY B &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
       </div>
     </div>
   </div>
@@ -3622,9 +3631,9 @@ body.presenter .header-sep { display: none; }
         <div class="script-line"><div class="agent-label">AGENT</div>That is actually really helpful, because we want to be as accurate as we can with the family tree. This is what determines who the lawful heirs might be, and it has to pass both the courts and the State. And beyond that, we always want to be certain we are doing right by everybody involved.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>So what do you think is the best way to handle this? Would you be comfortable if we tried a three-way with [AUNT BETTY] right now? Or would you rather call her first yourself, tell her what is going on, and then the two of us follow up after that?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Either way is fine. I will just say, whichever you pick, it is always better if I can actually talk with her at some point. Her answers usually generate other questions, and I do not want to turn this into you running back and forth across five or six calls when one call would put it all in perspective.</div>
-        <div class="exit-label">PLAY A &mdash; three-way accepted</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; three-way accepted</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Perfect! Stay right there with me and we will get her on.</div>
-        <div class="exit-label">PLAY B &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
       </div>
     </div>
   </div>
@@ -3636,9 +3645,9 @@ body.presenter .header-sep { display: none; }
         <div class="script-line"><div class="agent-label">AGENT</div>That is actually really helpful, because we want to be as accurate as possible with the questions about the family tree. This is what determines who the lawful heir or heirs might be, and it has to pass approval of both the courts and the State. And not only that, we always want to be as certain as possible that we are doing right by all parties involved.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>So what do you think would be the best way to handle this? There is no wrong answer. Would you be comfortable if we tried a three-way call with [AUNT BETTY] right now? Or would you rather call her first yourself, explain what is going on, and then the two of us follow up with her after that? Whichever feels easier to you.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Either way works, honestly. I will just say, whichever you prefer, it is always better if I can speak with her directly at some point. Her answers are likely to raise other questions, and I do not want to put you in the position of running back and forth across five or six separate calls when one call would put everything in perspective.</div>
-        <div class="exit-label">PLAY A &mdash; three-way accepted</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; three-way accepted</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Perfect. Just stay on the line with me and we will get her on.</div>
-        <div class="exit-label">PLAY B &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
       </div>
     </div>
   </div>
@@ -3650,9 +3659,9 @@ body.presenter .header-sep { display: none; }
         <div class="script-line"><div class="agent-label">AGENT</div>That is useful. We need the family tree accurate because it determines who the lawful heir or heirs are, and it has to satisfy both the courts and the State, which apply different standards. Beyond that, we want to be certain we are doing right by all parties.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>So which is better: a three-way call with [AUNT BETTY] now, or you speak with her first and we follow up together?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Either works. The reason I would prefer to speak with her directly at some point is that her answers will generate follow-up questions, and a relayed conversation turns one call into five or six with information lost at each step.</div>
-        <div class="exit-label">PLAY A &mdash; three-way accepted</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; three-way accepted</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Good. Stay on the line and I will bring her in.</div>
-        <div class="exit-label">PLAY B &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; family-call-first &mdash; callback line is generated, see Node 02</div>
       </div>
     </div>
   </div>
@@ -3682,19 +3691,19 @@ body.presenter .header-sep { display: none; }
       <div class="variant-header">[ALL TYPES] &mdash; Two Plays, Chosen by Where the Call Is</div>
       <div class="variant-body">
 
-        <div class="exit-label">PLAY A &mdash; THEY DO NOT YET KNOW WHAT THEY WOULD BE CONSULTING ABOUT</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; THEY DO NOT YET KNOW WHAT THEY WOULD BE CONSULTING ABOUT</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Of course, and you absolutely should. I would not want you making a decision like this on your own either.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Let me give you enough that the conversation with [him/her] is actually worth having, because right now there is not much to tell [him/her].</div>
         <div class="script-line"><div class="agent-label">NOTE</div>Then go back and deliver what they missed. Usually Node 03 or Node 07. Come back to the spouse question once they can explain it themselves.</div>
 
-        <div class="exit-label">PLAY B &mdash; THEY UNDERSTAND IT AND WANT [HIM/HER] INVOLVED</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY UNDERSTAND IT AND WANT [HIM/HER] INVOLVED</div>
         <div class="script-line"><div class="agent-label">AGENT</div>That makes complete sense, and honestly I would rather have [him/her] on the call than not. Is [he/she] around right now?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
 
-        <div class="exit-label">B1 &mdash; SPOUSE IS AVAILABLE</div>
+        <div class="exit-label"><span class="play-name">B1</span> &mdash; SPOUSE IS AVAILABLE</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Perfect. Go ahead and put [him/her] on, or put me on speaker, whichever is easier. I will start again from the top so [he/she] hears the whole thing rather than a summary.</div>
         <div class="script-line"><div class="agent-label">NOTE</div>Start from the beginning. A second-hand version of this loses every detail that makes it credible.</div>
 
-        <div class="exit-label">B2 &mdash; SPOUSE IS NOT AVAILABLE</div>
+        <div class="exit-label"><span class="play-name">B2</span> &mdash; SPOUSE IS NOT AVAILABLE</div>
         <div class="script-line"><div class="agent-label">AGENT</div>No problem at all. Here is what I would suggest. Let me send you everything on us, our licensing, our reviews, all of it, so the two of you can look it over together.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Then would it be a bad idea if I called back when you are both there? That way [he/she] can ask me directly rather than through you.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         <div class="script-line"><div class="agent-label">NOTE</div>Lock the day and the time with both of them present. Then exit clean. Do not re-pitch.</div>
@@ -3797,7 +3806,10 @@ body.presenter .header-sep { display: none; }
   const totalNodes = 37;
 
   // Nodes where variant display is always "ALL" regardless of type selector
-  const universalNodes = [2, 14, 23, 26];
+  // Nodes whose content is the same for every personality type. 37 was added
+  // 2026-09-16 and left off this list, so its ALL block never became visible
+  // and an agent routed there saw an empty script box.
+  const universalNodes = [2, 14, 23, 26, 37];
   // Nodes that use variant blocks with data-v="ALL" in specific places
   // (but show typed variants too - handled by data-v matching)
 
