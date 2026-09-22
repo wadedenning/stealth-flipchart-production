@@ -300,6 +300,15 @@
   }
   .exit-label:first-child { margin-top: 0; }
   body.presenter .exit-label { font-size: 15px; padding: 11px 16px; }
+
+  /* When the coach names a play, everything belonging to the others greys back.
+     Node 37 otherwise puts four blocks on screen at once and an agent mid-call
+     has to read all of them to find the one they need.
+
+     Greyed, not hidden, for the same reason a STALE script is greyed: if the
+     coach picked wrong, the agent can still see the other play. */
+  .play-dim { opacity: 0.2; filter: grayscale(1); }
+  .exit-label.play-dim { background: none; border-left-color: #2a3441; }
   /* The play name is what the agent is looking for, so it carries the size.
      The rest of the label is the condition it applies to. */
   .exit-label .play-name {
@@ -1193,7 +1202,7 @@ body.presenter .header-sep { display: none; }
         
         <div class="script-line"><div class="agent-label">AGENT</div>Hi [CLIENT NAME], this is [AGENT NAME] with Stealth Investigations — We are a licensed private Investigative Agency located in Brazoria County — I'm reaching out because our research team discovered that [REPORTING COMPANY] issued a payment to you that they report was never cashed.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>A part of my job is to notify you and make certain you have been made aware of this.</div>
-        <div class="script-line"><div class="agent-label">AGENT</div>Have you been made aware of this already? Are you familiar with [REPORTING COMPANY]?</div><div class="script-line"><div class="agent-label">AGENT</div>The reason I ask is that there is more than one [CLIENT NAME] in the United States, and we want to make sure we are talking to the correct party.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Are you familiar with [REPORTING COMPANY]?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
         
       </div>
@@ -4656,6 +4665,7 @@ body.presenter .header-sep { display: none; }
       dotEl.className = '';
       noteEl.textContent = 'waiting for a call';
       document.body.classList.add('no-call');
+      if (typeof window.setLiveCue === 'function') window.setLiveCue([]);
       return;
     }
 
@@ -4673,6 +4683,7 @@ body.presenter .header-sep { display: none; }
       document.body.classList.remove('has-generated',
                                      'script-stale', 'script-adjust');
       document.body.classList.add('no-call');
+      if (typeof window.setLiveCue === 'function') window.setLiveCue([]);
       clearBuySignal();
       dotEl.className = '';
       noteEl.textContent = 'summary filed, ready for the next call';
@@ -4691,7 +4702,14 @@ body.presenter .header-sep { display: none; }
     // In practice the agent accepts the summary long before that, and the
     // filed-summary guard above puts the gates up immediately. This branch is
     // the fallback for a call nobody filed.
-    if (over) document.body.classList.add('no-call');
+    if (over) {
+      // The gates are up, so there is no call for the coach to be coaching.
+      // Leaving the last call's line above them said two contradictory things
+      // at once: the panel saying no call is live, the banner still talking
+      // about one that ended.
+      document.body.classList.add('no-call');
+      if (typeof window.setLiveCue === 'function') window.setLiveCue([]);
+    }
     else document.body.classList.remove('no-call');
 
     // New call: clear anything held over from the last one.
@@ -4786,6 +4804,28 @@ body.presenter .header-sep { display: none; }
     var ss = over ? 'APPLIES' : (state.script_state || 'APPLIES');
     var b = document.body;
     var flag = document.getElementById('script-state-flag');
+    // Grey back the plays the coach did not name. The markup is flat, a label
+    // followed by its lines, so an element belongs to whichever play label came
+    // before it. B1 and B2 belong to B, so naming B leaves all three lit.
+    var chosen = over ? null : (state.play || null);
+    document.querySelectorAll('.play-dim').forEach(function (e) {
+      e.classList.remove('play-dim');
+    });
+    if (chosen) {
+      var vis = document.querySelector('.node.visible .variant.visible .variant-body');
+      if (vis) {
+        var cur = null;
+        Array.prototype.forEach.call(vis.children, function (el) {
+          if (el.classList.contains('exit-label')) {
+            var t = (el.textContent || '').trim().toUpperCase();
+            var m = t.match(/^PLAY\s+([A-Z])/) || t.match(/^([A-Z])\d/);
+            cur = m ? m[1] : null;
+          }
+          if (cur && cur !== chosen) el.classList.add('play-dim');
+        });
+      }
+    }
+
     // Two states, not three. ADJUST was removed 2026-09-16: "mostly holds" put
     // the full script on screen beside a calibration that contradicted it, and
     // left the agent to decide which to follow mid-call.
