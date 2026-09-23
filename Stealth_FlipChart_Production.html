@@ -528,6 +528,19 @@
     margin-bottom: 8px;
   }
 
+  /* A beat, not a hold. The silence marker means stop and wait for an answer.
+     This means pause long enough for the last line to land, then carry on. */
+  .pause-marker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #7a8798;
+    text-align: center;
+    padding: 6px 0 4px;
+    opacity: 0.85;
+  }
+
   .silence-marker {
     border-left: 5px solid #c0392b;
     background: #2a1015;
@@ -1567,13 +1580,10 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body owner-only">
         <div class="script-line"><div class="agent-label">AGENT</div>So it seems like anytime you're dealing with any governmental agency, they make the process far more difficult than it should be.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>First there's the initial forms, a couple of signatures, no big deal. But once those go in, the State auto-generates a generic list of documents for you to secure. Birth certificates, death certificates, marriage licenses, divorce decrees, court orders. Proof of your address from 1984 and a copy of a bank statement from 2003. Some of their requirements are just insane.</div>
-
-        <div class="exit-label"><span class="play-name">BREAK HERE</span> &mdash; let them react before the second half</div>
+        <div class="pause-marker">SHORT PAUSE HERE</div>
         <div class="script-line"><div class="agent-label">AGENT</div>Have you ever had to deal with anything like that?</div>
-        <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-
-        <div class="script-line"><div class="agent-label">AGENT</div>If you don't provide every document, on time, they deny or suspend the case. That is where most people give up, which I suspect is what the process is designed to do.</div>
-        <div class="script-line"><div class="agent-label">AGENT</div>And if you DO provide everything on time, your case finally gets assigned to a State Examiner, and that will not happen for a minimum of <span data-tl="ownerExaminer">45 to 60 days</span>. So now you're three months in, and THAT is when they hand you the real list of documents.</div>
+        <div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait. &nbsp;—&nbsp; let them react before the second half</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>If you don't provide every document, on time, they deny or suspend the case. That is where most people give up, which I suspect is what the process is designed to do. And if you DO provide everything on time, your case finally gets assigned to a State Examiner, and that will not happen for a minimum of <span data-tl="ownerExaminer">45 to 60 days</span>. So now you're three months in, and THAT is when they hand you the real list of documents.</div>
         <div class="script-line"><div class="agent-label">AGENT</div>That's where the second wave gives up.</div>
 
       </div>
