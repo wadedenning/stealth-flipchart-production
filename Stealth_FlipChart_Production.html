@@ -2961,13 +2961,16 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body">
         
         <div class="script-line"><div class="agent-label">KATHY</div>Hi [CLIENT NAME], this is Kathy — I'm a supervisor here at Stealth Investigations. [AGENT NAME] passed along your conversation and asked me to reach out personally. Is now a bad time?</div>
-        <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee structure on this case, and [AGENT] wanted to make sure you got a straight answer from someone who could actually address that. So — what were you thinking would feel fair to you?</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee structure on this case, and [AGENT] wanted to make sure you got a straight answer from someone who could actually address that. So — what were you thinking would feel fair to you?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>You know what — on a case like this, involving [REPORTING COMPANY] and the amount we're talking about, I'm comfortable working with you on that. Here's what I'd like to do: let's lock in [AGREED RATE]% and get the paperwork moving. Does that work for you?</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; THEIR NUMBER WORKS. Accept it and move.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>You know what — on a case like this, involving [REPORTING COMPANY] and the amount we're talking about, I'm comfortable working with you on that. Here's what I'd like to do: let's lock in [AGREED RATE]% and get the paperwork moving. Does that work for you?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>I appreciate you being direct with me. I can't go as low as [THEIR NUMBER], but I can come down to [KATHY'S NUMBER]% on this case. That's as far as I can go and still make it work on our end. Would you be comfortable moving forward at that?</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEIR NUMBER IS TOO LOW. Counter once.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I appreciate you being direct with me. I can't go as low as [THEIR NUMBER], but I can come down to [KATHY'S NUMBER]% on this case. That's as far as I can go and still make it work on our end. Would you be comfortable moving forward at that?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>Here's what I'm going to do. I'll authorize [AGREED RATE]% on this case and have [AGENT NAME] get back to you with the paperwork. You should hear from them within the hour. Does that work?</div>
+        <div class="exit-label"><span class="play-name">PLAY C</span> &mdash; AGREED. Confirm and hand back to the agent.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>Here's what I'm going to do. I'll authorize [AGREED RATE]% on this case and have [AGENT NAME] get back to you with the paperwork. You should hear from them within the hour. Does that work?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
   </div>
@@ -2976,11 +2979,13 @@ body.presenter .header-sep { display: none; }
     <div class="variant-block" data-v="D">
       <div class="variant-header">[DIRECTOR] — Short, Direct, Rate First</div>
       <div class="variant-body">
-        <div class="script-line"><div class="agent-label">KATHY</div>[NAME], this is Kathy at Stealth Investigations. [AGENT] told me you had a question about our rate. What number were you thinking?</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>[NAME], this is Kathy at Stealth Investigations. [AGENT] told me you had a question about our rate. What number were you thinking?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>I can work with that. Here's what I need from you: confirm you want to move forward and I'll have [AGENT] send you the paperwork today.</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; THEIR NUMBER WORKS.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I can work with that. Here's what I need from you: confirm you want to move forward and I'll have [AGENT] send you the paperwork today.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>I can't do [THEIR NUMBER]. I can do [KATHY'S NUMBER]%. That's my best number. Are we doing this?</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEIR NUMBER IS TOO LOW. Counter once.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I can't do [THEIR NUMBER]. I can do [KATHY'S NUMBER]%. That's my best number. Are we doing this?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
   </div>
@@ -2991,8 +2996,9 @@ body.presenter .header-sep { display: none; }
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME]! It's Kathy — I'm one of the supervisors here at Stealth Investigations. [AGENT] mentioned your conversation and I wanted to call you personally because I think we can work something out here. How are you doing today?</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>So [AGENT] said you had a question about the fee structure. I want to make sure you feel good about this before we move forward. What were you thinking on the rate?</div>
-        <div class="script-line"><div class="agent-label">KATHY</div>You know what — I want to make this happen for you. Let's do [AGREED/NEGOTIATED RATE]% and get this thing moving. How does that sound?</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>So [AGENT] said you had a question about the fee structure. I want to make sure you feel good about this before we move forward. What were you thinking on the rate?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; WHATEVER THEY SAID, YOU CAN WORK WITH IT.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>You know what — I want to make this happen for you. Let's do [AGREED/NEGOTIATED RATE]% and get this thing moving. How does that sound?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
   </div>
@@ -3002,8 +3008,9 @@ body.presenter .header-sep { display: none; }
       <div class="variant-header">[RELATER] — Reassure First, Then Rate</div>
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy — I'm a supervisor at Stealth Investigations. [AGENT NAME] filled me in on your situation and asked me to reach out personally. I just want to make sure you feel completely taken care of here.</div>
-        <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee, and I want to address that directly. What would make you feel comfortable moving forward?</div>
-        <div class="script-line"><div class="agent-label">KATHY</div>I hear you. Here's what I'm going to do — I'm going to authorize [NEGOTIATED RATE]% on your case. [AGENT NAME] will take it from here and walk you through every step. You're in good hands. Does that feel okay to you?</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I understand you had some questions about our fee, and I want to address that directly. What would make you feel comfortable moving forward?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; WHATEVER THEY SAID, YOU CAN WORK WITH IT.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I hear you. Here's what I'm going to do — I'm going to authorize [NEGOTIATED RATE]% on your case. [AGENT NAME] will take it from here and walk you through every step. You're in good hands. Does that feel okay to you?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
   </div>
@@ -3013,11 +3020,13 @@ body.presenter .header-sep { display: none; }
       <div class="variant-header">[THINKER] — Structured, Rate Parameters, No Soft Sell</div>
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">KATHY</div>Hi [NAME], this is Kathy, supervising here at Stealth Investigations. [AGENT] passed along the case details. I've reviewed the [REPORTING COMPANY] file and I'd like to discuss the fee structure with you directly.</div>
-        <div class="script-line"><div class="agent-label">KATHY</div>Our standard rate is 10%. Based on the specifics of your case, I have flexibility to work below that. What I need to understand is what number you'd need to see to feel that the value proposition makes sense for you.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>Our standard rate is 10%. Based on the specifics of your case, I have flexibility to work below that. What I need to understand is what number you'd need to see to feel that the value proposition makes sense for you.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>That's within what I can authorize. Here are the terms: [NEGOTIATED RATE]% contingency, due only upon State release of funds to you. Nothing is owed if we are unsuccessful. Does that structure work for you?</div>
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; THEIR NUMBER WORKS.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>That's within what I can authorize. Here are the terms: [NEGOTIATED RATE]% contingency, due only upon State release of funds to you. Nothing is owed if we are unsuccessful. Does that structure work for you?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
         
-        <div class="script-line"><div class="agent-label">KATHY</div>I appreciate the directness. I can't get to [THEIR NUMBER] and still deliver what we've promised you in terms of resources and timeline. My authorized floor on this case is [KATHY'S NUMBER]%. If that works for you, I can have the paperwork initiated today.</div>
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEIR NUMBER IS TOO LOW. Counter once.</div>
+        <div class="script-line"><div class="agent-label">KATHY</div>I appreciate the directness. I can't get to [THEIR NUMBER] and still deliver what we've promised you in terms of resources and timeline. My authorized floor on this case is [KATHY'S NUMBER]%. If that works for you, I can have the paperwork initiated today.</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
       </div>
     </div>
   </div>
