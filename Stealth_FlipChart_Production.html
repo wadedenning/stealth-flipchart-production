@@ -773,6 +773,67 @@
              box-shadow:0 0 10px rgba(255,90,60,0.65); }
 }
 
+#type-alert {
+  display: none;
+  padding: 16px 22px 18px;
+  text-align: center;
+  border-bottom: 2px solid #2a3140;
+  background: #10141c;
+}
+#type-alert.show { display: block; }
+
+/* Loud for six seconds, then it settles. Long enough to register mid-sentence,
+   short enough that it is not still shouting two questions later. */
+#type-alert.loud {
+  background: #16304a;
+  border-bottom-color: #2f6fa8;
+  animation: taPulse 0.5s ease-out;
+}
+@keyframes taPulse {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+#ta-label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7a8798;
+  margin-bottom: 6px;
+}
+#type-alert.loud #ta-label { color: #9fc6e8; }
+
+#ta-type {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--text-bright);
+}
+#type-alert.loud #ta-type { font-size: 30px; }
+
+#ta-tone {
+  display: block;
+  margin-top: 5px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #9aa0b5;
+}
+#type-alert.loud #ta-tone { font-size: 19px; color: #c9d4e0; }
+
+body.type-D #ta-type { color: var(--d-accent); }
+body.type-S #ta-type { color: var(--s-accent); }
+body.type-R #ta-type { color: var(--r-accent); }
+body.type-T #ta-type { color: var(--t-accent); }
+
+@media (max-width: 1100px) {
+  #type-alert.loud #ta-type { font-size: 24px; }
+  #type-alert.loud #ta-tone { font-size: 16px; }
+}
+
 #cue-banner {
   display:none;
   padding:10px 18px 11px;
@@ -1253,6 +1314,11 @@ body.presenter .header-sep { display: none; }
   <div id="generated-line"></div>
   <div id="generated-ladder"></div>
 </div>
+<!-- TYPE ANNOUNCEMENT. Fires on an EVENT, not on presence: seeded at call
+     open, committed on first read, switched mid-call. A type that is simply
+     always on screen stops being seen, which is the whole reason this exists
+     rather than a quiet persistent line doing the job alone. -->
+<div id="type-alert"><span id="ta-label"></span><span id="ta-type"></span><span id="ta-tone"></span></div>
 <div id="cue-banner"><span id="cue-persona">READ THEM FIRST</span><span id="cue-secondary"><span class="cue-src">know them</span><span id="cue-text">Read them before you commit.</span></span></div>
 
 <div id="layout">
@@ -1447,13 +1513,6 @@ body.presenter .header-sep { display: none; }
   </div>
   
 
-    <div class="coach-box">
-    <div class="coach-line act">Deliver it, then stop. The silence is the work.</div>
-    <div class="coach-line hard">Do not ask them to confirm a summary.</div>
-    <div class="coach-line">If the silence stalls, ask whether they lived at that address.</div>
-    <div class="coach-line hard">Do not rush to it.</div>
-  </div>
-
   <div class="variant" data-v="U" id="4-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">[UNDETERMINED] — Core Delivery at Neutral Pace</div>
@@ -1602,13 +1661,6 @@ body.presenter .header-sep { display: none; }
     
   </div>
   
-
-    <div class="coach-box">
-    <div class="coach-line">Filed already, or only looked? The answer picks the line.</div>
-    <div class="coach-line act">Filed: mirror the timeframe, then “that’s exactly where most people get stuck.”</div>
-    <div class="coach-line act">Only looked: ask how far they got, then hold it.</div>
-    <div class="coach-line">Either way you are going to Consequence next.</div>
-  </div>
 
   <div class="variant" data-v="U" id="6-U">
     <div class="variant-block" data-v="U">
@@ -2198,23 +2250,7 @@ body.presenter .header-sep { display: none; }
   </div>
   
 
-  <div class="gate-guide"><strong>Which gate is still unresolved?</strong><div class="gate-item"><strong>Gate 1 &mdash; The money is real.</strong> &ldquo;Is this a scam?&rdquo; &rarr; Verify the funds on claimittexas.gov. The State is holding them. They are real.</div><div class="gate-item"><strong>Gate 2 &mdash; Stealth can get it.</strong> &ldquo;How do I know you can do this?&rdquo; &rarr; 20-plus years, BBB A+, five-star Google, Texas DPS License A18410.</div><div class="gate-item"><strong>Gate 3 &mdash; Now is the time.</strong> &ldquo;I&rsquo;ll just call the State&rdquo; / &ldquo;the fee seems high&rdquo; &rarr; The generic-list trap, the wait, policy vs. regulation.</div><div class="gate-item gate-route">&ldquo;Let me think about it&rdquo; = dig for the real one. &ldquo;Check with family&rdquo; = read the personality type first.</div></div><div class="buy-cue">BUY SIGNAL? All three gates cleared = close now. Stop selling.</div>  <div class="coach-box">
-    <div class="coach-line">Which gate is still open?</div>
-    <div class="coach-line">All three clear? Close now and stop selling.</div>
-    <div class="coach-line act">One no-oriented question. Then remain silent.</div>
-    <!-- The one place the coaching version carries actual words. The close is
-         where the exact construction is load-bearing: no-oriented, down
-         inflection, and the type decides the verb. An agent improvising it
-         loses the structure. Decided 2026-10-03, as a special case rather than
-         a precedent. -->
-    <div class="coach-line close-words" data-v="U">Would you be opposed to allowing us to move forward with recovering your money?</div>
-    <div class="coach-line close-words" data-v="D">Would you be against us moving forward from here?</div>
-    <div class="coach-line close-words" data-v="S">Do you think it might be a crazy idea to let us handle this for you?</div>
-    <div class="coach-line close-words" data-v="R">Do you feel like you would be uncomfortable moving forward with this?</div>
-    <div class="coach-line close-words" data-v="T">Do you feel it would be out of the question to move forward?</div>
-  </div>
-
-  <div class="variant" data-v="U" id="13-U">
+  <div class="gate-guide"><strong>Which gate is still unresolved?</strong><div class="gate-item"><strong>Gate 1 &mdash; The money is real.</strong> &ldquo;Is this a scam?&rdquo; &rarr; Verify the funds on claimittexas.gov. The State is holding them. They are real.</div><div class="gate-item"><strong>Gate 2 &mdash; Stealth can get it.</strong> &ldquo;How do I know you can do this?&rdquo; &rarr; 20-plus years, BBB A+, five-star Google, Texas DPS License A18410.</div><div class="gate-item"><strong>Gate 3 &mdash; Now is the time.</strong> &ldquo;I&rsquo;ll just call the State&rdquo; / &ldquo;the fee seems high&rdquo; &rarr; The generic-list trap, the wait, policy vs. regulation.</div><div class="gate-item gate-route">&ldquo;Let me think about it&rdquo; = dig for the real one. &ldquo;Check with family&rdquo; = read the personality type first.</div></div><div class="buy-cue">BUY SIGNAL? All three gates cleared = close now. Stop selling.</div>  <div class="variant" data-v="U" id="13-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">[UNDETERMINED] — Default Close Questions</div>
       <div class="variant-body">
@@ -2295,13 +2331,7 @@ body.presenter .header-sep { display: none; }
   </div>
   
 
-  <div class="gate-guide"><strong>Which gate is still unresolved?</strong><div class="gate-item"><strong>Gate 1 &mdash; The money is real.</strong> &ldquo;Is this a scam?&rdquo; &rarr; Verify the funds on claimittexas.gov. The State is holding them. They are real.</div><div class="gate-item"><strong>Gate 2 &mdash; Stealth can get it.</strong> &ldquo;How do I know you can do this?&rdquo; &rarr; 20-plus years, BBB A+, five-star Google, Texas DPS License A18410.</div><div class="gate-item"><strong>Gate 3 &mdash; Now is the time.</strong> &ldquo;I&rsquo;ll just call the State&rdquo; / &ldquo;the fee seems high&rdquo; &rarr; The generic-list trap, the wait, policy vs. regulation.</div><div class="gate-item gate-route">&ldquo;Let me think about it&rdquo; = dig for the real one. &ldquo;Check with family&rdquo; = read the personality type first.</div></div><div class="behavior-cue bc-D">PUSHBACK IS A TEST — hold the line, don’t soften. One fact, one verify path, then silence.</div><div class="behavior-cue bc-S">FAMILY — “tell” = buy signal, close now. “check” = they switched to Relater, slow down.</div>  <div class="coach-box">
-    <div class="coach-line">Mirror their exact words back.</div>
-    <div class="coach-line act">Two camps: not interested, or interested but not sure. Which one?</div>
-    <div class="coach-line">Ask it flat and mean it.</div>
-  </div>
-
-  <div class="variant visible" id="14-ALL">
+  <div class="gate-guide"><strong>Which gate is still unresolved?</strong><div class="gate-item"><strong>Gate 1 &mdash; The money is real.</strong> &ldquo;Is this a scam?&rdquo; &rarr; Verify the funds on claimittexas.gov. The State is holding them. They are real.</div><div class="gate-item"><strong>Gate 2 &mdash; Stealth can get it.</strong> &ldquo;How do I know you can do this?&rdquo; &rarr; 20-plus years, BBB A+, five-star Google, Texas DPS License A18410.</div><div class="gate-item"><strong>Gate 3 &mdash; Now is the time.</strong> &ldquo;I&rsquo;ll just call the State&rdquo; / &ldquo;the fee seems high&rdquo; &rarr; The generic-list trap, the wait, policy vs. regulation.</div><div class="gate-item gate-route">&ldquo;Let me think about it&rdquo; = dig for the real one. &ldquo;Check with family&rdquo; = read the personality type first.</div></div><div class="behavior-cue bc-D">PUSHBACK IS A TEST — hold the line, don’t soften. One fact, one verify path, then silence.</div><div class="behavior-cue bc-S">FAMILY — “tell” = buy signal, close now. “check” = they switched to Relater, slow down.</div>  <div class="variant visible" id="14-ALL">
     <div class="variant-block" data-v="ALL">
       <div class="variant-header">[ALL TYPES] — Universal Core Script</div>
       <div class="variant-body">
@@ -2958,12 +2988,6 @@ body.presenter .header-sep { display: none; }
   </div>
   
 
-    <div class="coach-box">
-    <div class="coach-line act">Struggling? The usual case. Offer to take it over.</div>
-    <div class="coach-line hard">Going well? Do not push. Say so, leave the door open, get off.</div>
-    <div class="coach-line hard">Vague? The offer stands. Do not chase it.</div>
-  </div>
-
   <div class="variant" data-v="U" id="24-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">[UNDETERMINED] — Open with the Experience, Let Them Tell You</div>
@@ -3230,12 +3254,6 @@ body.presenter .header-sep { display: none; }
 
   <div class="compliance-block">Use this ONLY when the relationship is verified from a real source: an obituary, a will, or court records. If the file says RELATIVE_1 through 5, the database guessed and you do not know the relationship &mdash; use Node 35 instead. Naming a relationship that turns out to be wrong costs you the credibility the research just bought. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER: never adjudicate, confirm, deny, or hint at heir status.</div>
 
-    <div class="coach-box">
-    <div class="coach-line">Recent death? One line of condolence, then move on. Years past, skip it.</div>
-    <div class="coach-line act">Ask them to help you sort out who the lawful heirs are.</div>
-    <div class="coach-line hard">Never adjudicate. You are notifying, not deciding.</div>
-  </div>
-
   <div class="variant" data-v="U" id="27-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">THE OPENING</div>
@@ -3263,12 +3281,6 @@ body.presenter .header-sep { display: none; }
 
   <div class="compliance-block">The default for RELATIVE_1 through 5. The database placed this person with the decedent but the relationship itself is a guess: someone listed as a daughter may be a cousin, someone listed as a spouse may be an ex-spouse. So the script claims family, not a specific role. Everything else is identical to Node 27. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER.</div>
 
-    <div class="coach-box">
-    <div class="coach-line">They volunteer the relationship? Take it and use it from there.</div>
-    <div class="coach-line act">Ask them to help you sort out who the lawful heirs are.</div>
-    <div class="coach-line hard">Do not name a relationship the file only guessed at.</div>
-  </div>
-
   <div class="variant" data-v="U" id="35-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">THE OPENING</div>
@@ -3295,11 +3307,6 @@ body.presenter .header-sep { display: none; }
 
   <div class="compliance-block">No research sits behind this call: a referral from Node 33, a discovery call continuing past Node 28, or a thin file. Assert nothing the facts have not established, including that this person is family. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER.</div>
 
-    <div class="coach-box">
-    <div class="coach-line hard">Assert nothing the facts have not established, including that they are family.</div>
-    <div class="coach-line act">Ask whether they are family before you explain anything.</div>
-  </div>
-
   <div class="variant" data-v="U" id="36-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">THE OPENING</div>
@@ -3324,12 +3331,6 @@ body.presenter .header-sep { display: none; }
   </div>
 
   <div class="compliance-block">Heavy grief is rare (~1 in 50). The usual reaction is surprise plus suspicion &mdash; credibility matters more than sympathy. Never sound excited that someone died. Never promise money to the person on the phone. Heirship is never worked out on the call. The condolence, the silence, and the apology are the SAME for every personality type: a Director does not get a colder condolence. The type changes only what happens after it.</div>
-
-    <div class="coach-box">
-    <div class="coach-line act">Condolence, then stop. The silence is not optional.</div>
-    <div class="coach-line">Apologise for the records, not for calling.</div>
-    <div class="coach-line hard">Never decide heirship. There is a process and this call is not it.</div>
-  </div>
 
   <div class="variant" data-v="U" id="28-U">
     <div class="variant-block" data-v="U">
@@ -3492,13 +3493,6 @@ body.presenter .header-sep { display: none; }
 
   <div class="compliance-block">POSITIONAL &mdash; fires only on an UNVERIFIED executor / administrator / trustee claim, either call. Researched files where probate was already found NEVER come here. Chart-only: a real executor who completed probate does not forget the county. "I don't know" almost always means never filed, usually good faith (a Will named them; no known assets at the time). Ask as ordinary fact-gathering &mdash; never as a test, never characterized.</div>
 
-    <div class="coach-box">
-    <div class="coach-line act">County question. Ask it flat. It is not a test.</div>
-    <div class="coach-line">Names it, filed but incomplete, or does not know. All three get the same offer.</div>
-    <div class="coach-line hard">Never say probate may not have been filed.</div>
-    <div class="coach-line hard">Do not resolve it on this call.</div>
-  </div>
-
   <div class="variant" data-v="U" id="30-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">THE INSTRUMENT</div>
@@ -3622,13 +3616,6 @@ body.presenter .header-sep { display: none; }
 
   <div class="compliance-block">Call 2, after Node 10 RECONNECT, agreement signed or moving to signature. Ask the marital question, then hold silence. How they handle it sorts them: confident answers &rarr; Node 32 (the marital answer picks the branch). Vague / pointing away &rarr; Node 33 or 34. "Aunt Betty would know" in any form &rarr; Node 34. Never announce a fork. Never ask "are you the lawful heir." They reveal it.</div>
 
-    <div class="coach-box">
-    <div class="coach-line act">Frame it, then ask. Married, divorced and never remarried, never married, widowed.</div>
-    <div class="coach-line hard">Never announce a fork.</div>
-    <div class="coach-line hard">Never ask whether they are the lawful heir. They reveal it.</div>
-    <div class="coach-line">The question does not change. Not for any type.</div>
-  </div>
-
   <div class="variant" data-v="U" id="31-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">[UNDETERMINED] &mdash; framing + the marital-status question</div>
@@ -3690,13 +3677,6 @@ body.presenter .header-sep { display: none; }
   </div>
 
   <div class="compliance-block">You are GATHERING, not concluding. Complications (blended family, paternity surprises, incomplete probate, family friction) are FACTS FOR THE FILE &mdash; not problems to solve, not reasons to bridge. Note them exactly, get the names, stay warm, keep moving toward the signed agreement. Never characterize a complication ("that makes this harder" is banned). Everything complicated is worked AFTER signature, by CS with Kathy. A predeceased child with a surviving spouse and/or children is a SEPARATE ESTATE; whether it gets researched further is an affordability decision made off the call. Your job: the number of heirs and their names. Transcript renders "heirship" as "airship" &mdash; ignore it.</div>
-
-    <div class="coach-box">
-    <div class="coach-line">You are gathering, not concluding.</div>
-    <div class="coach-line hard">Never characterize a complication. “That makes this harder” is banned.</div>
-    <div class="coach-line act">Note it, get the names, keep moving.</div>
-    <div class="coach-line hard">Do not solve anything on this call.</div>
-  </div>
 
   <div class="variant" data-v="D" id="32-D">
     <div class="variant-block" data-v="D">
@@ -3777,13 +3757,6 @@ body.presenter .header-sep { display: none; }
 
   <div class="compliance-block">ONLY the self-identified bridge &mdash; the person who points away from themselves. A relative who PRESENTS as an heir (including stepchildren) is treated as an heir all the way through signature and fact-gathering; status determinations are NEVER made or hinted at on a sales call. Their disqualification, if the research supports it, is the owner/manager close-out letter &mdash; never the agent.</div>
 
-    <div class="coach-box">
-    <div class="coach-line">Only for someone pointing away from themselves.</div>
-    <div class="coach-line hard">If they present as an heir, treat them as one. All the way through signature.</div>
-    <div class="coach-line hard">Never make or hint at a status determination.</div>
-    <div class="coach-line act">Name, number, and permission to mention them.</div>
-  </div>
-
   <div class="variant" data-v="U" id="33-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">[UNDETERMINED] &mdash; name, contact, permission, warm close</div>
@@ -3854,13 +3827,6 @@ body.presenter .header-sep { display: none; }
   </div>
 
   <div class="compliance-block">An heir defers to a family knower. The heir on the phone stays the client relationship; the knowledge lives with someone else. Agent discretion is explicit: which play to favor, or simply taking the number and scheduling, is read from tone. Neither is wrong. PRE-TRAINING DEPENDENCY: do not offer the three-way until Dolphin's three-way mechanics are verified.</div>
-
-    <div class="coach-box">
-    <div class="coach-line act">Offer the choice. Do not sell either one.</div>
-    <div class="coach-line">Three-way now, or they call her first and you follow up.</div>
-    <div class="coach-line hard">Do not ask for her number.</div>
-    <div class="coach-line">You do need to speak with her at some point. Say so once.</div>
-  </div>
 
   <div class="variant" data-v="U" id="34-U">
     <div class="variant-block" data-v="U">
@@ -3963,13 +3929,6 @@ body.presenter .header-sep { display: none; }
     <div class="gate-line"><strong>No</strong> &rarr; PLAY A. They do not have enough to consult about. Do not accept the deferral yet.</div>
     <div class="gate-line"><strong>Yes</strong> &rarr; PLAY B. This is a real consultation and a good sign. Get the spouse in.</div>
     <div class="gate-line">&ldquo;Tell my husband&rdquo; is a buy signal. &ldquo;Check with my husband&rdquo; is a gate. Listen for which verb they used.</div>
-  </div>
-
-    <div class="coach-box">
-    <div class="coach-line">Could they explain this to their spouse right now?</div>
-    <div class="coach-line act">No: they have nothing to consult about. Give them the substance first.</div>
-    <div class="coach-line act">Yes: try for the spouse now, or send material and schedule with both.</div>
-    <div class="coach-line hard">Do not ask for her number.</div>
   </div>
 
   <div class="variant" data-v="ALL" id="37-ALL">
@@ -4515,6 +4474,94 @@ body.presenter .header-sep { display: none; }
     el.classList.add('show');
   };
 
+  // ─── TYPE ANNOUNCEMENT ──────────────────────────────────────────────────
+  //
+  // The personality read is the most valuable thing the coach produces live: it
+  // reads a type as fast as a human or faster. But a line that is always on
+  // screen stops being seen, so this fires on EVENTS rather than on presence.
+  //
+  //   SEEDED    carried from the previous call, on screen from the first
+  //             second, which is exactly when it goes invisible. Labelled as a
+  //             prior read so the agent knows it is prep they can use AND that
+  //             it might be wrong. Matters most on a follow-up voicemail: no
+  //             live conversation to read, one shot at the message, and the
+  //             seed arriving after connect is too late to prepare.
+  //   COMMITTED the coach's first read on this call.
+  //   SWITCHED  mid-call change. The thing an agent most needs to know fast.
+  //
+  // Loud for six seconds, then it settles to a quiet line.
+  var TONE = {
+    U: 'Read them first: collaborative, warm, neutral.',
+    D: 'Flat, clipped, efficient. Fast pace. No warmth, no over-explaining.',
+    S: 'Emotional, upbeat, high energy. Fast pace. Match their rhythm.',
+    R: 'Warm, slow, reassuring. No pressure, no urgency.',
+    T: 'Precise, measured, calm. No hedging, give data. Their silence is processing; hold it longer.'
+  };
+  var TYPE_NAME = { U:'UNDETERMINED', D:'DIRECTOR', S:'SOCIALIZER', R:'RELATER', T:'THINKER' };
+  var taShownType = null, taShownCall = null, taTimer = null;
+
+  window.showTypeAlert = function (letter, kind, fromLetter) {
+    var el = document.getElementById('type-alert');
+    if (!el) return;
+    var lab = document.getElementById('ta-label');
+    var ty  = document.getElementById('ta-type');
+    var to  = document.getElementById('ta-tone');
+
+    if (kind === 'seeded')        lab.textContent = 'from the last call';
+    else if (kind === 'switched') lab.textContent = 'switched from ' + (TYPE_NAME[fromLetter] || fromLetter || '');
+    else                          lab.textContent = 'personality read';
+
+    ty.textContent = TYPE_NAME[letter] || letter;
+    to.textContent = TONE[letter] || '';
+
+    el.classList.add('show', 'loud');
+    if (taTimer) clearTimeout(taTimer);
+    taTimer = setTimeout(function () { el.classList.remove('loud'); }, 6000);
+  };
+
+  window.clearTypeAlert = function () {
+    var el = document.getElementById('type-alert');
+    if (!el) return;
+    el.classList.remove('show', 'loud');
+    taShownType = null; taShownCall = null;
+    if (taTimer) { clearTimeout(taTimer); taTimer = null; }
+  };
+
+  // Works out WHICH of the three events this is, from state the relay already
+  // sends. seeded_type is set when the type came from a previous call on the
+  // same lead or account; switch_history records any mid-call change.
+  window.updateTypeAlert = function (state) {
+    if (!state || !state.call_uuid) return;
+    var t = state.committed_type;
+    if (!t) return;
+    var letter = String(t).charAt(0).toUpperCase();
+
+    if (taShownCall !== state.call_uuid) {
+      taShownCall = state.call_uuid;
+      taShownType = null;
+    }
+    if (taShownType === letter) return;
+
+    var hist = state.switch_history;
+    if (typeof hist === 'string') { try { hist = JSON.parse(hist); } catch (e) { hist = []; } }
+    hist = hist || [];
+
+    var kind = 'committed', from = null;
+    if (hist.length) {
+      var last = hist[hist.length - 1];
+      if (last && String(last.to || '').charAt(0).toUpperCase() === letter) {
+        kind = 'switched';
+        from = String(last.from || '').charAt(0).toUpperCase();
+      }
+    } else if (state.seeded_type &&
+               String(state.seeded_type).charAt(0).toUpperCase() === letter) {
+      kind = 'seeded';
+    }
+
+    taShownType = letter;
+    showTypeAlert(letter, kind, from);
+  };
+
   window.clearBuySignal = function () {
     var el = document.getElementById('buy-signal-alert');
     if (!el) return;
@@ -4958,6 +5005,7 @@ body.presenter .header-sep { display: none; }
       noteEl.textContent = 'waiting for a call';
       document.body.classList.add('no-call');
       if (typeof window.setLiveCue === 'function') window.setLiveCue([]);
+      if (typeof window.clearTypeAlert === 'function') window.clearTypeAlert();
       return;
     }
 
@@ -4976,6 +5024,7 @@ body.presenter .header-sep { display: none; }
                                      'script-stale', 'script-adjust');
       document.body.classList.add('no-call');
       if (typeof window.setLiveCue === 'function') window.setLiveCue([]);
+      if (typeof window.clearTypeAlert === 'function') window.clearTypeAlert();
       clearBuySignal();
       dotEl.className = '';
       noteEl.textContent = 'summary filed, ready for the next call';
@@ -5001,6 +5050,7 @@ body.presenter .header-sep { display: none; }
       // about one that ended.
       document.body.classList.add('no-call');
       if (typeof window.setLiveCue === 'function') window.setLiveCue([]);
+      if (typeof window.clearTypeAlert === 'function') window.clearTypeAlert();
     }
     else document.body.classList.remove('no-call');
 
@@ -5212,6 +5262,8 @@ body.presenter .header-sep { display: none; }
       if (m) said = m[1];
       showBuySignal(said);
     }
+
+    updateTypeAlert(state);
 
     // death discovered, once per call
     var coaching = state.coaching || [];
