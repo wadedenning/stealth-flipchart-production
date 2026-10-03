@@ -333,18 +333,24 @@
      The point is that an agent glancing at the box learns its shape without
      reading it. Colour doing a job rather than being decoration.
 
-       default   an instruction. Do this. Stays plain so it does not compete.
-       .ask      a question the agent asks THEMSELVES to decide what follows.
+       default   context. What the agent is working out for themselves.
+                 Stays plain, because thinking is not the urgent part.
+       .act      THE THING TO DO in the next five seconds. Gold and heavy.
+                 This is what should dominate the box.
        .hard     a prohibition. Never, do not. The one they get wrong under
-                 pressure, so it catches the eye first.
-       .close-words  actual words to say. Italic and dashed, because it is the
-                 only place in the coaching version that carries script.
+                 pressure.
+       .close-words  actual words to say. Green and italic, the only place in
+                 the coaching version that carries script.
+
+     Revised 2026-10-03. The first version made the self-assessment question
+     the loudest line, which was backwards: the agent thinking is less urgent
+     than the agent acting.
 
      Instructions are deliberately left plain. Four colours plus the type
      accent on the left bar would be too much happening at once. */
-  body.coach .coach-line.ask {
-    color: #e0c068;
-    font-weight: 600;
+  body.coach .coach-line.act {
+    color: #e0a94a;
+    font-weight: 700;
   }
 
   body.coach .coach-line.hard {
@@ -373,7 +379,10 @@
   body.coach.type-T .close-words[data-v="T"] { display: block; }
   body.coach .close-words {
     font-style: italic;
+    font-weight: 600;
+    color: #5eb870;
     border-left-style: dashed;
+    border-left-color: #3f8a52;
   }
 
   @media (max-width: 1100px) {
@@ -2176,9 +2185,9 @@ body.presenter .header-sep { display: none; }
   
 
   <div class="gate-guide"><strong>Which gate is still unresolved?</strong><div class="gate-item"><strong>Gate 1 &mdash; The money is real.</strong> &ldquo;Is this a scam?&rdquo; &rarr; Verify the funds on claimittexas.gov. The State is holding them. They are real.</div><div class="gate-item"><strong>Gate 2 &mdash; Stealth can get it.</strong> &ldquo;How do I know you can do this?&rdquo; &rarr; 20-plus years, BBB A+, five-star Google, Texas DPS License A18410.</div><div class="gate-item"><strong>Gate 3 &mdash; Now is the time.</strong> &ldquo;I&rsquo;ll just call the State&rdquo; / &ldquo;the fee seems high&rdquo; &rarr; The generic-list trap, the wait, policy vs. regulation.</div><div class="gate-item gate-route">&ldquo;Let me think about it&rdquo; = dig for the real one. &ldquo;Check with family&rdquo; = read the personality type first.</div></div><div class="buy-cue">BUY SIGNAL? All three gates cleared = close now. Stop selling.</div>  <div class="coach-box">
-    <div class="coach-line ask">Which gate is still open?</div>
+    <div class="coach-line">Which gate is still open?</div>
     <div class="coach-line">All three clear? Close now and stop selling.</div>
-    <div class="coach-line">One no-oriented question. Then remain silent.</div>
+    <div class="coach-line act">One no-oriented question. Then remain silent.</div>
     <!-- The one place the coaching version carries actual words. The close is
          where the exact construction is load-bearing: no-oriented, down
          inflection, and the type decides the verb. An agent improvising it
@@ -3208,7 +3217,7 @@ body.presenter .header-sep { display: none; }
   <div class="compliance-block">Use this ONLY when the relationship is verified from a real source: an obituary, a will, or court records. If the file says RELATIVE_1 through 5, the database guessed and you do not know the relationship &mdash; use Node 35 instead. Naming a relationship that turns out to be wrong costs you the credibility the research just bought. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER: never adjudicate, confirm, deny, or hint at heir status.</div>
 
     <div class="coach-box">
-    <div class="coach-line ask">Recent death? One line of condolence, then move on. Years past, skip it.</div>
+    <div class="coach-line">Recent death? One line of condolence, then move on. Years past, skip it.</div>
     <div class="coach-line hard">Never adjudicate. You are notifying, not deciding.</div>
   </div>
 
@@ -3240,7 +3249,7 @@ body.presenter .header-sep { display: none; }
   <div class="compliance-block">The default for RELATIVE_1 through 5. The database placed this person with the decedent but the relationship itself is a guess: someone listed as a daughter may be a cousin, someone listed as a spouse may be an ex-spouse. So the script claims family, not a specific role. Everything else is identical to Node 27. NOT a family tree call. No entitlement promised. SIGN FIRST, QUALIFY AFTER.</div>
 
     <div class="coach-box">
-    <div class="coach-line ask">They volunteer the relationship? Take it and use it from there.</div>
+    <div class="coach-line">They volunteer the relationship? Take it and use it from there.</div>
     <div class="coach-line hard">Do not name a relationship the file only guessed at.</div>
   </div>
 
@@ -3941,7 +3950,7 @@ body.presenter .header-sep { display: none; }
   </div>
 
     <div class="coach-box">
-    <div class="coach-line ask">Could they explain this to their spouse right now?</div>
+    <div class="coach-line">Could they explain this to their spouse right now?</div>
     <div class="coach-line">No: they have nothing to consult about. Give them the substance first.</div>
     <div class="coach-line">Yes: try for the spouse now, or send material and schedule with both.</div>
     <div class="coach-line hard">Do not ask for her number.</div>
