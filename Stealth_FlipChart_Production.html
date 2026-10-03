@@ -343,6 +343,23 @@
   body.coach.t-t .coach-line { border-left-color: var(--t-accent); }
   body.coach .coach-line.hard { border-left-color: #c9524a; }
 
+  /* The close wording, one line per type. Only the committed type's version
+     shows; Undetermined shows the neutral one. */
+  body.coach .close-words { display: none; }
+  body.coach .close-words[data-v="U"] { display: block; }
+  body.coach.t-d .close-words[data-v="U"],
+  body.coach.t-s .close-words[data-v="U"],
+  body.coach.t-r .close-words[data-v="U"],
+  body.coach.t-t .close-words[data-v="U"] { display: none; }
+  body.coach.t-d .close-words[data-v="D"],
+  body.coach.t-s .close-words[data-v="S"],
+  body.coach.t-r .close-words[data-v="R"],
+  body.coach.t-t .close-words[data-v="T"] { display: block; }
+  body.coach .close-words {
+    font-style: italic;
+    border-left-style: dashed;
+  }
+
   @media (max-width: 1100px) {
     body.coach .coach-line { font-size: 24px; padding-left: 16px; }
   }
@@ -2146,6 +2163,16 @@ body.presenter .header-sep { display: none; }
     <div class="coach-line">Which gate is still open?</div>
     <div class="coach-line">All three clear? Close now and stop selling.</div>
     <div class="coach-line hard">One question. Then nothing. Do not ask twice.</div>
+    <!-- The one place the coaching version carries actual words. The close is
+         where the exact construction is load-bearing: no-oriented, down
+         inflection, and the type decides the verb. An agent improvising it
+         loses the structure. Decided 2026-10-03, as a special case rather than
+         a precedent. -->
+    <div class="coach-line close-words" data-v="U">Would you be opposed to allowing us to move forward with recovering your money?</div>
+    <div class="coach-line close-words" data-v="D">Would you be against us moving forward from here?</div>
+    <div class="coach-line close-words" data-v="S">Do you think it might be a crazy idea to let us handle this for you?</div>
+    <div class="coach-line close-words" data-v="R">Do you feel like you would be uncomfortable moving forward with this?</div>
+    <div class="coach-line close-words" data-v="T">Do you feel it would be out of the question to move forward?</div>
   </div>
 
   <div class="variant" data-v="U" id="13-U">
