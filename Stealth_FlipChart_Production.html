@@ -1603,13 +1603,27 @@ body.presenter .header-sep { display: none; }
   </div>
   
 
+    <div class="coach-box">
+    <div class="coach-line">Filed already, or only looked? The answer picks the line.</div>
+    <div class="coach-line act">Filed: mirror the timeframe, then “that’s exactly where most people get stuck.”</div>
+    <div class="coach-line act">Only looked: ask how far they got, then hold it.</div>
+    <div class="coach-line">Either way you are going to Consequence next.</div>
+  </div>
+
   <div class="variant" data-v="U" id="6-U">
     <div class="variant-block" data-v="U">
       <div class="variant-header">[UNDETERMINED] — Label and Let Them Vent</div>
       <div class="variant-body">
         <div class="script-line"><div class="agent-label">AGENT</div>It sounds like you've already been through some of this process. How has that been going for you?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
-        
-        <div class="script-line"><div class="agent-label">AGENT</div>That doesn't surprise me at all. What you're describing is exactly what the State's process is designed to do — wear people down until they give up.</div>
+
+        <div class="exit-label"><span class="play-name">PLAY A</span> &mdash; THEY HAVE FILED. Mirror the timeframe back, then explain why.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Three months. Ouch. That's exactly where most people get stuck, and here's why that happens.</div>
+
+        <div class="exit-label"><span class="play-name">PLAY B</span> &mdash; THEY HAVE ONLY LOOKED. Find out how far they got first.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>So you've been dealing with this. How far did you get before it stalled?</div><div class="silence-marker">[ HOLD SILENCE ]&nbsp;&nbsp;—&nbsp;&nbsp;Stop. Do not speak. Wait.</div>
+        <div class="script-line"><div class="agent-label">AGENT</div>Well, here's what you can expect once you file.</div>
+
+        <div class="exit-label"><span class="play-name">BOTH PLAYS</span> &mdash; straight into CONSEQUENCE, Node 07.</div>
         
       </div>
     </div>
