@@ -337,24 +337,24 @@
     font-weight: 600;
   }
 
-  body.coach.t-d .coach-line { border-left-color: var(--d-accent); }
-  body.coach.t-s .coach-line { border-left-color: var(--s-accent); }
-  body.coach.t-r .coach-line { border-left-color: var(--r-accent); }
-  body.coach.t-t .coach-line { border-left-color: var(--t-accent); }
+  body.coach.type-D .coach-line { border-left-color: var(--d-accent); }
+  body.coach.type-S .coach-line { border-left-color: var(--s-accent); }
+  body.coach.type-R .coach-line { border-left-color: var(--r-accent); }
+  body.coach.type-T .coach-line { border-left-color: var(--t-accent); }
   body.coach .coach-line.hard { border-left-color: #c9524a; }
 
   /* The close wording, one line per type. Only the committed type's version
      shows; Undetermined shows the neutral one. */
   body.coach .close-words { display: none; }
   body.coach .close-words[data-v="U"] { display: block; }
-  body.coach.t-d .close-words[data-v="U"],
-  body.coach.t-s .close-words[data-v="U"],
-  body.coach.t-r .close-words[data-v="U"],
-  body.coach.t-t .close-words[data-v="U"] { display: none; }
-  body.coach.t-d .close-words[data-v="D"],
-  body.coach.t-s .close-words[data-v="S"],
-  body.coach.t-r .close-words[data-v="R"],
-  body.coach.t-t .close-words[data-v="T"] { display: block; }
+  body.coach.type-D .close-words[data-v="U"],
+  body.coach.type-S .close-words[data-v="U"],
+  body.coach.type-R .close-words[data-v="U"],
+  body.coach.type-T .close-words[data-v="U"] { display: none; }
+  body.coach.type-D .close-words[data-v="D"],
+  body.coach.type-S .close-words[data-v="S"],
+  body.coach.type-R .close-words[data-v="R"],
+  body.coach.type-T .close-words[data-v="T"] { display: block; }
   body.coach .close-words {
     font-style: italic;
     border-left-style: dashed;
