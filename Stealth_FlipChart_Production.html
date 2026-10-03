@@ -4990,6 +4990,12 @@ body.presenter .header-sep { display: none; }
   var lastAppliedAt = 0;
   var deathShownFor = null;
   var buySignalFor = null;
+  // The quote the banner is currently showing. The banner used to latch on the
+  // FIRST close signal of a call and never update, so a wrong early read stayed
+  // on screen for the rest of the call and the real close never appeared.
+  // Wade 2026-10-03: the quote needs to always show the most recent thing they
+  // said, which keeps up with the conversation.
+  var buySignalSaid = null;
 
   var TYPE_MAP = {
     DIRECTOR:'D', SOCIALIZER:'S', RELATER:'R', THINKER:'T', UNDETERMINED:'U'
@@ -5108,6 +5114,7 @@ body.presenter .header-sep { display: none; }
       lastCallUuid = state.call_uuid;
       deathShownFor = null;
       buySignalFor = null;
+      buySignalSaid = null;
       clearBuySignal();
       manualUntil = 0;
 
@@ -5291,13 +5298,19 @@ body.presenter .header-sep { display: none; }
     }
     if (!hasBuy && rawOut.toUpperCase().indexOf('[CLOSE SIGNAL') > -1) hasBuy = true;
 
-    if (hasBuy && buySignalFor !== state.call_uuid) {
-      buySignalFor = state.call_uuid;
+    if (hasBuy) {
       // Pull the quoted fragment if the coach gave one.
       var said = '';
       var m = rawOut.match(/\[CLOSE SIGNAL[^\]]*\]\s*said:\s*"([^"]+)"/i);
       if (m) said = m[1];
-      showBuySignal(said);
+      // Fires on the first signal of a call, and again whenever the coach
+      // quotes something different. Same call, same words, no re-fire, so the
+      // banner does not flash on every poll.
+      if (buySignalFor !== state.call_uuid || said !== buySignalSaid) {
+        buySignalFor = state.call_uuid;
+        buySignalSaid = said;
+        showBuySignal(said);
+      }
     }
 
     updateTypeAlert(state);
