@@ -806,24 +806,28 @@
 }
 #type-alert.loud #ta-label { color: #9fc6e8; }
 
+/* ONE SIZE, LOUD OR NOT.
+   There was a settled state at 20px and 15px, on the theory that an
+   announcement should quieten once it has been seen. It made the tone line
+   unreadable for the rest of the call, which is the opposite of what it is
+   for. What marks the EVENT is the colour change and the pulse, not the size.
+   2026-10-03. */
 #ta-type {
   display: block;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: 0.4px;
   color: var(--text-bright);
 }
-#type-alert.loud #ta-type { font-size: 30px; }
 
 #ta-tone {
   display: block;
-  margin-top: 5px;
-  font-size: 15px;
+  margin-top: 6px;
+  font-size: 19px;
   font-weight: 500;
   line-height: 1.4;
-  color: #9aa0b5;
+  color: #c9d4e0;
 }
-#type-alert.loud #ta-tone { font-size: 19px; color: #c9d4e0; }
 
 /* Coloured by the type being ANNOUNCED, not by the body's current type class.
    Those can differ: an announcement fires before the body class updates, and
@@ -834,8 +838,8 @@
 #type-alert[data-t="T"] #ta-type { color: var(--t-accent); }
 
 @media (max-width: 1100px) {
-  #type-alert.loud #ta-type { font-size: 24px; }
-  #type-alert.loud #ta-tone { font-size: 16px; }
+  #ta-type { font-size: 24px; }
+  #ta-tone { font-size: 16px; }
 }
 
 #cue-banner {
