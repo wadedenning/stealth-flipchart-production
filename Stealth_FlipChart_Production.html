@@ -782,9 +782,9 @@
 }
 #type-alert.show { display: block; }
 
-/* Loud for six seconds, then it goes. Long enough to register mid-sentence,
-   short enough that it is not still shouting two questions later. The cue
-   banner underneath carries the type from then on. */
+/* Loud for six seconds, then it settles but stays. Long enough to register
+   mid-sentence, short enough that it is not still shouting two questions
+   later. */
 #type-alert.loud {
   background: #16304a;
   border-bottom-color: #2f6fa8;
@@ -1012,23 +1012,18 @@ body.presenter.show-nodes #current-node-display { display: block; }
    then fades to a quiet marker rather than sitting on screen competing with the
    script. */
 
-/* FIXED TO THE BOTTOM OF THE SCREEN.
-   Moved there 2026-10-03. At the top it competed with the type announcement
-   and the cue banner, which both fire at the start of a call, and it was
-   reading as a header rather than an alert.
-
-   Fixed rather than in the page flow, because a buy signal that can scroll
-   out of view defeats the purpose. */
+/* Directly below the type announcement and the cue banner.
+   Briefly fixed to the bottom of the screen on 2026-10-03 and moved back the
+   same day: down there the second line, the thing the prospect actually said,
+   was off the bottom of the view. A buy signal you cannot read is worse than
+   no buy signal. */
 #buy-signal-alert {
   display: none;
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 60;
-  padding: 18px 26px calc(20px + env(safe-area-inset-bottom, 0px));
+  margin: 0;
+  padding: 18px 26px;
   border: none;
   border-top: 3px solid #5eb870;
+  border-bottom: 3px solid #5eb870;
   border-radius: 0;
   background: #0d2413;
   color: #7ef0a8;
@@ -1332,7 +1327,6 @@ body.presenter .header-sep { display: none; }
   </div>
 </div>
 
-<div id="buy-signal-alert"></div>
 <div id="script-state-flag"></div>
 <div id="generated-block">
   <div id="generated-label"></div>
@@ -1345,6 +1339,7 @@ body.presenter .header-sep { display: none; }
      rather than a quiet persistent line doing the job alone. -->
 <div id="type-alert"><span id="ta-label"></span><span id="ta-type"></span><span id="ta-tone"></span></div>
 <div id="cue-banner"><span id="cue-persona">READ THEM FIRST</span><span id="cue-secondary"><span class="cue-src">know them</span><span id="cue-text">Read them before you commit.</span></span></div>
+<div id="buy-signal-alert"></div>
 
 <div id="layout">
 
@@ -4540,16 +4535,17 @@ body.presenter .header-sep { display: none; }
     ty.textContent = TYPE_NAME[letter] || letter;
     to.textContent = TONE[letter] || '';
 
-    // It disappears rather than settling into a quiet line. The cue banner
-    // below already carries the type and its tone persistently, so a settled
-    // version of this would be the same text twice on screen.
+    // It stays. Loud for six seconds, then it settles, but it does not go.
     //
-    // Announcement is the EVENT. Banner is the STATE.
+    // This duplicates the cue banner below, which carries the same type and
+    // tone. That was raised as a fault and overruled deliberately on
+    // 2026-10-03: the personality read is the thing an agent most needs in
+    // front of them, and seeing it twice costs nothing. The announcement also
+    // carries the label the banner does not, saying whether the read came from
+    // this call, a switch, or the previous call.
     el.classList.add('show', 'loud');
     if (taTimer) clearTimeout(taTimer);
-    taTimer = setTimeout(function () {
-      el.classList.remove('show', 'loud');
-    }, 6000);
+    taTimer = setTimeout(function () { el.classList.remove('loud'); }, 6000);
   };
 
   window.clearTypeAlert = function () {
