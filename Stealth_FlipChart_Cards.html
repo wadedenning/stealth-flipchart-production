@@ -5179,6 +5179,40 @@ body.presenter .header-sep { display: none; }
       .then(function (rows) {
         pendingList = Array.isArray(rows) ? rows : [];
         renderBadge();
+
+        // A DRAFT ON SCREEN CAN BE REWRITTEN UNDER IT.
+        //
+        // The relay writes a draft when the call ends and rewrites the same
+        // row when the disposition is ticked, adding the disposition itself
+        // and, where they differ, the line saying what the call reads as. The
+        // chart used to render a draft once and never look again, so the agent
+        // sat reading the pre-disposition version, and ACCEPT files whatever
+        // is in the box. The corrected note existed and was never filed.
+        //
+        // Found 2026-11-05 by Wade asking why he could not see the adjusted
+        // answer. Replacing it is safe only while the box still matches what
+        // we rendered. Once the agent has typed, their words win and we say
+        // what happened instead of overwriting it.
+        if (current && current.id) {
+          var fresh = null;
+          for (var i = 0; i < pendingList.length; i++) {
+            if (pendingList[i] && pendingList[i].id === current.id) {
+              fresh = pendingList[i]; break;
+            }
+          }
+          if (fresh && fresh.draft !== current.draft) {
+            var box = el('summary-text');
+            if (box && box.value === (current.draft || '')) {
+              show(fresh);
+            } else {
+              el('summary-status').textContent =
+                'This note was rewritten when the disposition was ticked. ' +
+                'Your edits are kept. Close and reopen to see the new version.';
+              current.draft = fresh.draft;   // so this is said once, not every second
+            }
+          }
+        }
+
         // Hold this cycle if the draft we would open is being rebuilt. The
         // rebuild calls poll() again when it finishes, success or failure.
         if (!current && topUpStaleDrafts(pendingList)) return;
