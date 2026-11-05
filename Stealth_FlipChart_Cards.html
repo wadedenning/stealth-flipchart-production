@@ -1341,6 +1341,80 @@ body.presenter .header-sep { display: none; }
 </head>
 <body>
 
+<script>
+(function () {
+  // THE RELAY HANDS OUT CLAIMANT DATA, SO IT HAS TO ASK WHO IS CALLING.
+  //
+  // This file is public. It sits in a public GitHub repo and is served from
+  // GitHub Pages, so the relay's address is readable by anyone, and until
+  // 2026-11-05 every relay route was open to anyone who typed it. /pending
+  // returned prospect names, account numbers, claim amounts, phone numbers and
+  // call summaries. /state returned the same while a call was in progress.
+  //
+  // The passphrase is NOT in this file, because this file is public. The agent
+  // types it once per machine and the browser keeps it. Wade sets the matching
+  // value as a Worker secret, so nobody but the agents ever handles it.
+  //
+  // If the relay has no key configured it accepts everything, so this can go
+  // live before the secret is set without locking anyone out.
+  var KEY_NAME = 'stealth_relay_key';
+  var cached = null;
+  try { cached = localStorage.getItem(KEY_NAME) || null; } catch (e) { cached = null; }
+
+  window.relayHeaders = function (extra) {
+    var h = {};
+    if (extra) for (var k in extra) if (extra.hasOwnProperty(k)) h[k] = extra[k];
+    if (cached) h['x-stealth-key'] = cached;
+    return h;
+  };
+
+  function save(v) {
+    cached = String(v || '').trim();
+    try { localStorage.setItem(KEY_NAME, cached); } catch (e) {}
+  }
+
+  // Deliberately not window.prompt(): a modal blocks the page and some
+  // browsers suppress it outright.
+  function ask() {
+    if (cached) return;
+    var wrap = document.createElement('div');
+    wrap.setAttribute('style',
+      'position:fixed;inset:0;z-index:99999;background:rgba(12,18,28,.93);' +
+      'display:flex;align-items:center;justify-content:center;' +
+      'font-family:system-ui,-apple-system,Segoe UI,sans-serif;');
+    wrap.innerHTML =
+      '<div style="background:#fff;border-radius:10px;padding:28px 32px;' +
+      'max-width:420px;box-shadow:0 10px 40px rgba(0,0,0,.4)">' +
+      '<div style="font-size:17px;font-weight:600;color:#1F3A5F;margin-bottom:6px">' +
+      'Stealth relay passphrase</div>' +
+      '<div style="font-size:13px;color:#5a6472;line-height:1.5;margin-bottom:16px">' +
+      'Enter the passphrase once. This browser will remember it.</div>' +
+      '<input id="sk-input" type="password" autocomplete="off" ' +
+      'style="width:100%;padding:9px 11px;font-size:15px;border:1px solid #c9d0da;' +
+      'border-radius:6px;box-sizing:border-box">' +
+      '<button id="sk-go" style="margin-top:14px;width:100%;padding:9px;' +
+      'font-size:15px;font-weight:600;color:#fff;background:#1F3A5F;border:0;' +
+      'border-radius:6px;cursor:pointer">Continue</button></div>';
+    document.body.appendChild(wrap);
+    var inp = wrap.querySelector('#sk-input');
+    var go = function () {
+      if (!inp.value.trim()) return;
+      save(inp.value);
+      wrap.parentNode.removeChild(wrap);
+    };
+    wrap.querySelector('#sk-go').addEventListener('click', go);
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    inp.focus();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ask);
+  } else {
+    ask();
+  }
+})();
+</script>
+
 <div id="discovery-overlay" onclick="if(event.target===this)closeDiscovery()">
   <div id="discovery-panel">
     <button class="dp-close" onclick="closeDiscovery()">&times;</button>
@@ -4960,7 +5034,7 @@ body.presenter .header-sep { display: none; }
     el('summary-status').textContent = 'Discarding...';
     fetch(BASE + '/pending/discard', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: window.relayHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify({ id: id })
     })
       .then(function (r) { return r.json(); })
@@ -4986,7 +5060,7 @@ body.presenter .header-sep { display: none; }
 
     fetch(BASE + '/pending/accept', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: window.relayHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify({ id: current.id, text: text })
     })
       .then(function (r) { return r.json(); })
@@ -5082,7 +5156,7 @@ body.presenter .header-sep { display: none; }
     refreshAsked[head.id] = 1;
     refreshBusy[head.id] = 1;
     fetch(BASE + '/pending/refresh?id=' + encodeURIComponent(head.id),
-          { method: 'POST' })
+          { method: 'POST', headers: window.relayHeaders() })
       .then(function (r) { return r.json(); })
       .then(function (res) {
         try {
@@ -5100,7 +5174,7 @@ body.presenter .header-sep { display: none; }
 
   function poll() {
     fetch(BASE + '/pending?user_id=' + encodeURIComponent(AGENT_ID),
-          { cache: 'no-store' })
+          { cache: 'no-store', headers: window.relayHeaders() })
       .then(function (r) { return r.json(); })
       .then(function (rows) {
         pendingList = Array.isArray(rows) ? rows : [];
@@ -5614,7 +5688,8 @@ body.presenter .header-sep { display: none; }
   window.__dispatchTest = dispatchEventCard;
 
   function poll() {
-    fetch(RELAY_URL + '?user_id=' + encodeURIComponent(AGENT_ID), { cache:'no-store' })
+    fetch(RELAY_URL + '?user_id=' + encodeURIComponent(AGENT_ID),
+          { cache: 'no-store', headers: window.relayHeaders() })
       .then(function (r) { return r.json(); })
       .then(apply)
       .catch(function () {
