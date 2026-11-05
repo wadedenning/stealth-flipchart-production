@@ -5051,7 +5051,17 @@ body.presenter .header-sep { display: none; }
   //
   // Once per draft. If the rebuild comes back stale too, Dolphin is genuinely
   // unreachable and the stored copy is the honest answer, so we stop asking.
+  // Two separate things, and conflating them was a bug.
+  //
+  // refreshAsked stops us asking for the same draft twice, ever. refreshBusy
+  // says a rebuild is in flight RIGHT NOW. The first version used one flag for
+  // both, so it marked the draft asked, and then the next routine poll two
+  // seconds later saw it was already asked, stopped holding off, and put the
+  // stale draft on screen. The rebuild landed fourteen seconds after that and
+  // was never displayed, because the chart only opens a draft when nothing is
+  // showing. The agent read the stale one. Found 2026-11-05 within the hour.
   var refreshAsked = {};
+  var refreshBusy = {};
 
   function needsTopUp(row) {
     return !!row && !!row.id && !refreshAsked[row.id] &&
@@ -5065,8 +5075,12 @@ body.presenter .header-sep { display: none; }
   function topUpStaleDrafts(rows) {
     if (!rows || !rows.length) return false;
     var head = rows[0];
+    if (!head || !head.id) return false;
+    // Already rebuilding this one. Keep holding, however many polls go by.
+    if (refreshBusy[head.id]) return true;
     if (!needsTopUp(head)) return false;
     refreshAsked[head.id] = 1;
+    refreshBusy[head.id] = 1;
     fetch(BASE + '/pending/refresh?id=' + encodeURIComponent(head.id),
           { method: 'POST' })
       .then(function (r) { return r.json(); })
@@ -5076,8 +5090,11 @@ body.presenter .header-sep { display: none; }
                       JSON.stringify(res));
         } catch (e) {}
       })
-      .catch(function () { /* stale copy stands; we showed it either way */ })
-      .then(function () { poll(); });
+      .catch(function () { /* stale copy stands; it gets shown either way */ })
+      .then(function () {
+        delete refreshBusy[head.id];
+        poll();
+      });
     return true;
   }
 
