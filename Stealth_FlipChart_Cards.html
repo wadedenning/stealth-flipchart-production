@@ -5032,6 +5032,55 @@ body.presenter .header-sep { display: none; }
       });
   };
 
+  // THE CHART ASKS FOR THE REBUILD, BECAUSE DOLPHIN CANNOT.
+  //
+  // A draft is written the moment Dolphin says the call ended, which is what
+  // puts it in front of the agent during wrap-up instead of after they have
+  // ticked a disposition and the next lead is ringing. But the Dolphin read
+  // inside that draft is challenged by Cloudflare every single time.
+  //
+  // Measured 2026-11-05. Nine reads made while the relay was handling a
+  // request that came FROM Dolphin: all challenged. Twenty five made while
+  // handling a request from a browser: all clean. Ninety seconds apart, same
+  // lead, same code, opposite results. Retries and backoffs up to 24 seconds
+  // made no difference, because time was never the variable.
+  //
+  // So the chart asks. This request originates in the agent's browser, which
+  // is the part that matters, and the relay rebuilds the same draft with a
+  // live call history and the real dialled number.
+  //
+  // Once per draft. If the rebuild comes back stale too, Dolphin is genuinely
+  // unreachable and the stored copy is the honest answer, so we stop asking.
+  var refreshAsked = {};
+
+  function needsTopUp(row) {
+    return !!row && !!row.id && !refreshAsked[row.id] &&
+           /last copy held by the relay/.test(String(row.draft || ''));
+  }
+
+  // Returns true when a rebuild is in flight for the draft we were about to
+  // show, so this poll holds off. The agent then never sees the stale version
+  // at all, which also means there is no half-edited draft to clobber when the
+  // corrected one arrives.
+  function topUpStaleDrafts(rows) {
+    if (!rows || !rows.length) return false;
+    var head = rows[0];
+    if (!needsTopUp(head)) return false;
+    refreshAsked[head.id] = 1;
+    fetch(BASE + '/pending/refresh?id=' + encodeURIComponent(head.id),
+          { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        try {
+          console.log('[chart] rebuilt draft ' + head.id + ': ' +
+                      JSON.stringify(res));
+        } catch (e) {}
+      })
+      .catch(function () { /* stale copy stands; we showed it either way */ })
+      .then(function () { poll(); });
+    return true;
+  }
+
   function poll() {
     fetch(BASE + '/pending?user_id=' + encodeURIComponent(AGENT_ID),
           { cache: 'no-store' })
@@ -5039,6 +5088,9 @@ body.presenter .header-sep { display: none; }
       .then(function (rows) {
         pendingList = Array.isArray(rows) ? rows : [];
         renderBadge();
+        // Hold this cycle if the draft we would open is being rebuilt. The
+        // rebuild calls poll() again when it finishes, success or failure.
+        if (!current && topUpStaleDrafts(pendingList)) return;
         // Only open by itself when nothing is already on screen, so it can
         // never wipe out something the agent is part way through editing.
         if (!current && pendingList.length) show(pendingList[0]);
