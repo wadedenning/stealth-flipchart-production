@@ -1359,6 +1359,21 @@ body.presenter .header-sep { display: none; }
   // live before the secret is set without locking anyone out.
   var KEY_NAME = 'stealth_relay_key';
   var cached = null;
+
+  // THE ESCAPE HATCH.
+  //
+  // A mistyped passphrase used to be unrecoverable without developer tools:
+  // the wrong value cached forever, every relay call came back 401, and the
+  // chart just went quiet. Wade hit exactly that on 2026-11-06 the morning
+  // AGENT_KEY was first set. Appending ?resetkey=1 to the chart URL clears
+  // the stored value and re-prompts, which is something an agent can be told
+  // over the phone.
+  try {
+    if (/[?&]resetkey=1(&|$)/.test(location.search)) {
+      localStorage.removeItem(KEY_NAME);
+    }
+  } catch (e) {}
+
   try { cached = localStorage.getItem(KEY_NAME) || null; } catch (e) { cached = null; }
 
   window.relayHeaders = function (extra) {
@@ -1406,6 +1421,38 @@ body.presenter .header-sep { display: none; }
     inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
     inp.focus();
   }
+
+  // THE CHART NOTICES WHEN IT IS LOCKED OUT.
+  //
+  // Without this the chart sends a stale passphrase, collects 401s and shows
+  // nothing: no cards updating, no pending notes, no error. That is what the
+  // agent sees and it looks exactly like a quiet shift. Any 401 from the
+  // relay now clears the stored value and puts the prompt back up.
+  //
+  // Wrapping fetch rather than checking at each call site on purpose: there
+  // are five relay fetches today and there will be more, and a new one that
+  // forgets the check would reintroduce the silent failure.
+  window.relayUnauthorized = function () {
+    try { localStorage.removeItem(KEY_NAME); } catch (e) {}
+    cached = null;
+    if (!document.getElementById('sk-input')) ask();
+  };
+
+  var RELAY_HOST = 'stealth-relay.wdenning.workers.dev';
+  var nativeFetch = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    return nativeFetch(input, init).then(function (res) {
+      try {
+        var u = (typeof input === 'string')
+          ? input
+          : ((input && input.url) || '');
+        if (res.status === 401 && u.indexOf(RELAY_HOST) !== -1) {
+          window.relayUnauthorized();
+        }
+      } catch (e) { /* never let the check break a response */ }
+      return res;
+    });
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', ask);
