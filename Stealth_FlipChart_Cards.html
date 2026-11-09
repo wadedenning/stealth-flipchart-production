@@ -5596,15 +5596,19 @@ body.presenter .header-sep { display: none; }
     // the opening line with no script on screen, and the chart only caught up
     // after the PROSPECT replied. There is nothing to route on before then,
     // but there is nothing to decide either: every call starts at Node 1.
-    var n = nodeNumberFrom(state.node);
-    if (!n && typeof goNode === 'function' && window.currentNode !== 1) {
-      goNode(1);
-      lastAppliedAt = Date.now();
-    }
-    if (n && n >= 1 && n <= 37 && typeof goNode === 'function' && window.currentNode !== n) {
-      goNode(n);
-      lastAppliedAt = Date.now();
-    }
+    // THE CHART NO LONGER DRIVES ITSELF.
+    //
+    // Removed 2026-11-09 with the coach rewrite. The relay stopped computing a
+    // node, because the agents work from the printed binder and the live tool
+    // is now a personality and buy-signal reader rather than a teleprompter.
+    //
+    // This block used to move the chart to whatever node the coach named. With
+    // no node arriving, its first branch would have fired on every poll and
+    // pinned the chart to Node 1 for the whole call: not blank, which somebody
+    // would notice, but stuck on the opening script while looking live, which
+    // is the version that misleads an agent.
+    //
+    // The script stays in the chart as reference. The agent navigates it.
 
     // BUY SIGNAL. Fires once per call when the coach detects a close signal.
     // Loud for a moment, then it fades to a quiet marker: the agent needs to
